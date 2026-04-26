@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Itinerarios — TravelAI Platform</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .itinerary-layout {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .it-body {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .it-form-panel {
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .it-output-panel {
+      padding: 24px;
+      overflow-y: auto;
+      background: var(--bg-main);
+    }
+
+    .form-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+
+    .form-section-title:first-child { margin-top: 0; }
+
+    .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .trip-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .trip-type-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-body);
+    }
+
+    .trip-type-btn .trip-emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+    .trip-type-btn:hover, .trip-type-btn.selected {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: var(--cyan-dim);
+    }
+
+    /* Output */
+    .output-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: var(--text-muted);
+      gap: 12px;
+    }
+
+    .output-placeholder .emoji { font-size: 64px; }
+    .output-placeholder h3 { font-size: 18px; color: var(--text-secondary); }
+    .output-placeholder p { font-size: 14px; max-width: 300px; line-height: 1.6; }
+
+    /* Loading */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 48px;
+    }
+
+    .loading-spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { font-size: 14px; color: var(--text-secondary); text-align: center; }
+    .loading-dots span {
+      animation: blink 1.4s infinite;
+      color: var(--cyan);
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+    /* Itinerary output */
+    .it-header {
+      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1));
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .it-header h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .it-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .it-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .it-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Day cards */
+    .day-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+      animation: fadeSlide 0.4s ease;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .day-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .day-num {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .day-title { font-size: 15px; font-weight: 600; }
+    .day-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .day-content {
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .day-content strong { color: var(--text-primary); }
+    .day-content em { color: var(--cyan); font-style: normal; }
+
+    /* Budget summary */
+    .budget-card {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.08));
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .budget-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .budget-item {
+      text-align: center;
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+    }
+
+    .budget-amount { font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--green); }
+    .budget-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    @media (max-width: 768px) {
+      .it-body { grid-template-columns: 1fr; }
+      .it-form-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">✈️</div>
+      <div class="logo-text">Travel<span>AI</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="chatbot.html" class="nav-item"><span class="nav-icon">🤖</span> Chatbot IA</a>
+      <a href="itinerario.html" class="nav-item active"><span class="nav-icon">🗺️</span> Itinerarios</a>
+      <a href="crm.html" class="nav-item"><span class="nav-icon">👥</span> CRM</a>
+      <div class="nav-label">Sistema</div>
+      <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
+      <a href="../index.html" class="nav-item"><span class="nav-icon">🏠</span> Landing page</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="plan-badge">
+        <div class="plan-name">Plan Pro</div>
+        <div class="plan-desc">Demo activa · $599/mes</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title">Generador de Itinerarios</span>
+      <div class="topbar-actions">
+        <div class="topbar-status"><span class="status-dot"></span> IA activa</div>
+        <div class="avatar">JG</div>
+      </div>
+    </header>
+
+    <div class="itinerary-layout">
+      <div class="it-body">
+
+        <!-- Form -->
+        <div class="it-form-panel">
+          <div class="form-section-title">Destino</div>
+          <div class="form-group">
+            <label>¿A dónde quieres ir?</label>
+            <input type="text" id="destino" placeholder="ej. Cancún, París, Japón..." />
+          </div>
+
+          <div class="form-section-title">Fechas</div>
+          <div class="date-row">
+            <div class="form-group">
+              <label>Salida</label>
+              <input type="date" id="fecha-ida" />
+            </div>
+            <div class="form-group">
+              <label>Regreso</label>
+              <input type="date" id="fecha-vuelta" />
+            </div>
+          </div>
+
+          <div class="form-section-title">Viajeros y presupuesto</div>
+          <div class="date-row">
+            <div class="form-group">
+              <label>Personas</label>
+              <select id="personas">
+                <option value="1">1 persona</option>
+                <option value="2" selected>2 personas</option>
+                <option value="3">3 personas</option>
+                <option value="4">4 personas</option>
+                <option value="5+">5 o más</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Presupuesto total</label>
+              <input type="text" id="presupuesto" placeholder="ej. $80,000 MXN" />
+            </div>
+          </div>
+
+          <div class="form-section-title">Tipo de viaje</div>
+          <div class="trip-type-grid">
+            <button class="trip-type-btn selected" onclick="selectTripType(this, 'Aventura')">
+              <span class="trip-emoji">🧗</span>Aventura
+            </button>
+            <button class="trip-type-btn" onclick="selectTripType(this, 'Relax')">
+              <span class="trip-emoji">🏖️</span>Relax
+            </button>
+            <button class="trip-type-btn" onclick="selectTripType(this, 'Cultural')">
+              <span class="trip-emoji">🏛️</span>Cultural
+            </button>
+            <button class="trip-type-btn" onclick="selectTripType(this, 'Romántico')">
+              <span class="trip-emoji">💑</span>Romántico
+            </button>
+            <button class="trip-type-btn" onclick="selectTripType(this, 'Familiar')">
+              <span class="trip-emoji">👨‍👩‍👧</span>Familiar
+            </button>
+            <button class="trip-type-btn" onclick="selectTripType(this, 'Gastronómico')">
+              <span class="trip-emoji">🍜</span>Gastronomía
+            </button>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;" onclick="generateItinerary()">
+            🗺️ Generar Itinerario con IA
+          </button>
+
+          <div style="margin-top:12px;padding:12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:12px;color:var(--amber);">
+            ⚠️ Demo: genera itinerarios de ejemplo. Conecta tu Claude API key para respuestas personalizadas en tiempo real.
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="it-output-panel" id="output-panel">
+          <div class="output-placeholder" id="placeholder">
+            <span class="emoji">🗺️</span>
+            <h3>Tu itinerario aparecerá aquí</h3>
+            <p>Completa el formulario y haz clic en "Generar Itinerario" para crear un plan personalizado con IA.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ANTHROPIC_API_KEY = 'DEMO_KEY';
+  const MODEL = 'claude-sonnet-4-6';
+  let selectedTripType = 'Aventura';
+  let currentItinerary = '';
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  function selectTripType(btn, type) {
+    document.querySelectorAll('.trip-type-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedTripType = type;
+  }
+
+  // Set default dates
+  const today = new Date();
+  const nextMonth = new Date(today);
+  nextMonth.setMonth(today.getMonth() + 1);
+  const twoWeeks = new Date(nextMonth);
+  twoWeeks.setDate(nextMonth.getDate() + 7);
+
+  document.getElementById('fecha-ida').value = nextMonth.toISOString().split('T')[0];
+  document.getElementById('fecha-vuelta').value = twoWeeks.toISOString().split('T')[0];
+
+  function calcDays() {
+    const ida = new Date(document.getElementById('fecha-ida').value);
+    const vuelta = new Date(document.getElementById('fecha-vuelta').value);
+    const diff = Math.ceil((vuelta - ida) / (1000 * 60 * 60 * 24));
+    return Math.max(diff, 1);
+  }
+
+  /* ── DEMO ITINERARIES ── */
+  function getDemoItinerary(destino, personas, presupuesto, dias, tipo) {
+    const dest = destino.toLowerCase();
+
+    const itineraries = {
+      cancun: {
+        title: `Cancún y Riviera Maya`,
+        subtitle: `${dias} días de sol, mar y cultura maya`,
+        days: [
+          { title: 'Llegada y Zona Hotelera', subtitle: 'Check-in + primer contacto con el paraíso', content: '🛬 **Llegada** al Aeropuerto Internacional de Cancún.\n🚌 **Traslado** al hotel en la Zona Hotelera.\n🏨 **Check-in** y descanso.\n🌅 **Tarde:** Primera caminata por el Boulevard Kukulcán.\n🍹 **Noche:** Cena en El Fish Fritanga con vista al mar.\n\n💡 *Tip: Cambia efectivo en el aeropuerto — mejor tasa que en la Zona Hotelera.*' },
+          { title: 'Playa + Todo Incluido', subtitle: 'Día de relax y diversión acuática', content: '🏖️ **Mañana:** Playa del hotel — buceo de snorkel incluido.\n🤿 **Mediodía:** Área de alberca y buffet todo incluido.\n🚤 **Tarde:** Paseo en lancha por la Laguna Nichupté.\n🌮 **Noche:** Experiencia gastronómica en Mercado 28 (fuera del hotel).\n\n💡 *Tip: Los mercados locales tienen precios 60% más baratos que la Zona Hotelera.*' },
+          { title: 'Chichén Itzá y Cenote', subtitle: 'Maravilla del mundo + nado en cenote', content: '⛩️ **7am:** Tour a **Chichén Itzá** (Maravilla del Mundo).\n🏛️ **El Castillo** Kukulcán, el Juego de Pelota y El Caracol.\n🏊 **Cenote Ik-Kil:** Nado en el famoso cenote sagrado.\n🌮 **Comida:** En Pisté — cochinita pibil auténtica.\n🔙 **Regreso:** Cancún a las 6pm.\n\n💡 *Tip: Llega a Chichén Itzá antes de las 9am para evitar el calor y las multitudes.*' },
+          { title: 'Isla Mujeres', subtitle: 'Isla paradisíaca a 30 min de Cancún', content: '⛴️ **9am:** Ferry a **Isla Mujeres** ($350 MXN ida y vuelta).\n🐢 **Tortugranja:** Santuario de tortugas marinas.\n🏍️ **Tour en golf car** por toda la isla.\n🐟 **Punta Norte:** La mejor playa de la isla.\n🦞 **Almuerzo:** Langosta fresca en el muelle.\n⛴️ **Regreso** a Cancún al atardecer.\n\n💡 *Tip: Renta un golf car en $600 MXN/día para explorar la isla completa.*' },
+          { title: 'Tulum y Cenotes', subtitle: 'Ruinas mayas frente al mar y cenotes', content: '🚌 **8am:** Traslado a **Tulum** (1.5 hrs).\n🏛️ **Ruinas de Tulum:** Las únicas con vista al mar Caribe.\n🏊 **Cenote Gran Cenote:** El más fotogénico de Tulum.\n🌿 **Comida:** Restaurante orgánico en Tulum pueblo.\n🛍️ **Tarde:** Shopping en la zona bohemia.\n🚌 **Regreso** a Cancún.\n\n💡 *Tip: Cenote Dos Ojos es ideal para buceo. Reserva con anticipación.*' },
+          { title: 'Coba + Día Libre', subtitle: 'Subir a la pirámide maya más alta + playa', content: '⛩️ **7am:** Tour a **Cobá** — única pirámide maya que aún se puede subir (42m de altura).\n🦋 **Jardín botánico** y laguna de tortugas.\n🏖️ **Tarde:** Último día de playa en el Caribe.\n🍽️ **Cena especial de despedida** en el restaurante del hotel.\n📸 **Noche:** Fotos nocturnas en la Zona Hotelera.\n\n💡 *Tip: Sube a Cobá en la mañana — a mediodía está cerrado por calor.*' },
+          { title: 'Compras y Vuelo', subtitle: 'Últimas compras y regreso a casa', content: '🛍️ **Mañana:** Plaza Las Américas para souvenirs.\n☕ **Desayuno** de despedida en la ciudad.\n🏨 **Check-out** y guardado de equipaje.\n✈️ **Tarde:** Traslado al aeropuerto y vuelo de regreso.\n\n💡 *Tip: Llega al aeropuerto 3 horas antes — suele estar muy concurrido.*' },
+        ],
+        budget: { vuelos: '$12,000', hotel: '$25,000', comidas: '$8,000', tours: '$6,000' }
+      },
+      paris: {
+        title: 'París, La Ciudad Luz',
+        subtitle: `${dias} días entre arte, gastronomía y romance`,
+        days: [
+          { title: 'Llegada a París', subtitle: 'Primer encuentro con la Ciudad Luz', content: '🛬 **Llegada** al Aeropuerto Charles de Gaulle.\n🚂 **RER B** al centro de París (€11 aprox).\n🏨 **Check-in** en tu hotel. Zona recomendada: Marais o Saint-Germain.\n🗼 **Tarde:** Primera vista a la Torre Eiffel desde el Trocadéro.\n🥐 **Cena:** Brasserie típica parisina — croque monsieur y crème brûlée.\n\n💡 *Tip: Compra el Carnet de 10 viajes en metro — te ahorrará mucho.*' },
+          { title: 'El Louvre y los Champs-Élysées', subtitle: 'Arte y lujo en el corazón de París', content: '🏛️ **9am:** **Museo del Louvre** (reserva online para evitar filas).\n🖼️ La Mona Lisa, Venus de Milo y la Victoria de Samotracia.\n🛍️ **Tarde:** **Champs-Élysées** de punta a punta.\n🌹 **Place de la Concorde** y el Jardín de las Tullerías.\n🥩 **Cena:** Bistro en Saint-Germain-des-Prés.\n\n💡 *Tip: El Louvre es gratuito el primer domingo de cada mes.*' },
+          { title: 'Montmartre y Sacré-Cœur', subtitle: 'El barrio de los artistas', content: '⛪ **Mañana:** **Sacré-Cœur** y la vista panorámica de París.\n🎨 **Place du Tertre:** Artistas y retratistas en vivo.\n☕ **Café de Flore** — el más histórico de París.\n🗼 **Tarde:** **Torre Eiffel** — sube hasta la cima al atardecer.\n✨ **Noche:** El show de luces de la Torre Eiffel a las 9pm.\n\n💡 *Tip: El funicular sube a Montmartre por el precio de un metro.*' },
+          { title: 'Versalles', subtitle: 'El Palacio de los Reyes de Francia', content: '🚂 **9am:** Tren RER C a **Versalles** (40 min, €7).\n👑 **Palacio de Versalles:** Galería de los Espejos, aposentos reales.\n🌳 **Jardines** de Le Nôtre — los más grandes de Europa.\n🚣 **Lago:** Paseo en bote (€7/hr).\n🚂 **Regreso** a París a las 6pm.\n🍷 **Cena:** Fondue de queso en el Barrio Latino.\n\n💡 *Tip: El Pasaporte Versalles incluye palacio + jardines + Trianón. Vale la pena.*' },
+        ],
+        budget: { vuelos: '$28,000', hotel: '$32,000', comidas: '$12,000', tours: '$8,000' }
+      }
+    };
+
+    // Default
+    const defaultDays = Array.from({length: Math.min(dias, 7)}, (_, i) => ({
+      title: `Día ${i + 1} en ${destino}`,
+      subtitle: i === 0 ? 'Llegada y exploración inicial' : i === dias - 1 ? 'Regreso a casa' : 'Aventura y descubrimientos',
+      content: i === 0
+        ? `🛬 **Llegada** a ${destino}.\n🏨 **Check-in** en el hotel — zona recomendada: céntrica.\n🚶 **Tarde:** Primera exploración del vecindario.\n🍽️ **Cena:** Restaurante local recomendado.\n\n💡 *Tip: El primer día úsalo para aclimatarte y conocer los alrededores.*`
+        : i === dias - 1
+        ? `🛍️ **Mañana:** Últimas compras y souvenirs.\n☕ **Desayuno** de despedida.\n🏨 **Check-out** y traslado al aeropuerto.\n✈️ **Vuelo de regreso.**\n\n💡 *Tip: Llega al aeropuerto con 3 horas de anticipación.*`
+        : `🌅 **Mañana:** Visita al sitio principal del día ${i + 1}.\n🍜 **Almuerzo:** Gastronomía local auténtica.\n🏛️ **Tarde:** Museo, mercado o atracción cultural.\n🌃 **Noche:** Cena + vida nocturna local.\n\n💡 *Tip: Alterna actividades intensas con momentos de relax para disfrutar más.*`
+    }));
+
+    if (dest.includes('cancún') || dest.includes('cancun')) {
+      return { ...itineraries.cancun, days: itineraries.cancun.days.slice(0, dias) };
+    }
+    if (dest.includes('paris') || dest.includes('parís')) {
+      return { ...itineraries.paris, days: itineraries.paris.days.slice(0, dias) };
+    }
+
+    return {
+      title: `${destino}`,
+      subtitle: `${dias} días de viaje ${tipo.toLowerCase()}`,
+      days: defaultDays,
+      budget: {
+        vuelos: `$${(15000 + dias * 500).toLocaleString()}`,
+        hotel: `$${(3500 * dias).toLocaleString()}`,
+        comidas: `$${(1500 * dias).toLocaleString()}`,
+        tours: `$${(2000 * dias).toLocaleString()}`
+      }
+    };
+  }
+
+  async function generateItinerary() {
+    const destino = document.getElementById('destino').value.trim();
+    if (!destino) {
+      document.getElementById('destino').focus();
+      document.getElementById('destino').style.borderColor = 'var(--red)';
+      setTimeout(() => document.getElementById('destino').style.borderColor = '', 2000);
+      return;
+    }
+
+    const personas = document.getElementById('personas').value;
+    const presupuesto = document.getElementById('presupuesto').value || 'flexible';
+    const fechaIda = document.getElementById('fecha-ida').value;
+    const fechaVuelta = document.getElementById('fecha-vuelta').value;
+    const dias = calcDays();
+
+    const panel = document.getElementById('output-panel');
+
+    // Loading state
+    panel.innerHTML = `
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">
+          Generando tu itinerario para ${destino}<br>
+          <span class="loading-dots">
+            <span>.</span><span>.</span><span>.</span>
+          </span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">
+          La IA está personalizando actividades, hoteles y tips
+        </div>
+      </div>
+    `;
+
+    const isDemoMode = ANTHROPIC_API_KEY === 'DEMO_KEY';
+
+    if (!isDemoMode) {
+      try {
+        const prompt = `Genera un itinerario de viaje detallado para:
+- Destino: ${destino}
+- Fecha de ida: ${fechaIda}
+- Fecha de vuelta: ${fechaVuelta}
+- Duración: ${dias} días
+- Personas: ${personas}
+- Presupuesto: ${presupuesto}
+- Tipo de viaje: ${selectedTripType}
+
+Para cada día incluye: actividades de mañana, tarde y noche. Hoteles sugeridos con rango de precios. Tips prácticos locales. Estimaciones de costos en pesos mexicanos (MXN). Responde en español con emojis. Formato: Día N: [título] / [actividades detalladas]`;
+
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            max_tokens: 4096,
+            messages: [{ role: 'user', content: prompt }]
+          }),
+        });
+
+        const data = await res.json();
+        if (data.content && data.content[0]) {
+          renderRawItinerary(data.content[0].text, destino, dias, personas, presupuesto, fechaIda, fechaVuelta);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Demo mode
+    await new Promise(r => setTimeout(r, 2000));
+    const it = getDemoItinerary(destino, personas, presupuesto, dias, selectedTripType);
+    renderItinerary(it, destino, dias, personas, presupuesto, fechaIda, fechaVuelta);
+  }
+
+  function renderItinerary(it, destino, dias, personas, presupuesto, fechaIda, fechaVuelta) {
+    const panel = document.getElementById('output-panel');
+    currentItinerary = JSON.stringify(it);
+
+    const formatDate = d => new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    let html = `
+      <div class="it-header">
+        <h2>✈️ ${it.title}</h2>
+        <p style="color:var(--text-secondary);font-size:14px;">${it.subtitle}</p>
+        <div class="it-meta">
+          <div class="it-meta-item">📅 ${formatDate(fechaIda)} → ${formatDate(fechaVuelta)}</div>
+          <div class="it-meta-item">👥 ${personas} persona(s)</div>
+          <div class="it-meta-item">🎯 ${selectedTripType}</div>
+          ${presupuesto ? `<div class="it-meta-item">💰 ${presupuesto}</div>` : ''}
+        </div>
+        <div class="it-actions">
+          <button class="btn btn-primary btn-sm" onclick="copyItinerary()">📋 Copiar itinerario</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Descargar PDF</button>
+          <button class="btn btn-ghost btn-sm" onclick="generateItinerary()">🔄 Regenerar</button>
+        </div>
+      </div>
+    `;
+
+    it.days.forEach((day, i) => {
+      const content = day.content
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>');
+
+      html += `
+        <div class="day-card" style="animation-delay:${i * 0.1}s;">
+          <div class="day-header">
+            <div class="day-num">${i + 1}</div>
+            <div>
+              <div class="day-title">${day.title}</div>
+              <div class="day-subtitle">${day.subtitle}</div>
+            </div>
+          </div>
+          <div class="day-content">${content}</div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="budget-card">
+        <div style="font-family:var(--font-heading);font-weight:700;margin-bottom:4px;">💰 Estimación de Presupuesto</div>
+        <div style="font-size:13px;color:var(--text-secondary);">Por persona en pesos mexicanos (MXN)</div>
+        <div class="budget-grid">
+          <div class="budget-item">
+            <div class="budget-amount">${it.budget.vuelos}</div>
+            <div class="budget-label">✈️ Vuelos</div>
+          </div>
+          <div class="budget-item">
+            <div class="budget-amount">${it.budget.hotel}</div>
+            <div class="budget-label">🏨 Hotel (${dias} noches)</div>
+          </div>
+          <div class="budget-item">
+            <div class="budget-amount">${it.budget.comidas}</div>
+            <div class="budget-label">🍽️ Comidas</div>
+          </div>
+          <div class="budget-item">
+            <div class="budget-amount">${it.budget.tours}</div>
+            <div class="budget-label">🎭 Tours y actividades</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    panel.innerHTML = html;
+  }
+
+  function renderRawItinerary(text, destino, dias, personas, presupuesto, fechaIda, fechaVuelta) {
+    const panel = document.getElementById('output-panel');
+    const formatDate = d => new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+
+    panel.innerHTML = `
+      <div class="it-header">
+        <h2>✈️ Itinerario: ${destino}</h2>
+        <div class="it-meta">
+          <div class="it-meta-item">📅 ${formatDate(fechaIda)} → ${formatDate(fechaVuelta)}</div>
+          <div class="it-meta-item">👥 ${personas} persona(s)</div>
+          <div class="it-meta-item">🎯 ${selectedTripType}</div>
+        </div>
+        <div class="it-actions">
+          <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('raw-output').innerText)">📋 Copiar</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 PDF</button>
+          <button class="btn btn-ghost btn-sm" onclick="generateItinerary()">🔄 Regenerar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div id="raw-output" style="font-size:14px;line-height:1.8;color:var(--text-secondary);">${formatted}</div>
+      </div>
+    `;
+  }
+
+  function copyItinerary() {
+    if (!currentItinerary) return;
+    const it = JSON.parse(currentItinerary);
+    let text = `ITINERARIO: ${it.title}\n${it.subtitle}\n\n`;
+    it.days.forEach((d, i) => {
+      text += `DÍA ${i + 1}: ${d.title}\n${d.subtitle}\n${d.content.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\*/g, '')}\n\n`;
+    });
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      btn.textContent = '✅ Copiado';
+      setTimeout(() => btn.textContent = '📋 Copiar itinerario', 2000);
+    });
+  }
+
+  function downloadPDF() {
+    window.print();
+  }
+</script>
+</body>
+</html>

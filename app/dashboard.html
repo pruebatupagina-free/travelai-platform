@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — TravelAI Platform</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">✈️</div>
+      <div class="logo-text">Travel<span>AI</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="chatbot.html" class="nav-item">
+        <span class="nav-icon">🤖</span> Chatbot IA
+      </a>
+      <a href="itinerario.html" class="nav-item">
+        <span class="nav-icon">🗺️</span> Itinerarios
+      </a>
+      <a href="crm.html" class="nav-item">
+        <span class="nav-icon">👥</span> CRM
+      </a>
+      <div class="nav-label">Sistema</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> Configuración
+      </a>
+      <a href="../index.html" class="nav-item">
+        <span class="nav-icon">🏠</span> Landing page
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="plan-badge">
+        <div class="plan-name">Plan Pro</div>
+        <div class="plan-desc">Demo activa · $599/mes</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-actions">
+        <div class="topbar-status">
+          <span class="status-dot"></span>
+          Sistema activo
+        </div>
+        <div class="avatar">JG</div>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card cyan">
+          <div class="metric-icon cyan">💬</div>
+          <div class="metric-value" id="m1">47</div>
+          <div class="metric-label">Consultas hoy</div>
+          <div class="metric-delta up">↑ 12% vs ayer</div>
+        </div>
+        <div class="metric-card blue">
+          <div class="metric-icon blue">🗺️</div>
+          <div class="metric-value" id="m2">12</div>
+          <div class="metric-label">Itinerarios generados</div>
+          <div class="metric-delta up">↑ 8% vs ayer</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-icon purple">👥</div>
+          <div class="metric-value" id="m3">89</div>
+          <div class="metric-label">Leads activos</div>
+          <div class="metric-delta up">↑ 5 nuevos hoy</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-icon green">📈</div>
+          <div class="metric-value" id="m4">34%</div>
+          <div class="metric-label">Tasa de conversión</div>
+          <div class="metric-delta up">↑ 2.1% esta semana</div>
+        </div>
+      </div>
+
+      <!-- Chart + Mini stats -->
+      <div class="grid-2 mb-24">
+        <!-- Chart -->
+        <div class="card" style="grid-column: span 1;">
+          <div class="card-header">
+            <span class="card-title">Consultas esta semana</span>
+            <span class="badge badge-cyan">En vivo</span>
+          </div>
+          <canvas id="weeklyChart" height="200"></canvas>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <!-- Top destinations -->
+          <div class="card flex-1">
+            <div class="card-header">
+              <span class="card-title">Top Destinos</span>
+            </div>
+            <div id="dest-list"></div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Acciones rápidas</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <a href="chatbot.html" class="btn btn-ghost" style="justify-content:flex-start;">🤖 Abrir Chatbot IA</a>
+              <a href="itinerario.html" class="btn btn-ghost" style="justify-content:flex-start;">🗺️ Generar Itinerario</a>
+              <a href="crm.html" class="btn btn-ghost" style="justify-content:flex-start;">👥 Ver CRM</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent queries table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Últimas consultas</span>
+          <a href="chatbot.html" class="btn btn-ghost btn-sm">Ver todas →</a>
+        </div>
+        <div class="table-wrap">
+          <table id="queries-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Destino solicitado</th>
+                <th>Presupuesto</th>
+                <th>Estado</th>
+                <th>Hace</th>
+              </tr>
+            </thead>
+            <tbody id="queries-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  // Chart
+  const ctx = document.getElementById('weeklyChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+      datasets: [{
+        label: 'Consultas',
+        data: [32, 45, 38, 56, 42, 67, 47],
+        borderColor: '#06b6d4',
+        backgroundColor: 'rgba(6,182,212,0.08)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#06b6d4',
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }, {
+        label: 'Itinerarios',
+        data: [8, 12, 9, 15, 11, 18, 12],
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.05)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        pointBackgroundColor: '#3b82f6',
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 }, boxWidth: 12 }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#475569', font: { family: 'DM Sans' } },
+          grid: { color: 'rgba(255,255,255,0.04)' }
+        },
+        y: {
+          ticks: { color: '#475569', font: { family: 'DM Sans' } },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Top destinations
+  const destinations = [
+    { name: 'Cancún, México', count: 18, pct: 38 },
+    { name: 'París, Francia', count: 12, pct: 26 },
+    { name: 'Nueva York, USA', count: 9, pct: 19 },
+    { name: 'Roma, Italia', count: 5, pct: 11 },
+    { name: 'Tokyo, Japón', count: 3, pct: 6 },
+  ];
+
+  const colors = ['#06b6d4', '#3b82f6', '#6366f1', '#10b981', '#f59e0b'];
+
+  const destList = document.getElementById('dest-list');
+  destinations.forEach((d, i) => {
+    destList.innerHTML += `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-size:13px;color:#f1f5f9;">${d.name}</span>
+          <span style="font-size:12px;color:#94a3b8;">${d.count} consultas</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border-radius:4px;height:4px;">
+          <div style="width:${d.pct}%;height:100%;background:${colors[i]};border-radius:4px;transition:width 1s ease;"></div>
+        </div>
+      </div>
+    `;
+  });
+
+  // Queries table
+  const queries = [
+    { id: 1, name: 'María González', dest: 'Cancún + Chichen Itzá', budget: '$45,000', status: 'cotizando', time: '3 min' },
+    { id: 2, name: 'Carlos Mendez', dest: 'Europa 15 días', budget: '$120,000', status: 'nuevo', time: '11 min' },
+    { id: 3, name: 'Laura Pérez', dest: 'Disney World Orlando', budget: '$80,000', status: 'cerrado', time: '28 min' },
+    { id: 4, name: 'Roberto Silva', dest: 'Japón + Corea del Sur', budget: '$95,000', status: 'seguimiento', time: '45 min' },
+    { id: 5, name: 'Ana Torres', dest: 'Maldivas todo incluido', budget: '$200,000', status: 'cotizando', time: '1 hr' },
+    { id: 6, name: 'Miguel Ramos', dest: 'Perú + Machu Picchu', budget: '$55,000', status: 'nuevo', time: '2 hr' },
+    { id: 7, name: 'Sofía Herrera', dest: 'París + Ámsterdam', budget: '$90,000', status: 'cerrado', time: '3 hr' },
+  ];
+
+  const statusBadge = {
+    nuevo: '<span class="badge badge-blue">Nuevo</span>',
+    cotizando: '<span class="badge badge-amber">Cotizando</span>',
+    seguimiento: '<span class="badge badge-purple">Seguimiento</span>',
+    cerrado: '<span class="badge badge-green">Cerrado ✓</span>',
+  };
+
+  const tbody = document.getElementById('queries-body');
+  queries.forEach(q => {
+    tbody.innerHTML += `
+      <tr>
+        <td style="color:#475569;">#${q.id}</td>
+        <td style="color:#f1f5f9;font-weight:500;">${q.name}</td>
+        <td>${q.dest}</td>
+        <td style="color:#10b981;font-weight:500;">${q.budget}</td>
+        <td>${statusBadge[q.status]}</td>
+        <td style="color:#475569;">hace ${q.time}</td>
+      </tr>
+    `;
+  });
+
+  // Animate metric values
+  function animateCount(el, target, suffix = '') {
+    const isPercent = suffix === '%';
+    let start = 0;
+    const num = parseInt(target.replace(/[^0-9]/g, ''));
+    const step = Math.ceil(num / 40);
+    const timer = setInterval(() => {
+      start = Math.min(start + step, num);
+      el.textContent = isPercent ? start + '%' : start;
+      if (start >= num) clearInterval(timer);
+    }, 30);
+  }
+
+  setTimeout(() => {
+    animateCount(document.getElementById('m1'), '47');
+    animateCount(document.getElementById('m2'), '12');
+    animateCount(document.getElementById('m3'), '89');
+    animateCount(document.getElementById('m4'), '34', '%');
+  }, 300);
+</script>
+</body>
+</html>
