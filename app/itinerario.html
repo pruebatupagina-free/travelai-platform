@@ -6,238 +6,201 @@
   <title>Generador de Itinerarios — TravelAI Platform</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
   <link rel="stylesheet" href="../style.css">
+  <script src="../config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    .itinerary-layout {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
+    /* ── API KEY MODAL ── */
+    .apikey-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
     }
+    .apikey-overlay.open { display: flex; }
+    .apikey-modal {
+      background: var(--bg-sidebar);
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%;
+      max-width: 460px;
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn { from { opacity:0;transform:scale(0.94); } to { opacity:1;transform:scale(1); } }
+    .apikey-modal .modal-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .apikey-modal h3 { font-size: 20px; margin-bottom: 8px; }
+    .apikey-modal p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .apikey-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .apikey-input-row input { flex: 1; font-family: monospace; font-size: 13px; }
+    .apikey-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+    .apikey-hint a { color: var(--cyan); }
 
+    .lock-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+      transition: all 0.2s;
+    }
+    .lock-indicator.locked { color: var(--green); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
+    .lock-indicator.unlocked { color: var(--amber); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
+
+    /* ── LAYOUT ── */
     .it-body {
       display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 0;
+      grid-template-columns: 360px 1fr;
       flex: 1;
-      min-height: 0;
+      min-height: calc(100vh - var(--header-height));
+      overflow: hidden;
     }
 
     .it-form-panel {
       background: var(--bg-sidebar);
       border-right: 1px solid var(--border);
-      padding: 24px;
+      padding: 20px;
       overflow-y: auto;
+      height: calc(100vh - var(--header-height));
     }
 
     .it-output-panel {
       padding: 24px;
       overflow-y: auto;
-      background: var(--bg-main);
+      height: calc(100vh - var(--header-height));
     }
 
     .form-section-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-muted);
-      margin-bottom: 12px;
-      margin-top: 20px;
+      margin-bottom: 10px;
+      margin-top: 18px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
     }
-
     .form-section-title:first-child { margin-top: 0; }
 
-    .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    .trip-type-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
+    .checkbox-group {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
     }
-
-    .trip-type-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 8px;
-      text-align: center;
-      font-size: 12px;
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all var(--transition);
-      font-family: var(--font-body);
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 16px; height: 16px;
+      cursor: pointer;
+      accent-color: var(--cyan);
     }
 
-    .trip-type-btn .trip-emoji { font-size: 20px; display: block; margin-bottom: 4px; }
-    .trip-type-btn:hover, .trip-type-btn.selected {
-      border-color: var(--cyan);
-      color: var(--cyan);
-      background: var(--cyan-dim);
-    }
-
-    /* Output */
+    /* ── OUTPUT ── */
     .output-placeholder {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100%;
+      min-height: 400px;
       text-align: center;
       color: var(--text-muted);
       gap: 12px;
     }
-
-    .output-placeholder .emoji { font-size: 64px; }
+    .output-placeholder .ph-emoji { font-size: 64px; }
     .output-placeholder h3 { font-size: 18px; color: var(--text-secondary); }
     .output-placeholder p { font-size: 14px; max-width: 300px; line-height: 1.6; }
 
-    /* Loading */
     .loading-state {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 400px;
       gap: 16px;
-      padding: 48px;
     }
-
-    .loading-spinner {
+    .spinner {
       width: 48px; height: 48px;
       border: 3px solid var(--border);
       border-top-color: var(--cyan);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .loading-text { font-size: 14px; color: var(--text-secondary); text-align: center; }
-    .loading-dots span {
-      animation: blink 1.4s infinite;
-      color: var(--cyan);
-    }
-    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
-
-    /* Itinerary output */
-    .it-header {
-      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1));
+    /* ── ITINERARY RESULT ── */
+    .it-result-header {
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.06));
       border: 1px solid rgba(6,182,212,0.2);
       border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
     }
+    .it-result-header h2 { font-size: 22px; margin-bottom: 4px; }
+    .it-result-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 
-    .it-header h2 {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-
-    .it-meta {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .it-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .it-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-      flex-wrap: wrap;
-    }
-
-    /* Day cards */
-    .day-card {
+    .it-content-box {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      margin-bottom: 16px;
-      overflow: hidden;
-      animation: fadeSlide 0.4s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .day-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
-      background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .day-num {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-heading);
-      font-weight: 700;
+      padding: 24px;
       font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .day-title { font-size: 15px; font-weight: 600; }
-    .day-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-    .day-content {
-      padding: 16px 20px;
-      font-size: 14px;
+      line-height: 1.85;
       color: var(--text-secondary);
-      line-height: 1.8;
+      white-space: pre-wrap;
+      font-family: var(--font-body);
     }
 
-    .day-content strong { color: var(--text-primary); }
-    .day-content em { color: var(--cyan); font-style: normal; }
-
-    /* Budget summary */
-    .budget-card {
-      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.08));
-      border: 1px solid rgba(16,185,129,0.2);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-top: 20px;
-    }
-
-    .budget-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .budget-item {
-      text-align: center;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 8px;
-    }
-
-    .budget-amount { font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--green); }
-    .budget-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .it-content-box strong { color: var(--cyan); }
 
     @media (max-width: 768px) {
       .it-body { grid-template-columns: 1fr; }
-      .it-form-panel { border-right: none; border-bottom: 1px solid var(--border); }
+      .it-form-panel { height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .it-output-panel { height: auto; }
     }
   </style>
 </head>
 <body>
+
+<!-- API KEY MODAL -->
+<div class="apikey-overlay" id="apikey-modal">
+  <div class="apikey-modal">
+    <div class="modal-icon">🔐</div>
+    <h3>Ingresa tu API Key</h3>
+    <p>Para generar itinerarios personalizados con IA necesitas una API Key de Anthropic. Se guarda solo en esta sesión.</p>
+    <div class="apikey-input-row">
+      <input type="password" id="apikey-input" placeholder="sk-ant-api03-..." />
+      <button class="btn btn-primary" onclick="saveApiKey()">Activar</button>
+    </div>
+    <div class="apikey-hint">
+      ¿No tienes una? <a href="https://console.anthropic.com" target="_blank">Crear en console.anthropic.com →</a>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="useDemoMode()">Continuar en modo demo</button>
+  </div>
+</div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
@@ -268,390 +231,502 @@
   <div class="main-content">
     <header class="topbar">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      <span class="topbar-title">Generador de Itinerarios</span>
+      <span class="topbar-title">Generador de Itinerarios <span style="font-size:11px;background:rgba(6,182,212,0.15);color:var(--cyan);padding:2px 8px;border-radius:10px;font-family:var(--font-body);font-weight:500;">DEMO</span></span>
       <div class="topbar-actions">
-        <div class="topbar-status"><span class="status-dot"></span> IA activa</div>
+        <div id="lock-indicator" class="lock-indicator unlocked" onclick="openApiKeyModal()" title="Clic para cambiar API Key">
+          🔒 Sin API Key
+        </div>
         <div class="avatar">JG</div>
       </div>
     </header>
 
-    <div class="itinerary-layout">
-      <div class="it-body">
+    <div class="it-body">
 
-        <!-- Form -->
-        <div class="it-form-panel">
-          <div class="form-section-title">Destino</div>
+      <!-- FORM -->
+      <div class="it-form-panel">
+
+        <div class="form-section-title">Destino y origen</div>
+        <div class="form-group">
+          <label>Destino *</label>
+          <input type="text" id="destino" placeholder="ej. Cancún, París, Japón..." />
+        </div>
+        <div class="form-group">
+          <label>Origen (ciudad de salida)</label>
+          <input type="text" id="origen" placeholder="ej. Ciudad de México" />
+        </div>
+
+        <div class="form-section-title">Fechas</div>
+        <div class="date-row">
           <div class="form-group">
-            <label>¿A dónde quieres ir?</label>
-            <input type="text" id="destino" placeholder="ej. Cancún, París, Japón..." />
+            <label>Salida</label>
+            <input type="date" id="fecha-ida" />
           </div>
-
-          <div class="form-section-title">Fechas</div>
-          <div class="date-row">
-            <div class="form-group">
-              <label>Salida</label>
-              <input type="date" id="fecha-ida" />
-            </div>
-            <div class="form-group">
-              <label>Regreso</label>
-              <input type="date" id="fecha-vuelta" />
-            </div>
-          </div>
-
-          <div class="form-section-title">Viajeros y presupuesto</div>
-          <div class="date-row">
-            <div class="form-group">
-              <label>Personas</label>
-              <select id="personas">
-                <option value="1">1 persona</option>
-                <option value="2" selected>2 personas</option>
-                <option value="3">3 personas</option>
-                <option value="4">4 personas</option>
-                <option value="5+">5 o más</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Presupuesto total</label>
-              <input type="text" id="presupuesto" placeholder="ej. $80,000 MXN" />
-            </div>
-          </div>
-
-          <div class="form-section-title">Tipo de viaje</div>
-          <div class="trip-type-grid">
-            <button class="trip-type-btn selected" onclick="selectTripType(this, 'Aventura')">
-              <span class="trip-emoji">🧗</span>Aventura
-            </button>
-            <button class="trip-type-btn" onclick="selectTripType(this, 'Relax')">
-              <span class="trip-emoji">🏖️</span>Relax
-            </button>
-            <button class="trip-type-btn" onclick="selectTripType(this, 'Cultural')">
-              <span class="trip-emoji">🏛️</span>Cultural
-            </button>
-            <button class="trip-type-btn" onclick="selectTripType(this, 'Romántico')">
-              <span class="trip-emoji">💑</span>Romántico
-            </button>
-            <button class="trip-type-btn" onclick="selectTripType(this, 'Familiar')">
-              <span class="trip-emoji">👨‍👩‍👧</span>Familiar
-            </button>
-            <button class="trip-type-btn" onclick="selectTripType(this, 'Gastronómico')">
-              <span class="trip-emoji">🍜</span>Gastronomía
-            </button>
-          </div>
-
-          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;" onclick="generateItinerary()">
-            🗺️ Generar Itinerario con IA
-          </button>
-
-          <div style="margin-top:12px;padding:12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:12px;color:var(--amber);">
-            ⚠️ Demo: genera itinerarios de ejemplo. Conecta tu Claude API key para respuestas personalizadas en tiempo real.
+          <div class="form-group">
+            <label>Regreso</label>
+            <input type="date" id="fecha-vuelta" />
           </div>
         </div>
 
-        <!-- Output -->
-        <div class="it-output-panel" id="output-panel">
-          <div class="output-placeholder" id="placeholder">
-            <span class="emoji">🗺️</span>
-            <h3>Tu itinerario aparecerá aquí</h3>
-            <p>Completa el formulario y haz clic en "Generar Itinerario" para crear un plan personalizado con IA.</p>
+        <div class="form-section-title">Viajeros y presupuesto</div>
+        <div class="date-row">
+          <div class="form-group">
+            <label>Número de personas</label>
+            <select id="personas">
+              <option value="1">1 persona</option>
+              <option value="2" selected>2 personas</option>
+              <option value="3">3 personas</option>
+              <option value="4">4 personas</option>
+              <option value="5">5 personas</option>
+              <option value="6">6 personas</option>
+              <option value="8">8 personas</option>
+              <option value="10">10 personas</option>
+              <option value="15">15 personas</option>
+              <option value="20">20 personas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Presupuesto por persona</label>
+            <select id="presupuesto">
+              <option value="$500–$1,000 USD">$500–$1,000 USD</option>
+              <option value="$1,000–$2,000 USD" selected>$1,000–$2,000 USD</option>
+              <option value="$2,000–$5,000 USD">$2,000–$5,000 USD</option>
+              <option value="$5,000+ USD">$5,000+ USD (Premium)</option>
+            </select>
           </div>
         </div>
+
+        <div class="form-section-title">Tipo de viaje</div>
+        <div class="form-group">
+          <select id="tipo-viaje">
+            <option value="Aventura">🧗 Aventura</option>
+            <option value="Romántico" selected>💑 Romántico</option>
+            <option value="Familiar">👨‍👩‍👧 Familiar</option>
+            <option value="Cultural">🏛️ Cultural</option>
+            <option value="Playa y relax">🏖️ Playa y relax</option>
+            <option value="Negocios">💼 Negocios</option>
+          </select>
+        </div>
+
+        <div class="form-section-title">Incluir en el itinerario</div>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="incl-vuelos" checked /> ✈️ Vuelos
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="incl-hotel" checked /> 🏨 Hotel
+          </label>
+        </div>
+
+        <div class="form-section-title">Notas especiales</div>
+        <div class="form-group">
+          <textarea id="notas" rows="3" placeholder="Alergias, preferencias, restricciones, celebración especial..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;" id="generate-btn" onclick="generateItinerary()">
+          🗺️ Generar Itinerario con IA
+        </button>
+
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px;" onclick="resetForm()">
+          🔄 Limpiar formulario
+        </button>
 
       </div>
+
+      <!-- OUTPUT -->
+      <div class="it-output-panel" id="output-panel">
+        <div class="output-placeholder" id="placeholder">
+          <span class="ph-emoji">🗺️</span>
+          <h3>Tu itinerario aparecerá aquí</h3>
+          <p>Completa el formulario y haz clic en "Generar Itinerario" para crear un plan personalizado con IA.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <script>
-  const ANTHROPIC_API_KEY = 'DEMO_KEY';
-  const MODEL = 'claude-sonnet-4-6';
-  let selectedTripType = 'Aventura';
-  let currentItinerary = '';
+  /* ── CONFIG ── */
+  let apiKey = sessionStorage.getItem('travelai_api_key') || null;
+  let isDemoMode = !apiKey;
+  let currentItineraryText = '';
 
+  /* ── SIDEBAR ── */
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('open');
   }
 
-  function selectTripType(btn, type) {
-    document.querySelectorAll('.trip-type-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedTripType = type;
+  /* ── API KEY ── */
+  function openApiKeyModal() {
+    document.getElementById('apikey-modal').classList.add('open');
+    document.getElementById('apikey-input').value = apiKey || '';
+    setTimeout(() => document.getElementById('apikey-input').focus(), 100);
   }
+  function saveApiKey() {
+    const val = document.getElementById('apikey-input').value.trim();
+    if (!val) return;
+    apiKey = val;
+    isDemoMode = false;
+    sessionStorage.setItem('travelai_api_key', apiKey);
+    document.getElementById('apikey-modal').classList.remove('open');
+    updateLockIndicator();
+  }
+  function useDemoMode() {
+    isDemoMode = true;
+    document.getElementById('apikey-modal').classList.remove('open');
+    updateLockIndicator();
+  }
+  function updateLockIndicator() {
+    const el = document.getElementById('lock-indicator');
+    if (!isDemoMode && apiKey) {
+      el.className = 'lock-indicator locked';
+      el.textContent = '🔓 API Key activa';
+    } else {
+      el.className = 'lock-indicator unlocked';
+      el.textContent = '🔒 Sin API Key';
+    }
+  }
+  document.getElementById('apikey-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
 
-  // Set default dates
+  /* ── DATES ── */
   const today = new Date();
-  const nextMonth = new Date(today);
-  nextMonth.setMonth(today.getMonth() + 1);
-  const twoWeeks = new Date(nextMonth);
-  twoWeeks.setDate(nextMonth.getDate() + 7);
-
-  document.getElementById('fecha-ida').value = nextMonth.toISOString().split('T')[0];
-  document.getElementById('fecha-vuelta').value = twoWeeks.toISOString().split('T')[0];
+  const dep = new Date(today); dep.setMonth(today.getMonth() + 1);
+  const ret = new Date(dep); ret.setDate(dep.getDate() + 7);
+  document.getElementById('fecha-ida').value = dep.toISOString().split('T')[0];
+  document.getElementById('fecha-vuelta').value = ret.toISOString().split('T')[0];
 
   function calcDays() {
-    const ida = new Date(document.getElementById('fecha-ida').value);
-    const vuelta = new Date(document.getElementById('fecha-vuelta').value);
-    const diff = Math.ceil((vuelta - ida) / (1000 * 60 * 60 * 24));
-    return Math.max(diff, 1);
+    const a = new Date(document.getElementById('fecha-ida').value);
+    const b = new Date(document.getElementById('fecha-vuelta').value);
+    return Math.max(Math.ceil((b - a) / (1000 * 60 * 60 * 24)), 1);
   }
 
-  /* ── DEMO ITINERARIES ── */
-  function getDemoItinerary(destino, personas, presupuesto, dias, tipo) {
+  function formatDate(d) {
+    return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  /* ── RESET ── */
+  function resetForm() {
+    document.getElementById('destino').value = '';
+    document.getElementById('origen').value = '';
+    document.getElementById('notas').value = '';
+    document.getElementById('personas').value = '2';
+    document.getElementById('presupuesto').value = '$1,000–$2,000 USD';
+    document.getElementById('tipo-viaje').value = 'Romántico';
+    document.getElementById('incl-vuelos').checked = true;
+    document.getElementById('incl-hotel').checked = true;
+    document.getElementById('output-panel').innerHTML = `
+      <div class="output-placeholder" id="placeholder">
+        <span class="ph-emoji">🗺️</span>
+        <h3>Tu itinerario aparecerá aquí</h3>
+        <p>Completa el formulario y haz clic en "Generar Itinerario" para crear un plan personalizado con IA.</p>
+      </div>`;
+    currentItineraryText = '';
+  }
+
+  /* ── BUILD PROMPT ── */
+  function buildPrompt(destino, origen, fechaIda, fechaVuelta, dias, personas, presupuesto, tipo, inclVuelos, inclHotel, notas) {
+    const days = [];
+    const start = new Date(fechaIda + 'T12:00:00');
+    for (let i = 0; i < dias; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      days.push(d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }));
+    }
+
+    return `Eres un experto en viajes. Crea un itinerario detallado con este formato EXACTO:
+
+🌍 ITINERARIO: ${destino}
+📅 Duración: ${dias} días
+👥 Viajeros: ${personas} personas
+💰 Presupuesto estimado: ${presupuesto} por persona
+
+---
+${days.map((day, i) => `DÍA ${i + 1} — ${day}
+🌅 Mañana: [actividad + tip práctico]
+☀️ Tarde: [actividad + tip práctico]
+🌙 Noche: [restaurante/actividad + tip práctico]
+🏨 Hotel sugerido: [nombre + precio aprox]`).join('\n\n')}
+---
+
+${inclVuelos ? `✈️ VUELOS SUGERIDOS: [opciones de vuelos desde ${origen || 'México'} con precio aproximado]` : ''}
+💡 TIPS IMPORTANTES: [3-5 consejos clave específicos para ${destino}]
+⚠️ DOCUMENTOS NECESARIOS: [visa, pasaporte, requisitos de entrada]
+💵 DESGLOSE DE COSTOS ESTIMADO (por persona en USD):
+  · ${inclVuelos ? 'Vuelos: $XXX' : ''}
+  · ${inclHotel ? 'Hotel: $XXX/noche' : ''}
+  · Actividades: $XXX
+  · Comidas: $XXX/día
+  · Total estimado: $XXX
+
+Tipo de viaje: ${tipo}${notas ? `\nNotas especiales del viajero: ${notas}` : ''}
+
+IMPORTANTE: Usa emojis exactamente como se indican. Sé específico con nombres de lugares, restaurantes reales y precios realistas. Responde en español.`;
+  }
+
+  /* ── DEMO ITINERARY ── */
+  function getDemoItinerary(destino, origen, dias, personas, presupuesto, tipo) {
+    const start = new Date(document.getElementById('fecha-ida').value + 'T12:00:00');
+    const days = Array.from({length: dias}, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+    });
+
     const dest = destino.toLowerCase();
 
-    const itineraries = {
-      cancun: {
-        title: `Cancún y Riviera Maya`,
-        subtitle: `${dias} días de sol, mar y cultura maya`,
-        days: [
-          { title: 'Llegada y Zona Hotelera', subtitle: 'Check-in + primer contacto con el paraíso', content: '🛬 **Llegada** al Aeropuerto Internacional de Cancún.\n🚌 **Traslado** al hotel en la Zona Hotelera.\n🏨 **Check-in** y descanso.\n🌅 **Tarde:** Primera caminata por el Boulevard Kukulcán.\n🍹 **Noche:** Cena en El Fish Fritanga con vista al mar.\n\n💡 *Tip: Cambia efectivo en el aeropuerto — mejor tasa que en la Zona Hotelera.*' },
-          { title: 'Playa + Todo Incluido', subtitle: 'Día de relax y diversión acuática', content: '🏖️ **Mañana:** Playa del hotel — buceo de snorkel incluido.\n🤿 **Mediodía:** Área de alberca y buffet todo incluido.\n🚤 **Tarde:** Paseo en lancha por la Laguna Nichupté.\n🌮 **Noche:** Experiencia gastronómica en Mercado 28 (fuera del hotel).\n\n💡 *Tip: Los mercados locales tienen precios 60% más baratos que la Zona Hotelera.*' },
-          { title: 'Chichén Itzá y Cenote', subtitle: 'Maravilla del mundo + nado en cenote', content: '⛩️ **7am:** Tour a **Chichén Itzá** (Maravilla del Mundo).\n🏛️ **El Castillo** Kukulcán, el Juego de Pelota y El Caracol.\n🏊 **Cenote Ik-Kil:** Nado en el famoso cenote sagrado.\n🌮 **Comida:** En Pisté — cochinita pibil auténtica.\n🔙 **Regreso:** Cancún a las 6pm.\n\n💡 *Tip: Llega a Chichén Itzá antes de las 9am para evitar el calor y las multitudes.*' },
-          { title: 'Isla Mujeres', subtitle: 'Isla paradisíaca a 30 min de Cancún', content: '⛴️ **9am:** Ferry a **Isla Mujeres** ($350 MXN ida y vuelta).\n🐢 **Tortugranja:** Santuario de tortugas marinas.\n🏍️ **Tour en golf car** por toda la isla.\n🐟 **Punta Norte:** La mejor playa de la isla.\n🦞 **Almuerzo:** Langosta fresca en el muelle.\n⛴️ **Regreso** a Cancún al atardecer.\n\n💡 *Tip: Renta un golf car en $600 MXN/día para explorar la isla completa.*' },
-          { title: 'Tulum y Cenotes', subtitle: 'Ruinas mayas frente al mar y cenotes', content: '🚌 **8am:** Traslado a **Tulum** (1.5 hrs).\n🏛️ **Ruinas de Tulum:** Las únicas con vista al mar Caribe.\n🏊 **Cenote Gran Cenote:** El más fotogénico de Tulum.\n🌿 **Comida:** Restaurante orgánico en Tulum pueblo.\n🛍️ **Tarde:** Shopping en la zona bohemia.\n🚌 **Regreso** a Cancún.\n\n💡 *Tip: Cenote Dos Ojos es ideal para buceo. Reserva con anticipación.*' },
-          { title: 'Coba + Día Libre', subtitle: 'Subir a la pirámide maya más alta + playa', content: '⛩️ **7am:** Tour a **Cobá** — única pirámide maya que aún se puede subir (42m de altura).\n🦋 **Jardín botánico** y laguna de tortugas.\n🏖️ **Tarde:** Último día de playa en el Caribe.\n🍽️ **Cena especial de despedida** en el restaurante del hotel.\n📸 **Noche:** Fotos nocturnas en la Zona Hotelera.\n\n💡 *Tip: Sube a Cobá en la mañana — a mediodía está cerrado por calor.*' },
-          { title: 'Compras y Vuelo', subtitle: 'Últimas compras y regreso a casa', content: '🛍️ **Mañana:** Plaza Las Américas para souvenirs.\n☕ **Desayuno** de despedida en la ciudad.\n🏨 **Check-out** y guardado de equipaje.\n✈️ **Tarde:** Traslado al aeropuerto y vuelo de regreso.\n\n💡 *Tip: Llega al aeropuerto 3 horas antes — suele estar muy concurrido.*' },
-        ],
-        budget: { vuelos: '$12,000', hotel: '$25,000', comidas: '$8,000', tours: '$6,000' }
-      },
-      paris: {
-        title: 'París, La Ciudad Luz',
-        subtitle: `${dias} días entre arte, gastronomía y romance`,
-        days: [
-          { title: 'Llegada a París', subtitle: 'Primer encuentro con la Ciudad Luz', content: '🛬 **Llegada** al Aeropuerto Charles de Gaulle.\n🚂 **RER B** al centro de París (€11 aprox).\n🏨 **Check-in** en tu hotel. Zona recomendada: Marais o Saint-Germain.\n🗼 **Tarde:** Primera vista a la Torre Eiffel desde el Trocadéro.\n🥐 **Cena:** Brasserie típica parisina — croque monsieur y crème brûlée.\n\n💡 *Tip: Compra el Carnet de 10 viajes en metro — te ahorrará mucho.*' },
-          { title: 'El Louvre y los Champs-Élysées', subtitle: 'Arte y lujo en el corazón de París', content: '🏛️ **9am:** **Museo del Louvre** (reserva online para evitar filas).\n🖼️ La Mona Lisa, Venus de Milo y la Victoria de Samotracia.\n🛍️ **Tarde:** **Champs-Élysées** de punta a punta.\n🌹 **Place de la Concorde** y el Jardín de las Tullerías.\n🥩 **Cena:** Bistro en Saint-Germain-des-Prés.\n\n💡 *Tip: El Louvre es gratuito el primer domingo de cada mes.*' },
-          { title: 'Montmartre y Sacré-Cœur', subtitle: 'El barrio de los artistas', content: '⛪ **Mañana:** **Sacré-Cœur** y la vista panorámica de París.\n🎨 **Place du Tertre:** Artistas y retratistas en vivo.\n☕ **Café de Flore** — el más histórico de París.\n🗼 **Tarde:** **Torre Eiffel** — sube hasta la cima al atardecer.\n✨ **Noche:** El show de luces de la Torre Eiffel a las 9pm.\n\n💡 *Tip: El funicular sube a Montmartre por el precio de un metro.*' },
-          { title: 'Versalles', subtitle: 'El Palacio de los Reyes de Francia', content: '🚂 **9am:** Tren RER C a **Versalles** (40 min, €7).\n👑 **Palacio de Versalles:** Galería de los Espejos, aposentos reales.\n🌳 **Jardines** de Le Nôtre — los más grandes de Europa.\n🚣 **Lago:** Paseo en bote (€7/hr).\n🚂 **Regreso** a París a las 6pm.\n🍷 **Cena:** Fondue de queso en el Barrio Latino.\n\n💡 *Tip: El Pasaporte Versalles incluye palacio + jardines + Trianón. Vale la pena.*' },
-        ],
-        budget: { vuelos: '$28,000', hotel: '$32,000', comidas: '$12,000', tours: '$8,000' }
-      }
-    };
-
-    // Default
-    const defaultDays = Array.from({length: Math.min(dias, 7)}, (_, i) => ({
-      title: `Día ${i + 1} en ${destino}`,
-      subtitle: i === 0 ? 'Llegada y exploración inicial' : i === dias - 1 ? 'Regreso a casa' : 'Aventura y descubrimientos',
-      content: i === 0
-        ? `🛬 **Llegada** a ${destino}.\n🏨 **Check-in** en el hotel — zona recomendada: céntrica.\n🚶 **Tarde:** Primera exploración del vecindario.\n🍽️ **Cena:** Restaurante local recomendado.\n\n💡 *Tip: El primer día úsalo para aclimatarte y conocer los alrededores.*`
-        : i === dias - 1
-        ? `🛍️ **Mañana:** Últimas compras y souvenirs.\n☕ **Desayuno** de despedida.\n🏨 **Check-out** y traslado al aeropuerto.\n✈️ **Vuelo de regreso.**\n\n💡 *Tip: Llega al aeropuerto con 3 horas de anticipación.*`
-        : `🌅 **Mañana:** Visita al sitio principal del día ${i + 1}.\n🍜 **Almuerzo:** Gastronomía local auténtica.\n🏛️ **Tarde:** Museo, mercado o atracción cultural.\n🌃 **Noche:** Cena + vida nocturna local.\n\n💡 *Tip: Alterna actividades intensas con momentos de relax para disfrutar más.*`
-    }));
-
     if (dest.includes('cancún') || dest.includes('cancun')) {
-      return { ...itineraries.cancun, days: itineraries.cancun.days.slice(0, dias) };
-    }
-    if (dest.includes('paris') || dest.includes('parís')) {
-      return { ...itineraries.paris, days: itineraries.paris.days.slice(0, dias) };
+      return `🌍 ITINERARIO: Cancún y Riviera Maya
+📅 Duración: ${dias} días
+👥 Viajeros: ${personas} personas
+💰 Presupuesto estimado: ${presupuesto} por persona
+
+---
+DÍA 1 — ${days[0]}
+🌅 Mañana: Llegada al aeropuerto de Cancún. Traslado al hotel en la Zona Hotelera (30 min). Check-in y descanso. 💡 Tip: Cambia efectivo en el aeropuerto — mejor tasa de cambio.
+☀️ Tarde: Primera exploración de la Zona Hotelera. Paseo por Boulevard Kukulcán. Primer contacto con el mar Caribe. 💡 Tip: La Zona Hotelera es segura para caminar, usa protector solar SPF50+.
+🌙 Noche: Cena en El Fish Fritanga (mariscos frescos, $300–500 MXN). Cóctel de bienvenida en la playa del hotel.
+🏨 Hotel sugerido: Hotel Krystal Grand Cancún 5⭐ (~$180 USD/noche todo incluido)
+
+DÍA 2 — ${days[1] || days[0]}
+🌅 Mañana: Desayuno buffet en el hotel. Mañana de playa y snorkel en la laguna del hotel.
+☀️ Tarde: Tour en lancha por la Laguna Nichupté (2 hrs, ~$400 MXN por persona). Avistamiento de cocodrilos y aves.
+🌙 Noche: Salida a Mercado 28 para cenar. Tacos de canasta y cochinita pibil (~$150 MXN). Ambiente local auténtico.
+🏨 Hotel sugerido: Misma base en Zona Hotelera
+
+DÍA 3 — ${days[2] || days[0]}
+🌅 Mañana: Tour madrugador a Chichén Itzá (salida 7am). El Castillo Kukulcán, Maravilla del Mundo. 💡 Tip: Llega antes de las 10am para evitar el calor y las multitudes.
+☀️ Tarde: Baño en Cenote Ik-Kil (sagrado maya, agua cristalina). Comida en Pisté — cochinita pibil auténtica (~$120 MXN).
+🌙 Noche: Regreso a Cancún (6pm). Cena en el hotel. Descanso merecido.
+🏨 Hotel sugerido: Mismo hotel base
+
+---
+✈️ VUELOS SUGERIDOS: ${origen || 'CDMX'} → Cancún. Volaris o VivaAerobus desde $3,200 MXN por tramo (reservar con 45 días de anticipación). Vuelo directo ~2 hrs.
+💡 TIPS IMPORTANTES:
+1. La temporada alta es diciembre–abril. Reserva con mínimo 60 días de anticipación.
+2. Aplica protector solar biodegradable — obligatorio en cenotes ($100 MXN en tiendas locales).
+3. Lleva ropa ligera y zapatos cómodos para tours arqueológicos.
+4. El dólar se acepta en casi todos los establecimientos turísticos.
+5. Negocia los tours en el hotel vs. agencias de la calle — las agencias locales son 40% más baratas.
+⚠️ DOCUMENTOS NECESARIOS: Solo pasaporte o credencial del INE vigente para ciudadanos mexicanos. Turistas extranjeros: pasaporte + FMM (gratuito en el vuelo).
+💵 DESGLOSE DE COSTOS ESTIMADO (por persona):
+  · Vuelos: $200–$350 USD
+  · Hotel: $120–$200 USD/noche (todo incluido)
+  · Actividades y tours: $150–$250 USD total
+  · Comidas extras: $30–$50 USD/día
+  · Total estimado: $1,200–$2,100 USD por persona`;
     }
 
-    return {
-      title: `${destino}`,
-      subtitle: `${dias} días de viaje ${tipo.toLowerCase()}`,
-      days: defaultDays,
-      budget: {
-        vuelos: `$${(15000 + dias * 500).toLocaleString()}`,
-        hotel: `$${(3500 * dias).toLocaleString()}`,
-        comidas: `$${(1500 * dias).toLocaleString()}`,
-        tours: `$${(2000 * dias).toLocaleString()}`
-      }
-    };
+    // Default generic
+    return `🌍 ITINERARIO: ${destino}
+📅 Duración: ${dias} días
+👥 Viajeros: ${personas} personas
+💰 Presupuesto estimado: ${presupuesto} por persona
+
+---
+${days.map((day, i) => `DÍA ${i + 1} — ${day}
+🌅 Mañana: ${i === 0 ? `Llegada y check-in en ${destino}. Exploración inicial del área del hotel.` : `Desayuno local y visita al sitio principal del día.`}
+☀️ Tarde: ${i === dias - 1 ? 'Últimas compras y preparativos para el regreso.' : `Recorrido por las atracciones principales. Almuerzo en restaurante local.`}
+🌙 Noche: ${i === dias - 1 ? 'Cena de despedida. Traslado al aeropuerto.' : `Cena y vida nocturna local.`}
+🏨 Hotel sugerido: Hotel céntrico categoría ${presupuesto.includes('500') ? '3⭐' : presupuesto.includes('1,000') ? '4⭐' : '5⭐'} (~${presupuesto.split('–')[0]} por noche)`).join('\n\n')}
+---
+✈️ VUELOS SUGERIDOS: ${origen || 'Ciudad de origen'} → ${destino}. Busca en Google Flights o Kayak con 45-60 días de anticipación para mejores tarifas.
+💡 TIPS IMPORTANTES:
+1. Reserva alojamiento con anticipación, especialmente en temporada alta.
+2. Investiga el transporte local antes de llegar (metro, buses, apps de taxi).
+3. Lleva adaptador de corriente eléctrica si viajas internacionalmente.
+4. Compra seguro de viaje — cubre cancelaciones, médico y pérdida de equipaje.
+5. Descarga mapas offline en Google Maps antes de salir.
+⚠️ DOCUMENTOS NECESARIOS: Pasaporte vigente (mínimo 6 meses). Verifica requisitos de visa según tu nacionalidad en la embajada correspondiente.
+💵 DESGLOSE DE COSTOS ESTIMADO (por persona):
+  · Vuelos: ${presupuesto.includes('500') ? '$150–$300' : presupuesto.includes('1,000') ? '$300–$600' : '$600–$1,500'} USD
+  · Hotel: ${presupuesto.includes('500') ? '$50–$80' : presupuesto.includes('1,000') ? '$80–$150' : '$150–$400'} USD/noche
+  · Actividades: ${presupuesto.includes('500') ? '$100–$200' : '$200–$500'} USD total
+  · Comidas: ${presupuesto.includes('500') ? '$25–$40' : '$40–$80'} USD/día
+  · Total estimado: ${presupuesto} por persona`;
   }
 
+  /* ── GENERATE ── */
   async function generateItinerary() {
     const destino = document.getElementById('destino').value.trim();
     if (!destino) {
-      document.getElementById('destino').focus();
       document.getElementById('destino').style.borderColor = 'var(--red)';
+      document.getElementById('destino').focus();
       setTimeout(() => document.getElementById('destino').style.borderColor = '', 2000);
       return;
     }
 
-    const personas = document.getElementById('personas').value;
-    const presupuesto = document.getElementById('presupuesto').value || 'flexible';
+    const origen = document.getElementById('origen').value.trim();
     const fechaIda = document.getElementById('fecha-ida').value;
     const fechaVuelta = document.getElementById('fecha-vuelta').value;
+    const personas = document.getElementById('personas').value;
+    const presupuesto = document.getElementById('presupuesto').value;
+    const tipo = document.getElementById('tipo-viaje').value;
+    const inclVuelos = document.getElementById('incl-vuelos').checked;
+    const inclHotel = document.getElementById('incl-hotel').checked;
+    const notas = document.getElementById('notas').value.trim();
     const dias = calcDays();
 
     const panel = document.getElementById('output-panel');
-
-    // Loading state
     panel.innerHTML = `
       <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">
-          Generando tu itinerario para ${destino}<br>
-          <span class="loading-dots">
-            <span>.</span><span>.</span><span>.</span>
-          </span>
+        <div class="spinner"></div>
+        <div style="font-size:14px;color:var(--text-secondary);text-align:center;">
+          Generando itinerario para ${destino}...<br>
+          <span style="font-size:12px;color:var(--text-muted);margin-top:4px;display:block;">La IA está personalizando actividades, hoteles y tips</span>
         </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">
-          La IA está personalizando actividades, hoteles y tips
-        </div>
-      </div>
-    `;
+      </div>`;
 
-    const isDemoMode = ANTHROPIC_API_KEY === 'DEMO_KEY';
+    let result = '';
 
-    if (!isDemoMode) {
+    if (!isDemoMode && apiKey) {
       try {
-        const prompt = `Genera un itinerario de viaje detallado para:
-- Destino: ${destino}
-- Fecha de ida: ${fechaIda}
-- Fecha de vuelta: ${fechaVuelta}
-- Duración: ${dias} días
-- Personas: ${personas}
-- Presupuesto: ${presupuesto}
-- Tipo de viaje: ${selectedTripType}
-
-Para cada día incluye: actividades de mañana, tarde y noche. Hoteles sugeridos con rango de precios. Tips prácticos locales. Estimaciones de costos en pesos mexicanos (MXN). Responde en español con emojis. Formato: Día N: [título] / [actividades detalladas]`;
-
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const prompt = buildPrompt(destino, origen, fechaIda, fechaVuelta, dias, personas, presupuesto, tipo, inclVuelos, inclHotel, notas);
+        const res = await fetch(TRAVELAI_CONFIG.apiEndpoint, {
           method: 'POST',
           headers: {
-            'x-api-key': ANTHROPIC_API_KEY,
+            'x-api-key': apiKey,
             'anthropic-version': '2023-06-01',
             'content-type': 'application/json',
             'anthropic-dangerous-direct-browser-access': 'true',
           },
           body: JSON.stringify({
-            model: MODEL,
+            model: TRAVELAI_CONFIG.model,
             max_tokens: 4096,
             messages: [{ role: 'user', content: prompt }]
           }),
         });
 
-        const data = await res.json();
-        if (data.content && data.content[0]) {
-          renderRawItinerary(data.content[0].text, destino, dias, personas, presupuesto, fechaIda, fechaVuelta);
-          return;
+        if (res.ok) {
+          const data = await res.json();
+          result = data.content?.[0]?.text || '';
+        } else {
+          const err = await res.json().catch(() => ({}));
+          result = `❌ Error de API: ${err.error?.message || 'Error desconocido'}. Verifica tu API Key.`;
         }
       } catch (e) {
-        console.error(e);
+        result = `❌ Error de conexión. Verifica tu API Key y conexión a internet.`;
       }
+    } else {
+      await new Promise(r => setTimeout(r, 2000));
+      result = getDemoItinerary(destino, origen, dias, personas, presupuesto, tipo);
     }
 
-    // Demo mode
-    await new Promise(r => setTimeout(r, 2000));
-    const it = getDemoItinerary(destino, personas, presupuesto, dias, selectedTripType);
-    renderItinerary(it, destino, dias, personas, presupuesto, fechaIda, fechaVuelta);
+    currentItineraryText = result;
+    renderResult(result, destino, dias, personas, presupuesto, fechaIda, fechaVuelta, tipo);
   }
 
-  function renderItinerary(it, destino, dias, personas, presupuesto, fechaIda, fechaVuelta) {
+  function renderResult(text, destino, dias, personas, presupuesto, fechaIda, fechaVuelta, tipo) {
     const panel = document.getElementById('output-panel');
-    currentItinerary = JSON.stringify(it);
-
-    const formatDate = d => new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
-
-    let html = `
-      <div class="it-header">
-        <h2>✈️ ${it.title}</h2>
-        <p style="color:var(--text-secondary);font-size:14px;">${it.subtitle}</p>
-        <div class="it-meta">
-          <div class="it-meta-item">📅 ${formatDate(fechaIda)} → ${formatDate(fechaVuelta)}</div>
-          <div class="it-meta-item">👥 ${personas} persona(s)</div>
-          <div class="it-meta-item">🎯 ${selectedTripType}</div>
-          ${presupuesto ? `<div class="it-meta-item">💰 ${presupuesto}</div>` : ''}
-        </div>
-        <div class="it-actions">
-          <button class="btn btn-primary btn-sm" onclick="copyItinerary()">📋 Copiar itinerario</button>
-          <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Descargar PDF</button>
-          <button class="btn btn-ghost btn-sm" onclick="generateItinerary()">🔄 Regenerar</button>
-        </div>
-      </div>
-    `;
-
-    it.days.forEach((day, i) => {
-      const content = day.content
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\n/g, '<br>');
-
-      html += `
-        <div class="day-card" style="animation-delay:${i * 0.1}s;">
-          <div class="day-header">
-            <div class="day-num">${i + 1}</div>
-            <div>
-              <div class="day-title">${day.title}</div>
-              <div class="day-subtitle">${day.subtitle}</div>
-            </div>
-          </div>
-          <div class="day-content">${content}</div>
-        </div>
-      `;
-    });
-
-    html += `
-      <div class="budget-card">
-        <div style="font-family:var(--font-heading);font-weight:700;margin-bottom:4px;">💰 Estimación de Presupuesto</div>
-        <div style="font-size:13px;color:var(--text-secondary);">Por persona en pesos mexicanos (MXN)</div>
-        <div class="budget-grid">
-          <div class="budget-item">
-            <div class="budget-amount">${it.budget.vuelos}</div>
-            <div class="budget-label">✈️ Vuelos</div>
-          </div>
-          <div class="budget-item">
-            <div class="budget-amount">${it.budget.hotel}</div>
-            <div class="budget-label">🏨 Hotel (${dias} noches)</div>
-          </div>
-          <div class="budget-item">
-            <div class="budget-amount">${it.budget.comidas}</div>
-            <div class="budget-label">🍽️ Comidas</div>
-          </div>
-          <div class="budget-item">
-            <div class="budget-amount">${it.budget.tours}</div>
-            <div class="budget-label">🎭 Tours y actividades</div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    panel.innerHTML = html;
-  }
-
-  function renderRawItinerary(text, destino, dias, personas, presupuesto, fechaIda, fechaVuelta) {
-    const panel = document.getElementById('output-panel');
-    const formatDate = d => new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
-
-    const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    const formatted = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>');
 
     panel.innerHTML = `
-      <div class="it-header">
-        <h2>✈️ Itinerario: ${destino}</h2>
-        <div class="it-meta">
-          <div class="it-meta-item">📅 ${formatDate(fechaIda)} → ${formatDate(fechaVuelta)}</div>
-          <div class="it-meta-item">👥 ${personas} persona(s)</div>
-          <div class="it-meta-item">🎯 ${selectedTripType}</div>
+      <div class="it-result-header">
+        <h2>✈️ Itinerario generado</h2>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">
+          ${destino} · ${dias} días · ${personas} personas · ${tipo}
         </div>
-        <div class="it-actions">
-          <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('raw-output').innerText)">📋 Copiar</button>
-          <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 PDF</button>
-          <button class="btn btn-ghost btn-sm" onclick="generateItinerary()">🔄 Regenerar</button>
+        <div class="it-result-actions">
+          <button class="btn btn-primary btn-sm" onclick="copyItinerary()">📋 Copiar al portapapeles</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Descargar PDF</button>
+          <button class="btn btn-ghost btn-sm" onclick="generateItinerary()">🔄 Generar otro</button>
         </div>
       </div>
-      <div class="card">
-        <div id="raw-output" style="font-size:14px;line-height:1.8;color:var(--text-secondary);">${formatted}</div>
-      </div>
+      <div class="it-content-box" id="itinerary-content">${formatted.replace(/\n/g, '<br>')}</div>
     `;
   }
 
+  /* ── COPY ── */
   function copyItinerary() {
-    if (!currentItinerary) return;
-    const it = JSON.parse(currentItinerary);
-    let text = `ITINERARIO: ${it.title}\n${it.subtitle}\n\n`;
-    it.days.forEach((d, i) => {
-      text += `DÍA ${i + 1}: ${d.title}\n${d.subtitle}\n${d.content.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\*/g, '')}\n\n`;
-    });
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(currentItineraryText).then(() => {
       const btn = event.target;
-      btn.textContent = '✅ Copiado';
-      setTimeout(() => btn.textContent = '📋 Copiar itinerario', 2000);
+      const orig = btn.textContent;
+      btn.textContent = '✅ ¡Copiado!';
+      setTimeout(() => btn.textContent = orig, 2500);
     });
   }
 
+  /* ── PDF ── */
   function downloadPDF() {
-    window.print();
+    if (!currentItineraryText) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 18;
+    const maxW = pageW - margin * 2;
+
+    // Header
+    doc.setFillColor(10, 15, 30);
+    doc.rect(0, 0, pageW, 28, 'F');
+    doc.setTextColor(6, 182, 212);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('✈ TravelAI Platform', margin, 16);
+    doc.setTextColor(148, 163, 184);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Itinerario personalizado generado con IA', margin, 23);
+
+    // Date
+    doc.setTextColor(100, 116, 139);
+    doc.setFontSize(8);
+    doc.text(`Generado: ${new Date().toLocaleDateString('es-MX', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}`, pageW - margin, 23, { align: 'right' });
+
+    // Content
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    const lines = doc.splitTextToSize(currentItineraryText, maxW);
+    let y = 36;
+    const lineH = 5.5;
+    const pageH = doc.internal.pageSize.getHeight() - 20;
+
+    lines.forEach(line => {
+      if (y > pageH) {
+        doc.addPage();
+        y = 16;
+      }
+      // Bold headers
+      if (line.startsWith('DÍA ') || line.startsWith('🌍') || line.startsWith('---')) {
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(6, 100, 140);
+      } else if (line.startsWith('🌅') || line.startsWith('☀️') || line.startsWith('🌙') || line.startsWith('🏨')) {
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(50, 50, 50);
+      } else if (line.startsWith('✈️') || line.startsWith('💡') || line.startsWith('⚠️') || line.startsWith('💵')) {
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(80, 80, 80);
+      } else {
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(80, 80, 80);
+      }
+      doc.text(line, margin, y);
+      y += lineH;
+    });
+
+    // Footer
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFillColor(10, 15, 30);
+      doc.rect(0, doc.internal.pageSize.getHeight() - 12, pageW, 12, 'F');
+      doc.setTextColor(148, 163, 184);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Generado por TravelAI Platform · travelai.com', margin, doc.internal.pageSize.getHeight() - 5);
+      doc.text(`Página ${i} de ${totalPages}`, pageW - margin, doc.internal.pageSize.getHeight() - 5, { align: 'right' });
+    }
+
+    doc.save(`itinerario-${document.getElementById('destino').value.replace(/\s+/g,'-').toLowerCase()}.pdf`);
   }
+
+  /* ── INIT ── */
+  updateLockIndicator();
+  if (!apiKey) setTimeout(() => openApiKeyModal(), 400);
 </script>
 </body>
 </html>

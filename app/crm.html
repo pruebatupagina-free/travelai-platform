@@ -7,286 +7,180 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <style>
-    /* CRM-specific */
-    .crm-topbar {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .crm-stats {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-
+    /* ── STATS BAR ── */
+    .crm-stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
     .crm-stat {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:12px 18px;
+      display:flex; align-items:center; gap:10px;
     }
+    .crm-stat-num { font-family:var(--font-heading); font-size:22px; font-weight:700; }
+    .crm-stat-lbl { font-size:11px; color:var(--text-muted); margin-top:1px; }
 
-    .crm-stat-num {
-      font-family: var(--font-heading);
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    /* Kanban */
+    /* ── KANBAN ── */
     .kanban-board {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding-bottom: 24px;
-      min-height: calc(100vh - 280px);
+      display:flex;
+      gap:16px;
+      overflow-x:auto;
+      padding-bottom:24px;
+      align-items:flex-start;
     }
-
     .kanban-col {
-      min-width: 280px;
-      max-width: 280px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      display: flex;
-      flex-direction: column;
-      max-height: calc(100vh - 280px);
+      min-width:290px; max-width:290px;
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      display:flex; flex-direction:column;
+      max-height:calc(100vh - 260px);
     }
-
     .col-header {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      position: sticky;
-      top: 0;
-      background: inherit;
-      border-radius: var(--radius) var(--radius) 0 0;
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:8px;
+      position:sticky; top:0;
+      background:inherit;
+      border-radius:var(--radius) var(--radius) 0 0;
+      flex-shrink:0;
     }
-
-    .col-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .col-name {
-      font-size: 13px;
-      font-weight: 600;
-      flex: 1;
-    }
-
+    .col-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .col-name { font-size:13px; font-weight:600; flex:1; }
     .col-count {
-      background: rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 2px 10px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
+      background:rgba(255,255,255,0.08);
+      border-radius:12px;
+      padding:2px 10px;
+      font-size:11px; font-weight:600; color:var(--text-secondary);
     }
-
     .col-body {
-      padding: 12px;
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      padding:12px;
+      flex:1;
+      overflow-y:auto;
+      display:flex; flex-direction:column; gap:8px;
+      min-height:120px;
     }
-
     .col-body.drag-over {
-      background: rgba(6,182,212,0.05);
+      background:rgba(6,182,212,0.05);
+      outline:2px dashed rgba(6,182,212,0.3);
+      outline-offset:-4px;
+      border-radius:0 0 var(--radius) var(--radius);
     }
 
-    /* Lead cards */
+    /* ── LEAD CARD ── */
     .lead-card {
-      background: var(--bg-sidebar);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      cursor: grab;
-      transition: all 0.2s;
-      position: relative;
+      background:var(--bg-sidebar);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:14px;
+      cursor:grab;
+      transition:all 0.2s;
+      user-select:none;
+    }
+    .lead-card:hover { border-color:rgba(6,182,212,0.3); box-shadow:0 4px 12px rgba(0,0,0,0.3); transform:translateY(-1px); }
+    .lead-card.dragging { opacity:0.4; transform:scale(0.97); cursor:grabbing; }
+    .lead-card.drag-placeholder {
+      border:2px dashed rgba(6,182,212,0.4);
+      background:rgba(6,182,212,0.04);
+      min-height:80px;
     }
 
-    .lead-card:hover {
-      border-color: rgba(6,182,212,0.3);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transform: translateY(-2px);
+    .lead-card-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+
+    .lead-avatar {
+      width:36px; height:36px;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:14px; font-family:var(--font-heading);
+      flex-shrink:0;
+      color:white;
     }
 
-    .lead-card.dragging {
-      opacity: 0.5;
-      transform: rotate(2deg);
-      cursor: grabbing;
-    }
+    .lead-info { flex:1; min-width:0; }
+    .lead-name { font-size:14px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lead-dest { font-size:12px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-    .lead-priority {
-      position: absolute;
-      top: 10px; right: 10px;
-      font-size: 14px;
-    }
+    .lead-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .lead-budget { font-size:13px; font-weight:600; color:var(--green); }
+    .lead-days { font-size:11px; color:var(--text-muted); }
 
-    .lead-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-      padding-right: 24px;
-    }
-
-    .lead-dest {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .lead-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .lead-tag {
-      background: rgba(255,255,255,0.05);
-      border-radius: 4px;
-      padding: 2px 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .lead-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-
-    .lead-budget {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--green);
-    }
-
-    .lead-date {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .lead-actions {
-      display: flex;
-      gap: 4px;
-      margin-top: 8px;
-    }
-
+    .lead-footer { display:flex; gap:6px; }
     .lead-btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 11px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: var(--font-body);
+      flex:1;
+      background:none;
+      border:1px solid var(--border);
+      border-radius:6px;
+      padding:5px 8px;
+      font-size:11px;
+      color:var(--text-secondary);
+      cursor:pointer;
+      transition:all 0.15s;
+      font-family:var(--font-body);
+      text-align:center;
     }
+    .lead-btn:hover { border-color:var(--cyan); color:var(--cyan); }
+    .lead-btn.wa:hover { border-color:var(--green); color:var(--green); }
+    .lead-btn.del:hover { border-color:var(--red); color:var(--red); }
 
-    .lead-btn:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
-    }
-
-    /* Add lead btn */
+    /* ── ADD BTN ── */
     .add-lead-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      width: 100%;
-      padding: 10px 12px;
-      background: transparent;
-      border: 1px dashed rgba(255,255,255,0.1);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: var(--font-body);
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      width:100%;
+      padding:10px;
+      background:transparent;
+      border:1px dashed rgba(255,255,255,0.08);
+      border-radius:8px;
+      color:var(--text-muted);
+      font-size:13px;
+      cursor:pointer;
+      transition:all 0.2s;
+      font-family:var(--font-body);
+      margin-top:4px;
     }
+    .add-lead-btn:hover { border-color:var(--cyan); color:var(--cyan); background:var(--cyan-dim); }
 
-    .add-lead-btn:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
-      background: var(--cyan-dim);
-    }
-
-    /* Modal */
+    /* ── MODAL ── */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      display:none;
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.75);
+      z-index:300;
+      align-items:center; justify-content:center;
+      padding:20px;
+      backdrop-filter:blur(4px);
     }
-
-    .modal-overlay.open { display: flex; }
-
+    .modal-overlay.open { display:flex; }
     .modal {
-      background: var(--bg-sidebar);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      width: 100%;
-      max-width: 480px;
-      animation: modalIn 0.2s ease;
+      background:var(--bg-sidebar);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:28px;
+      width:100%; max-width:480px;
+      animation:modalIn 0.2s ease;
     }
-
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .modal h3 { font-size: 18px; margin-bottom: 20px; }
-
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 20px;
-    }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+    .modal h3 { font-size:18px; margin-bottom:20px; }
+    .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
   </style>
 </head>
 <body>
 
-<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-<!-- Modal agregar lead -->
-<div class="modal-overlay" id="modal">
+<!-- ADD LEAD MODAL -->
+<div class="modal-overlay" id="lead-modal">
   <div class="modal">
     <h3>➕ Nuevo Lead</h3>
-    <div class="form-group">
-      <label>Nombre completo</label>
-      <input type="text" id="new-name" placeholder="María González" />
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Nombre del cliente *</label>
+        <input type="text" id="new-name" placeholder="María González" />
+      </div>
+      <div class="form-group">
+        <label>Teléfono / WhatsApp</label>
+        <input type="tel" id="new-phone" placeholder="5512345678" />
+      </div>
     </div>
     <div class="form-group">
-      <label>Destino solicitado</label>
-      <input type="text" id="new-dest" placeholder="Cancún 7 días" />
+      <label>Destino de interés *</label>
+      <input type="text" id="new-dest" placeholder="ej. Cancún 7 días todo incluido" />
     </div>
     <div class="grid-2">
       <div class="form-group">
@@ -294,17 +188,13 @@
         <input type="text" id="new-budget" placeholder="$50,000 MXN" />
       </div>
       <div class="form-group">
-        <label>Personas</label>
-        <input type="number" id="new-people" placeholder="2" min="1" max="20" />
+        <label>Etapa inicial</label>
+        <select id="new-col">
+          <option value="nuevo">Nuevo Lead</option>
+          <option value="cotizando">Cotizando</option>
+          <option value="seguimiento">Seguimiento</option>
+        </select>
       </div>
-    </div>
-    <div class="form-group">
-      <label>Columna inicial</label>
-      <select id="new-col">
-        <option value="nuevo">Nuevo Lead</option>
-        <option value="cotizando">Cotizando</option>
-        <option value="seguimiento">Seguimiento</option>
-      </select>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
@@ -312,6 +202,8 @@
     </div>
   </div>
 </div>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="app-layout">
   <aside class="sidebar" id="sidebar">
@@ -340,7 +232,7 @@
   <div class="main-content">
     <header class="topbar">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      <span class="topbar-title">CRM — Pipeline de Ventas</span>
+      <span class="topbar-title">CRM — Pipeline de Ventas <span style="font-size:11px;background:rgba(6,182,212,0.15);color:var(--cyan);padding:2px 8px;border-radius:10px;font-family:var(--font-body);font-weight:500;">DEMO</span></span>
       <div class="topbar-actions">
         <button class="btn btn-primary btn-sm" onclick="openModal()">+ Agregar Lead</button>
         <div class="avatar">JG</div>
@@ -348,248 +240,322 @@
     </header>
 
     <div class="page-content">
-      <!-- Stats -->
       <div class="crm-stats" id="crm-stats"></div>
-
-      <!-- Kanban -->
-      <div class="kanban-board" id="kanban-board">
-        <!-- Cols rendered by JS -->
-      </div>
+      <div class="kanban-board" id="kanban-board"></div>
     </div>
   </div>
 </div>
 
 <script>
+  /* ── SIDEBAR ── */
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('open');
   }
 
-  function openModal() { document.getElementById('modal').classList.add('open'); }
-  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  /* ── MODAL ── */
+  function openModal(col = 'nuevo') {
+    document.getElementById('new-col').value = col;
+    document.getElementById('lead-modal').classList.add('open');
+    setTimeout(() => document.getElementById('new-name').focus(), 100);
+  }
+  function closeModal() { document.getElementById('lead-modal').classList.remove('open'); }
+
+  document.getElementById('lead-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('lead-modal')) closeModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Enter' && document.getElementById('lead-modal').classList.contains('open')) addLead();
+  });
+
+  /* ── AVATAR COLORS ── */
+  const avatarColors = [
+    ['#06b6d4','#0891b2'], ['#3b82f6','#2563eb'], ['#8b5cf6','#7c3aed'],
+    ['#10b981','#059669'], ['#f59e0b','#d97706'], ['#ef4444','#dc2626'],
+    ['#ec4899','#db2777'], ['#14b8a6','#0d9488'],
+  ];
+  function getAvatarColor(name) {
+    let h = 0;
+    for (const c of name) h = (h * 31 + c.charCodeAt(0)) % avatarColors.length;
+    return avatarColors[Math.abs(h) % avatarColors.length];
+  }
+  function getInitials(name) {
+    return name.split(' ').slice(0, 2).map(n => n[0] || '').join('').toUpperCase();
+  }
+
+  /* ── DAYS SINCE ── */
+  function daysSince(dateStr) {
+    const diff = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+    if (diff === 0) return 'Hoy';
+    if (diff === 1) return '1 día';
+    return `${diff} días`;
+  }
 
   /* ── DATA ── */
-  const columns = [
-    { id: 'nuevo', name: 'Nuevo Lead', color: '#3b82f6', emoji: '🔵' },
-    { id: 'cotizando', name: 'Cotizando', color: '#f59e0b', emoji: '🟡' },
-    { id: 'seguimiento', name: 'Seguimiento', color: '#6366f1', emoji: '🟣' },
-    { id: 'cerrado', name: 'Cerrado ✓', color: '#10b981', emoji: '🟢' },
+  const STORAGE_KEY = 'travelai_leads';
+  const COLUMNS = [
+    { id:'nuevo',       name:'Nuevo Lead',    color:'#3b82f6' },
+    { id:'cotizando',   name:'Cotizando',      color:'#f59e0b' },
+    { id:'seguimiento', name:'Seguimiento',    color:'#8b5cf6' },
+    { id:'cerrado',     name:'Cerrado ✓',      color:'#10b981' },
   ];
 
-  let leads = [
-    { id: 1, name: 'María González', dest: '✈️ Cancún + Chichén Itzá', budget: '$45,000', people: 2, date: 'Hoy 10:23', col: 'cotizando', priority: '🔥' },
-    { id: 2, name: 'Carlos Méndez', dest: '🌍 Europa 15 días', budget: '$120,000', people: 3, date: 'Hoy 09:45', col: 'nuevo', priority: '⭐' },
-    { id: 3, name: 'Laura Pérez', dest: '🏰 Disney World Orlando', budget: '$80,000', people: 4, date: 'Ayer 16:30', col: 'cerrado', priority: '✅' },
-    { id: 4, name: 'Roberto Silva', dest: '🗾 Japón + Corea del Sur', budget: '$95,000', people: 2, date: 'Hoy 08:12', col: 'seguimiento', priority: '🔥' },
-    { id: 5, name: 'Ana Torres', dest: '🏝️ Maldivas todo incluido', budget: '$200,000', people: 2, date: 'Ayer 14:20', col: 'cotizando', priority: '⭐' },
-    { id: 6, name: 'Miguel Ramos', dest: '🦙 Perú + Machu Picchu', budget: '$55,000', people: 2, date: 'Ayer 11:05', col: 'nuevo', priority: '' },
-    { id: 7, name: 'Sofía Herrera', dest: '🗼 París + Ámsterdam', budget: '$90,000', people: 2, date: '23 Abr', col: 'cerrado', priority: '✅' },
-    { id: 8, name: 'Diego Castillo', dest: '🌊 Crucero Caribe', budget: '$70,000', people: 5, date: 'Hoy 07:30', col: 'seguimiento', priority: '🔥' },
+  const DEFAULT_LEADS = [
+    { id:1, name:'María González',  phone:'5512345678', dest:'✈️ Cancún + Chichén Itzá 7 días', budget:'$45,000 MXN', col:'cotizando',   date:'2026-04-23' },
+    { id:2, name:'Carlos Méndez',   phone:'5598765432', dest:'🌍 Europa 15 días',               budget:'$120,000 MXN', col:'nuevo',       date:'2026-04-25' },
+    { id:3, name:'Laura Pérez',     phone:'5511223344', dest:'🏰 Disney World Orlando',          budget:'$80,000 MXN',  col:'cerrado',     date:'2026-04-10' },
+    { id:4, name:'Roberto Silva',   phone:'5599887766', dest:'🗾 Japón + Corea del Sur',         budget:'$95,000 MXN',  col:'seguimiento', date:'2026-04-20' },
+    { id:5, name:'Ana Torres',      phone:'5544332211', dest:'🏝️ Maldivas todo incluido',        budget:'$200,000 MXN', col:'cotizando',   date:'2026-04-22' },
+    { id:6, name:'Miguel Ramos',    phone:'5566778899', dest:'🦙 Perú + Machu Picchu',           budget:'$55,000 MXN',  col:'nuevo',       date:'2026-04-25' },
+    { id:7, name:'Sofía Herrera',   phone:'5577665544', dest:'🗼 París + Ámsterdam',              budget:'$90,000 MXN',  col:'cerrado',     date:'2026-04-05' },
+    { id:8, name:'Diego Castillo',  phone:'5588776655', dest:'🌊 Crucero Caribe 8 noches',       budget:'$70,000 MXN',  col:'seguimiento', date:'2026-04-18' },
   ];
 
+  let leads = [];
   let nextId = 9;
-  let dragSrc = null;
+
+  function loadLeads() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          leads = parsed;
+          nextId = Math.max(...leads.map(l => l.id)) + 1;
+          return;
+        }
+      }
+    } catch {}
+    leads = [...DEFAULT_LEADS];
+    saveLeads();
+  }
+
+  function saveLeads() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+  }
+
+  /* ── DRAG & DROP ── */
+  let dragId = null;
+  let placeholder = null;
+
+  function handleDragStart(e, id) {
+    dragId = id;
+    const card = e.currentTarget;
+    setTimeout(() => card.classList.add('dragging'), 0);
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function handleDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+    if (placeholder) { placeholder.remove(); placeholder = null; }
+  }
+
+  function handleDragOver(e, colId) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const body = document.getElementById(`col-${colId}`);
+    body.classList.add('drag-over');
+
+    if (!placeholder) {
+      placeholder = document.createElement('div');
+      placeholder.className = 'lead-card drag-placeholder';
+      placeholder.id = 'drag-placeholder';
+    }
+
+    const afterEl = getDragAfterElement(body, e.clientY);
+    if (afterEl) {
+      body.insertBefore(placeholder, afterEl);
+    } else {
+      const addBtn = body.querySelector('.add-lead-btn');
+      body.insertBefore(placeholder, addBtn);
+    }
+  }
+
+  function handleDragLeave(e, colId) {
+    const body = document.getElementById(`col-${colId}`);
+    if (!body.contains(e.relatedTarget)) {
+      body.classList.remove('drag-over');
+    }
+  }
+
+  function handleDrop(e, colId) {
+    e.preventDefault();
+    if (placeholder) { placeholder.remove(); placeholder = null; }
+    document.querySelectorAll('.col-body').forEach(b => b.classList.remove('drag-over'));
+    if (dragId === null) return;
+    const lead = leads.find(l => l.id === dragId);
+    if (lead) { lead.col = colId; saveLeads(); render(); }
+    dragId = null;
+  }
+
+  function getDragAfterElement(container, y) {
+    const cards = [...container.querySelectorAll('.lead-card:not(.dragging):not(.drag-placeholder)')];
+    return cards.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) return { offset, element: child };
+      return closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  /* ── ACTIONS ── */
+  function moveLeft(id) {
+    const lead = leads.find(l => l.id === id);
+    if (!lead) return;
+    const idx = COLUMNS.findIndex(c => c.id === lead.col);
+    if (idx > 0) { lead.col = COLUMNS[idx - 1].id; saveLeads(); render(); }
+  }
+
+  function moveRight(id) {
+    const lead = leads.find(l => l.id === id);
+    if (!lead) return;
+    const idx = COLUMNS.findIndex(c => c.id === lead.col);
+    if (idx < COLUMNS.length - 1) { lead.col = COLUMNS[idx + 1].id; saveLeads(); render(); }
+  }
+
+  function deleteLead(id) {
+    leads = leads.filter(l => l.id !== id);
+    saveLeads();
+    render();
+  }
+
+  function addLead() {
+    const name = document.getElementById('new-name').value.trim();
+    const dest = document.getElementById('new-dest').value.trim();
+    if (!name || !dest) return;
+
+    leads.unshift({
+      id: nextId++,
+      name,
+      phone: document.getElementById('new-phone').value.trim(),
+      dest: `✈️ ${dest}`,
+      budget: document.getElementById('new-budget').value.trim() || 'A definir',
+      col: document.getElementById('new-col').value,
+      date: new Date().toISOString().split('T')[0],
+    });
+
+    ['new-name','new-phone','new-dest','new-budget'].forEach(id => document.getElementById(id).value = '');
+    closeModal();
+    saveLeads();
+    render();
+  }
 
   /* ── RENDER ── */
   function render() {
     const board = document.getElementById('kanban-board');
     board.innerHTML = '';
 
-    columns.forEach(col => {
+    COLUMNS.forEach(col => {
       const colLeads = leads.filter(l => l.col === col.id);
-
       const colEl = document.createElement('div');
       colEl.className = 'kanban-col';
-      colEl.dataset.col = col.id;
 
       colEl.innerHTML = `
         <div class="col-header">
-          <div class="col-dot" style="background:${col.color};"></div>
+          <div class="col-dot" style="background:${col.color};box-shadow:0 0 6px ${col.color}40;"></div>
           <span class="col-name">${col.name}</span>
           <span class="col-count">${colLeads.length}</span>
         </div>
         <div class="col-body" id="col-${col.id}"></div>
       `;
-
       board.appendChild(colEl);
 
       const body = document.getElementById(`col-${col.id}`);
 
       colLeads.forEach(lead => {
+        const [bg1, bg2] = getAvatarColor(lead.name);
+        const initials = getInitials(lead.name);
+        const daysAgo = daysSince(lead.date);
+
         const card = document.createElement('div');
         card.className = 'lead-card';
         card.draggable = true;
         card.dataset.id = lead.id;
 
+        const waLink = lead.phone
+          ? `https://wa.me/52${lead.phone.replace(/\D/g,'').slice(-10)}?text=Hola%20${encodeURIComponent(lead.name)}%2C%20le%20contactamos%20de%20TravelAI%20sobre%20su%20consulta%20de%20viaje.`
+          : '#';
+
         card.innerHTML = `
-          ${lead.priority ? `<div class="lead-priority">${lead.priority}</div>` : ''}
-          <div class="lead-name">${lead.name}</div>
-          <div class="lead-dest">${lead.dest}</div>
+          <div class="lead-card-top">
+            <div class="lead-avatar" style="background:linear-gradient(135deg,${bg1},${bg2});">${initials}</div>
+            <div class="lead-info">
+              <div class="lead-name">${lead.name}</div>
+              <div class="lead-dest">${lead.dest}</div>
+            </div>
+          </div>
           <div class="lead-meta">
-            <span class="lead-tag">👥 ${lead.people} pax</span>
-            <span class="lead-tag">📅 ${lead.date}</span>
+            <span class="lead-budget">${lead.budget}</span>
+            <span class="lead-days">⏱ ${daysAgo}</span>
           </div>
           <div class="lead-footer">
-            <span class="lead-budget">${lead.budget}</span>
-          </div>
-          <div class="lead-actions">
-            <button class="lead-btn" onclick="moveLeadLeft(${lead.id})">← Mover</button>
-            <button class="lead-btn" onclick="moveLeadRight(${lead.id})">Mover →</button>
-            <button class="lead-btn" onclick="deleteLead(${lead.id})" style="color:var(--red);">✕</button>
+            <button class="lead-btn" onclick="moveLeft(${lead.id})">← Anterior</button>
+            ${lead.phone ? `<a href="${waLink}" target="_blank" class="lead-btn wa">💬 WA</a>` : ''}
+            <button class="lead-btn" onclick="moveRight(${lead.id})">Siguiente →</button>
+            <button class="lead-btn del" onclick="deleteLead(${lead.id})">✕</button>
           </div>
         `;
 
-        card.addEventListener('dragstart', e => {
-          dragSrc = lead.id;
-          card.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
-        });
-
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
-
+        card.addEventListener('dragstart', e => handleDragStart(e, lead.id));
+        card.addEventListener('dragend', handleDragEnd);
         body.appendChild(card);
       });
 
       // Add button
       const addBtn = document.createElement('button');
       addBtn.className = 'add-lead-btn';
-      addBtn.innerHTML = `+ Agregar lead`;
-      addBtn.onclick = () => {
-        document.getElementById('new-col').value = col.id;
-        openModal();
-      };
+      addBtn.textContent = '+ Agregar lead';
+      addBtn.onclick = () => openModal(col.id);
       body.appendChild(addBtn);
 
-      // Drop zone
-      body.addEventListener('dragover', e => {
-        e.preventDefault();
-        body.classList.add('drag-over');
-      });
-
-      body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
-
-      body.addEventListener('drop', e => {
-        e.preventDefault();
-        body.classList.remove('drag-over');
-        if (dragSrc) {
-          const lead = leads.find(l => l.id === dragSrc);
-          if (lead) {
-            lead.col = col.id;
-            render();
-          }
-          dragSrc = null;
-        }
-      });
+      // Drop events
+      body.addEventListener('dragover', e => handleDragOver(e, col.id));
+      body.addEventListener('dragleave', e => handleDragLeave(e, col.id));
+      body.addEventListener('drop', e => handleDrop(e, col.id));
     });
 
-    updateStats();
+    renderStats();
   }
 
-  function updateStats() {
+  function renderStats() {
     const total = leads.length;
     const cerrados = leads.filter(l => l.col === 'cerrado').length;
-    const totalBudget = leads
-      .filter(l => l.col === 'cerrado')
-      .reduce((sum, l) => sum + parseInt(l.budget.replace(/[^0-9]/g, '')), 0);
-
+    const activos = leads.filter(l => l.col !== 'cerrado').length;
     const conversion = total > 0 ? Math.round((cerrados / total) * 100) : 0;
+    const budgetTotal = leads
+      .filter(l => l.col === 'cerrado')
+      .reduce((sum, l) => {
+        const n = parseInt((l.budget || '').replace(/[^0-9]/g, '')) || 0;
+        return sum + n;
+      }, 0);
 
     document.getElementById('crm-stats').innerHTML = `
       <div class="crm-stat">
-        <span style="font-size:20px;">👥</span>
-        <div>
-          <div class="crm-stat-num" style="color:var(--blue);">${total}</div>
-          <div style="font-size:11px;color:var(--text-muted);">Total leads</div>
-        </div>
+        <span style="font-size:20px">👥</span>
+        <div><div class="crm-stat-num" style="color:var(--blue)">${total}</div><div class="crm-stat-lbl">Total leads</div></div>
       </div>
       <div class="crm-stat">
-        <span style="font-size:20px;">🔥</span>
-        <div>
-          <div class="crm-stat-num" style="color:var(--amber);">${leads.filter(l => l.col === 'cotizando').length}</div>
-          <div style="font-size:11px;color:var(--text-muted);">En proceso</div>
-        </div>
+        <span style="font-size:20px">🔥</span>
+        <div><div class="crm-stat-num" style="color:var(--amber)">${activos}</div><div class="crm-stat-lbl">En proceso</div></div>
       </div>
       <div class="crm-stat">
-        <span style="font-size:20px;">✅</span>
-        <div>
-          <div class="crm-stat-num" style="color:var(--green);">${cerrados}</div>
-          <div style="font-size:11px;color:var(--text-muted);">Cerrados</div>
-        </div>
+        <span style="font-size:20px">✅</span>
+        <div><div class="crm-stat-num" style="color:var(--green)">${cerrados}</div><div class="crm-stat-lbl">Cerrados</div></div>
       </div>
       <div class="crm-stat">
-        <span style="font-size:20px;">📈</span>
-        <div>
-          <div class="crm-stat-num" style="color:var(--cyan);">${conversion}%</div>
-          <div style="font-size:11px;color:var(--text-muted);">Conversión</div>
-        </div>
+        <span style="font-size:20px">📈</span>
+        <div><div class="crm-stat-num" style="color:var(--cyan)">${conversion}%</div><div class="crm-stat-lbl">Conversión</div></div>
       </div>
+      ${budgetTotal > 0 ? `
       <div class="crm-stat">
-        <span style="font-size:20px;">💰</span>
-        <div>
-          <div class="crm-stat-num" style="color:var(--green);font-size:16px;">$${totalBudget.toLocaleString()}</div>
-          <div style="font-size:11px;color:var(--text-muted);">MXN cerrado</div>
-        </div>
-      </div>
+        <span style="font-size:20px">💰</span>
+        <div><div class="crm-stat-num" style="color:var(--green);font-size:16px;">$${budgetTotal.toLocaleString()}</div><div class="crm-stat-lbl">MXN cerrado</div></div>
+      </div>` : ''}
     `;
   }
 
-  function addLead() {
-    const name = document.getElementById('new-name').value.trim();
-    const dest = document.getElementById('new-dest').value.trim();
-    const budget = document.getElementById('new-budget').value.trim();
-    const people = document.getElementById('new-people').value || '2';
-    const col = document.getElementById('new-col').value;
-
-    if (!name || !dest) return;
-
-    leads.unshift({
-      id: nextId++,
-      name,
-      dest: `✈️ ${dest}`,
-      budget: budget || 'A definir',
-      people: parseInt(people),
-      date: 'Ahora',
-      col,
-      priority: '🆕'
-    });
-
-    document.getElementById('new-name').value = '';
-    document.getElementById('new-dest').value = '';
-    document.getElementById('new-budget').value = '';
-    document.getElementById('new-people').value = '';
-
-    closeModal();
-    render();
-  }
-
-  function moveLeadLeft(id) {
-    const lead = leads.find(l => l.id === id);
-    if (!lead) return;
-    const idx = columns.findIndex(c => c.id === lead.col);
-    if (idx > 0) { lead.col = columns[idx - 1].id; render(); }
-  }
-
-  function moveLeadRight(id) {
-    const lead = leads.find(l => l.id === id);
-    if (!lead) return;
-    const idx = columns.findIndex(c => c.id === lead.col);
-    if (idx < columns.length - 1) { lead.col = columns[idx + 1].id; render(); }
-  }
-
-  function deleteLead(id) {
-    leads = leads.filter(l => l.id !== id);
-    render();
-  }
-
-  document.getElementById('modal').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal')) closeModal();
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'Enter' && document.getElementById('modal').classList.contains('open')) addLead();
-  });
-
+  loadLeads();
   render();
 </script>
 </body>

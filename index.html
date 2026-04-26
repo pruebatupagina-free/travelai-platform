@@ -649,6 +649,182 @@
       .cta-box { padding: 36px 24px; }
       section { padding: 64px 20px; }
     }
+
+    /* ── VIDEO PLACEHOLDER ── */
+    .video-section { padding: 0 24px 96px; }
+    .video-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--bg-card);
+      aspect-ratio: 16/9;
+      cursor: pointer;
+    }
+    .video-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.08) 50%, rgba(99,102,241,0.08) 100%);
+    }
+    .video-grid-overlay {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .video-mock-ui {
+      position: absolute; inset: 16px;
+      display: flex; gap: 12px;
+    }
+    .mock-sidebar {
+      width: 120px; background: rgba(17,24,39,0.8);
+      border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);
+      padding: 10px 8px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .mock-nav { height: 10px; background: rgba(255,255,255,0.06); border-radius: 4px; }
+    .mock-nav.active { background: rgba(6,182,212,0.3); }
+    .mock-content {
+      flex: 1; display: flex; flex-direction: column; gap: 10px;
+    }
+    .mock-row { display: flex; gap: 8px; }
+    .mock-card {
+      flex: 1; height: 60px;
+      background: rgba(17,24,39,0.8);
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .mock-chart {
+      flex: 1; height: 100px;
+      background: rgba(17,24,39,0.8);
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .play-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 72px;
+      background: rgba(6,182,212,0.9);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      transition: all 0.3s;
+      box-shadow: 0 0 0 0 rgba(6,182,212,0.4);
+      animation: playPulse 2.5s infinite;
+      z-index: 2;
+    }
+    .video-wrap:hover .play-btn {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: rgba(6,182,212,1);
+    }
+    @keyframes playPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
+      50% { box-shadow: 0 0 0 16px rgba(6,182,212,0); }
+    }
+    .video-label {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-3);
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .testi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+      transition: all 0.25s;
+    }
+    .testi-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-3px); }
+    .testi-card::before {
+      content: '"';
+      position: absolute;
+      top: 16px; right: 20px;
+      font-size: 64px;
+      line-height: 1;
+      color: rgba(6,182,212,0.15);
+      font-family: Georgia, serif;
+      font-weight: 700;
+    }
+    .testi-stars { color: #fbbf24; font-size: 14px; margin-bottom: 14px; }
+    .testi-text { font-size: 14px; color: var(--text-2); line-height: 1.75; margin-bottom: 20px; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px;
+      color: white;
+    }
+    .testi-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .testi-role { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    /* ── TECH LOGOS ── */
+    .logos-section { padding: 48px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .logos-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+    .logos-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 28px; }
+    .logos-grid { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .logo-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 600; color: var(--text-3);
+      opacity: 0.6;
+      transition: opacity 0.2s;
+      font-family: var(--font-h);
+    }
+    .logo-item:hover { opacity: 1; }
+    .logo-item .logo-emoji { font-size: 22px; }
+
+    /* ── FAQ ── */
+    .faq-list { margin-top: 52px; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .faq-item.open { border-color: rgba(6,182,212,0.3); }
+    .faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--bg-card);
+      user-select: none;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+    .faq-item.open .faq-q { background: rgba(6,182,212,0.05); }
+    .faq-chevron {
+      font-size: 12px;
+      color: var(--text-3);
+      transition: transform 0.25s;
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--cyan); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.7;
+      background: var(--bg-card);
+      padding: 0 20px;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding: 0 20px 18px; }
   </style>
 </head>
 <body>
@@ -884,12 +1060,157 @@
   </div>
 </section>
 
+<!-- VIDEO DEMO -->
+<div class="video-section">
+  <div class="section-inner" style="text-align:center;margin-bottom:32px;">
+    <div class="section-label" style="justify-content:center;">Demo en vivo</div>
+    <h2>Mira cómo funciona en 2 minutos</h2>
+    <p class="section-desc" style="margin:0 auto;">Una plataforma diseñada para que tu equipo opere más rápido con menos esfuerzo.</p>
+  </div>
+  <div class="video-wrap" onclick="location.href='app/dashboard.html'">
+    <div class="video-bg"></div>
+    <div class="video-grid-overlay"></div>
+    <div class="video-mock-ui">
+      <div class="mock-sidebar">
+        <div class="mock-nav active"></div>
+        <div class="mock-nav"></div>
+        <div class="mock-nav"></div>
+        <div class="mock-nav"></div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-row">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-chart"></div>
+          <div class="mock-chart" style="flex:0.6;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="play-btn">▶</div>
+  </div>
+  <p class="video-label">Haz clic para explorar el dashboard en vivo →</p>
+</div>
+
+<!-- TESTIMONIOS -->
+<section style="padding:96px 24px;">
+  <div class="section-inner">
+    <div class="section-label">Testimonios</div>
+    <h2>Lo que dicen nuestros clientes</h2>
+    <p class="section-desc">Agencias reales con resultados reales. Así es como TravelAI está cambiando la industria.</p>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"En el primer mes duplicamos las consultas atendidas sin contratar más personal. El chatbot responde a las 3am cuando nosotros dormimos y los clientes quedan felices."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);">MV</div>
+          <div>
+            <div class="testi-name">Martina Vega</div>
+            <div class="testi-role">Directora — Viajes del Sol, CDMX</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Los itinerarios que genera la IA son increíbles. Antes me tardaba 2 horas en hacer uno personalizado. Ahora lo tengo en 2 minutos y mis clientes no notan la diferencia."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">RC</div>
+          <div>
+            <div class="testi-name">Ricardo Cortez</div>
+            <div class="testi-role">Agente Senior — TourMex, Guadalajara</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"El CRM me tiene todo organizado. Antes perdía leads porque no tenía seguimiento. Ahora tengo un 34% de conversión y sé exactamente en qué etapa está cada cliente."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">AL</div>
+          <div>
+            <div class="testi-name">Andrea López</div>
+            <div class="testi-role">Fundadora — Travesías Premium, MTY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECNOLOGÍA -->
+<div class="logos-section">
+  <div class="logos-inner">
+    <div class="logos-label">Tecnología que impulsa TravelAI</div>
+    <div class="logos-grid">
+      <div class="logo-item"><span class="logo-emoji">🤖</span> Anthropic Claude</div>
+      <div class="logo-item"><span class="logo-emoji">💬</span> WhatsApp Business</div>
+      <div class="logo-item"><span class="logo-emoji">📧</span> Gmail API</div>
+      <div class="logo-item"><span class="logo-emoji">📍</span> Google Maps</div>
+      <div class="logo-item"><span class="logo-emoji">📊</span> Google Analytics</div>
+    </div>
+  </div>
+</div>
+
 <!-- CTA -->
 <section class="cta-section">
   <div class="cta-box">
     <h2>¿Listo para automatizar<br>tu agencia?</h2>
     <p>Prueba la demo en vivo y descubre cómo TravelAI transforma la operación de tu agencia de viajes.</p>
     <a href="app/dashboard.html" class="btn btn-primary btn-lg">Ver demo en vivo →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding:96px 24px;background:var(--bg-card2);">
+  <div class="section-inner">
+    <div class="section-label">FAQ</div>
+    <h2 style="text-align:center;">Preguntas frecuentes</h2>
+    <p class="section-desc" style="margin:0 auto 0;text-align:center;">Todo lo que necesitas saber antes de empezar.</p>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Necesito conocimientos técnicos para usar TravelAI?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">No. TravelAI está diseñado para agentes de viajes, no para desarrolladores. La configuración inicial toma menos de 1 hora y contamos con soporte dedicado para guiarte en cada paso. Si sabes usar WhatsApp, puedes usar TravelAI.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Cuánto tiempo tarda en estar lista la plataforma?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">En menos de 48 horas. El día 1 configuras tu cuenta y personalizas el chatbot con tu catálogo. El día 2 integramos con tu sitio web o WhatsApp Business. El día 3 ya estás recibiendo leads y generando itinerarios automáticamente.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿El chatbot puede responder en otros idiomas además del español?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">Sí. El chatbot responde en más de 40 idiomas automáticamente, detectando el idioma del cliente. En los planes Pro y Enterprise puedes configurar idiomas prioritarios y tono personalizado por mercado (formal, casual, etc.).</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Mis datos de clientes están seguros?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">Absolutamente. Toda la información se almacena con cifrado AES-256. No compartimos datos con terceros. Cumplimos con GDPR y la Ley Federal de Protección de Datos de México. Puedes exportar o eliminar tus datos en cualquier momento desde la configuración.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ¿Puedo cancelar en cualquier momento?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">Sí, sin penalizaciones. Los planes son mes a mes. Si decides cancelar, tu cuenta queda activa hasta el final del período pagado y puedes exportar todos tus datos. No hay contratos mínimos ni cuotas de cancelación.</div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -903,11 +1224,20 @@
     <ul class="footer-links">
       <li><a href="#modulos">Módulos</a></li>
       <li><a href="#precios">Precios</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="app/dashboard.html">Demo</a></li>
     </ul>
     <div class="footer-copy">© 2025 TravelAI Platform. Todos los derechos reservados.</div>
   </div>
 </footer>
 
+<script>
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
 </body>
 </html>

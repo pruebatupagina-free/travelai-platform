@@ -7,6 +7,47 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ── FLOATING ACTION ── */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(6,182,212,0.4);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s;
+      z-index: 90;
+    }
+    .fab:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 8px 28px rgba(6,182,212,0.5); }
+
+    /* ── URGENCY CARD ── */
+    .urgent-lead {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .urgent-lead:last-child { border-bottom: none; }
+    .urgent-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; font-family: var(--font-heading);
+      color: white; flex-shrink: 0;
+    }
+    .urgent-info { flex: 1; min-width: 0; }
+    .urgent-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .urgent-dest { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .urgent-days { font-size: 11px; white-space: nowrap; }
+  </style>
 </head>
 <body>
 
@@ -21,25 +62,13 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-label">Principal</div>
-      <a href="dashboard.html" class="nav-item active">
-        <span class="nav-icon">📊</span> Dashboard
-      </a>
-      <a href="chatbot.html" class="nav-item">
-        <span class="nav-icon">🤖</span> Chatbot IA
-      </a>
-      <a href="itinerario.html" class="nav-item">
-        <span class="nav-icon">🗺️</span> Itinerarios
-      </a>
-      <a href="crm.html" class="nav-item">
-        <span class="nav-icon">👥</span> CRM
-      </a>
+      <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="chatbot.html" class="nav-item"><span class="nav-icon">🤖</span> Chatbot IA</a>
+      <a href="itinerario.html" class="nav-item"><span class="nav-icon">🗺️</span> Itinerarios</a>
+      <a href="crm.html" class="nav-item"><span class="nav-icon">👥</span> CRM</a>
       <div class="nav-label">Sistema</div>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">⚙️</span> Configuración
-      </a>
-      <a href="../index.html" class="nav-item">
-        <span class="nav-icon">🏠</span> Landing page
-      </a>
+      <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Configuración</a>
+      <a href="../index.html" class="nav-item"><span class="nav-icon">🏠</span> Landing page</a>
     </nav>
     <div class="sidebar-footer">
       <div class="plan-badge">
@@ -53,50 +82,46 @@
   <div class="main-content">
     <header class="topbar">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      <span class="topbar-title">Dashboard</span>
+      <span class="topbar-title">Dashboard <span style="font-size:11px;background:rgba(6,182,212,0.15);color:var(--cyan);padding:2px 8px;border-radius:10px;font-family:var(--font-body);font-weight:500;">DEMO</span></span>
       <div class="topbar-actions">
-        <div class="topbar-status">
-          <span class="status-dot"></span>
-          Sistema activo
-        </div>
+        <div class="topbar-status"><span class="status-dot"></span> Sistema activo</div>
         <div class="avatar">JG</div>
       </div>
     </header>
 
     <main class="page-content">
 
-      <!-- Metrics -->
-      <div class="metrics-grid">
+      <!-- Metric Cards -->
+      <div class="metrics-grid mb-24">
         <div class="metric-card cyan">
           <div class="metric-icon cyan">💬</div>
-          <div class="metric-value" id="m1">47</div>
+          <div class="metric-value" data-target="47" id="m1">0</div>
           <div class="metric-label">Consultas hoy</div>
           <div class="metric-delta up">↑ 12% vs ayer</div>
         </div>
         <div class="metric-card blue">
           <div class="metric-icon blue">🗺️</div>
-          <div class="metric-value" id="m2">12</div>
+          <div class="metric-value" data-target="12" id="m2">0</div>
           <div class="metric-label">Itinerarios generados</div>
           <div class="metric-delta up">↑ 8% vs ayer</div>
         </div>
         <div class="metric-card purple">
           <div class="metric-icon purple">👥</div>
-          <div class="metric-value" id="m3">89</div>
+          <div class="metric-value" data-target="89" id="m3">0</div>
           <div class="metric-label">Leads activos</div>
           <div class="metric-delta up">↑ 5 nuevos hoy</div>
         </div>
         <div class="metric-card green">
           <div class="metric-icon green">📈</div>
-          <div class="metric-value" id="m4">34%</div>
+          <div class="metric-value" data-target="34" data-suffix="%" id="m4">0%</div>
           <div class="metric-label">Tasa de conversión</div>
           <div class="metric-delta up">↑ 2.1% esta semana</div>
         </div>
       </div>
 
-      <!-- Chart + Mini stats -->
+      <!-- Chart + Destinos -->
       <div class="grid-2 mb-24">
-        <!-- Chart -->
-        <div class="card" style="grid-column: span 1;">
+        <div class="card">
           <div class="card-header">
             <span class="card-title">Consultas esta semana</span>
             <span class="badge badge-cyan">En vivo</span>
@@ -104,21 +129,15 @@
           <canvas id="weeklyChart" height="200"></canvas>
         </div>
 
-        <!-- Right column -->
         <div style="display:flex;flex-direction:column;gap:16px;">
           <!-- Top destinations -->
-          <div class="card flex-1">
-            <div class="card-header">
-              <span class="card-title">Top Destinos</span>
-            </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Top Destinos</span></div>
             <div id="dest-list"></div>
           </div>
-
           <!-- Quick actions -->
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">Acciones rápidas</span>
-            </div>
+            <div class="card-header"><span class="card-title">Acciones rápidas</span></div>
             <div style="display:flex;flex-direction:column;gap:8px;">
               <a href="chatbot.html" class="btn btn-ghost" style="justify-content:flex-start;">🤖 Abrir Chatbot IA</a>
               <a href="itinerario.html" class="btn btn-ghost" style="justify-content:flex-start;">🗺️ Generar Itinerario</a>
@@ -128,23 +147,50 @@
         </div>
       </div>
 
+      <!-- Itinerarios + Leads urgentes -->
+      <div class="grid-2 mb-24">
+        <!-- Recent itineraries -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Últimos itinerarios generados</span>
+            <a href="itinerario.html" class="btn btn-ghost btn-sm">+ Nuevo →</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Destino</th>
+                  <th>Pax</th>
+                  <th>Presupuesto</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="itinerary-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Urgent leads -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Leads por cerrar esta semana</span>
+            <a href="crm.html" class="btn btn-ghost btn-sm">Ver todos →</a>
+          </div>
+          <div id="urgent-leads"></div>
+        </div>
+      </div>
+
       <!-- Recent queries table -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Últimas consultas</span>
-          <a href="chatbot.html" class="btn btn-ghost btn-sm">Ver todas →</a>
+          <span class="card-title">Últimas consultas del chatbot</span>
+          <a href="chatbot.html" class="btn btn-ghost btn-sm">Ver chatbot →</a>
         </div>
         <div class="table-wrap">
-          <table id="queries-table">
+          <table>
             <thead>
-              <tr>
-                <th>#</th>
-                <th>Cliente</th>
-                <th>Destino solicitado</th>
-                <th>Presupuesto</th>
-                <th>Estado</th>
-                <th>Hace</th>
-              </tr>
+              <tr><th>#</th><th>Cliente</th><th>Destino solicitado</th><th>Presupuesto</th><th>Estado</th><th>Hace</th></tr>
             </thead>
             <tbody id="queries-body"></tbody>
           </table>
@@ -155,13 +201,32 @@
   </div>
 </div>
 
+<!-- Floating Action Button -->
+<button class="fab" onclick="location.href='crm.html'" title="Agregar nuevo lead">+</button>
+
 <script>
+  /* ── SIDEBAR ── */
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('open');
   }
 
-  // Chart
+  /* ── COUNTER ANIMATION ── */
+  function animateCounters() {
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = Math.max(1, Math.ceil(target / 50));
+      const interval = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current + suffix;
+        if (current >= target) clearInterval(interval);
+      }, 25);
+    });
+  }
+
+  /* ── CHART ── */
   const ctx = document.getElementById('weeklyChart').getContext('2d');
   new Chart(ctx, {
     type: 'line',
@@ -172,85 +237,89 @@
         data: [32, 45, 38, 56, 42, 67, 47],
         borderColor: '#06b6d4',
         backgroundColor: 'rgba(6,182,212,0.08)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#06b6d4',
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        borderWidth: 2, fill: true, tension: 0.4,
+        pointBackgroundColor: '#06b6d4', pointRadius: 4, pointHoverRadius: 6,
       }, {
         label: 'Itinerarios',
         data: [8, 12, 9, 15, 11, 18, 12],
         borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59,130,246,0.05)',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.4,
-        pointBackgroundColor: '#3b82f6',
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        backgroundColor: 'rgba(59,130,246,0.04)',
+        borderWidth: 2, fill: false, tension: 0.4,
+        pointBackgroundColor: '#3b82f6', pointRadius: 4, pointHoverRadius: 6,
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: true,
+      responsive: true, maintainAspectRatio: true,
       interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: {
-          labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 }, boxWidth: 12 }
-        }
-      },
+      plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 }, boxWidth: 12 } } },
       scales: {
-        x: {
-          ticks: { color: '#475569', font: { family: 'DM Sans' } },
-          grid: { color: 'rgba(255,255,255,0.04)' }
-        },
-        y: {
-          ticks: { color: '#475569', font: { family: 'DM Sans' } },
-          grid: { color: 'rgba(255,255,255,0.04)' },
-          beginAtZero: true
-        }
+        x: { ticks: { color: '#475569', font: { family: 'DM Sans' } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#475569', font: { family: 'DM Sans' } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
       }
     }
   });
 
-  // Top destinations
-  const destinations = [
-    { name: 'Cancún, México', count: 18, pct: 38 },
-    { name: 'París, Francia', count: 12, pct: 26 },
-    { name: 'Nueva York, USA', count: 9, pct: 19 },
-    { name: 'Roma, Italia', count: 5, pct: 11 },
-    { name: 'Tokyo, Japón', count: 3, pct: 6 },
-  ];
-
-  const colors = ['#06b6d4', '#3b82f6', '#6366f1', '#10b981', '#f59e0b'];
-
-  const destList = document.getElementById('dest-list');
-  destinations.forEach((d, i) => {
-    destList.innerHTML += `
+  /* ── TOP DESTINATIONS ── */
+  [
+    { name: 'Cancún, México', count: 18, pct: 38, color: '#06b6d4' },
+    { name: 'París, Francia', count: 12, pct: 26, color: '#3b82f6' },
+    { name: 'Nueva York, USA', count: 9, pct: 19, color: '#6366f1' },
+    { name: 'Roma, Italia', count: 5, pct: 11, color: '#10b981' },
+    { name: 'Tokyo, Japón', count: 3, pct: 6, color: '#f59e0b' },
+  ].forEach(d => {
+    document.getElementById('dest-list').innerHTML += `
       <div style="margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
           <span style="font-size:13px;color:#f1f5f9;">${d.name}</span>
           <span style="font-size:12px;color:#94a3b8;">${d.count} consultas</span>
         </div>
         <div style="background:rgba(255,255,255,0.05);border-radius:4px;height:4px;">
-          <div style="width:${d.pct}%;height:100%;background:${colors[i]};border-radius:4px;transition:width 1s ease;"></div>
+          <div style="width:${d.pct}%;height:100%;background:${d.color};border-radius:4px;transition:width 1.2s ease;"></div>
         </div>
-      </div>
-    `;
+      </div>`;
   });
 
-  // Queries table
-  const queries = [
-    { id: 1, name: 'María González', dest: 'Cancún + Chichen Itzá', budget: '$45,000', status: 'cotizando', time: '3 min' },
-    { id: 2, name: 'Carlos Mendez', dest: 'Europa 15 días', budget: '$120,000', status: 'nuevo', time: '11 min' },
-    { id: 3, name: 'Laura Pérez', dest: 'Disney World Orlando', budget: '$80,000', status: 'cerrado', time: '28 min' },
-    { id: 4, name: 'Roberto Silva', dest: 'Japón + Corea del Sur', budget: '$95,000', status: 'seguimiento', time: '45 min' },
-    { id: 5, name: 'Ana Torres', dest: 'Maldivas todo incluido', budget: '$200,000', status: 'cotizando', time: '1 hr' },
-    { id: 6, name: 'Miguel Ramos', dest: 'Perú + Machu Picchu', budget: '$55,000', status: 'nuevo', time: '2 hr' },
-    { id: 7, name: 'Sofía Herrera', dest: 'París + Ámsterdam', budget: '$90,000', status: 'cerrado', time: '3 hr' },
-  ];
+  /* ── RECENT ITINERARIES ── */
+  [
+    { client: 'María G.', dest: 'Cancún 7 días', pax: 2, budget: '$45,000 MXN', date: 'Hoy 10:23' },
+    { client: 'Carlos M.', dest: 'Europa 15 días', pax: 3, budget: '$120,000 MXN', date: 'Hoy 09:15' },
+    { client: 'Ana T.', dest: 'Maldivas 8 noches', pax: 2, budget: '$200,000 MXN', date: 'Ayer 16:40' },
+    { client: 'Roberto S.', dest: 'Japón + Corea', pax: 2, budget: '$95,000 MXN', date: 'Ayer 11:05' },
+    { client: 'Sofía H.', dest: 'París + Ámsterdam', pax: 2, budget: '$90,000 MXN', date: '23 Abr 09:30' },
+  ].forEach(r => {
+    document.getElementById('itinerary-table').innerHTML += `
+      <tr>
+        <td style="font-weight:500;color:#f1f5f9;">${r.client}</td>
+        <td>${r.dest}</td>
+        <td style="text-align:center;">${r.pax}</td>
+        <td style="color:#10b981;font-weight:500;">${r.budget}</td>
+        <td style="color:#475569;">${r.date}</td>
+      </tr>`;
+  });
 
+  /* ── URGENT LEADS ── */
+  const urgentColors = [
+    ['#f59e0b','#d97706'], ['#ef4444','#dc2626'], ['#8b5cf6','#7c3aed'],
+  ];
+  [
+    { name: 'Roberto Silva', dest: '🗾 Japón + Corea del Sur', days: 5, col: '#f59e0b' },
+    { name: 'Diego Castillo', dest: '🌊 Crucero Caribe 8 noches', days: 7, col: '#ef4444' },
+    { name: 'Ana Torres', dest: '🏝️ Maldivas todo incluido', days: 3, col: '#8b5cf6' },
+  ].forEach((l, i) => {
+    const [bg] = urgentColors[i];
+    const init = l.name.split(' ').map(n => n[0]).join('').slice(0,2);
+    document.getElementById('urgent-leads').innerHTML += `
+      <div class="urgent-lead">
+        <div class="urgent-avatar" style="background:linear-gradient(135deg,${urgentColors[i][0]},${urgentColors[i][1]});">${init}</div>
+        <div class="urgent-info">
+          <div class="urgent-name">${l.name}</div>
+          <div class="urgent-dest">${l.dest}</div>
+        </div>
+        <div class="urgent-days" style="color:${l.days <= 3 ? 'var(--red)' : 'var(--amber)'}">⏱ ${l.days} días</div>
+      </div>`;
+  });
+
+  /* ── QUERIES TABLE ── */
   const statusBadge = {
     nuevo: '<span class="badge badge-blue">Nuevo</span>',
     cotizando: '<span class="badge badge-amber">Cotizando</span>',
@@ -258,9 +327,15 @@
     cerrado: '<span class="badge badge-green">Cerrado ✓</span>',
   };
 
-  const tbody = document.getElementById('queries-body');
-  queries.forEach(q => {
-    tbody.innerHTML += `
+  [
+    { id:1, name:'María González',  dest:'Cancún + Chichén Itzá', budget:'$45,000 MXN', status:'cotizando',   time:'3 min' },
+    { id:2, name:'Carlos Méndez',   dest:'Europa 15 días',         budget:'$120,000 MXN',status:'nuevo',       time:'11 min' },
+    { id:3, name:'Laura Pérez',     dest:'Disney World Orlando',   budget:'$80,000 MXN', status:'cerrado',     time:'28 min' },
+    { id:4, name:'Roberto Silva',   dest:'Japón + Corea del Sur',  budget:'$95,000 MXN', status:'seguimiento', time:'45 min' },
+    { id:5, name:'Ana Torres',      dest:'Maldivas todo incluido', budget:'$200,000 MXN',status:'cotizando',   time:'1 hr' },
+    { id:6, name:'Miguel Ramos',    dest:'Perú + Machu Picchu',    budget:'$55,000 MXN', status:'nuevo',       time:'2 hr' },
+  ].forEach(q => {
+    document.getElementById('queries-body').innerHTML += `
       <tr>
         <td style="color:#475569;">#${q.id}</td>
         <td style="color:#f1f5f9;font-weight:500;">${q.name}</td>
@@ -268,29 +343,11 @@
         <td style="color:#10b981;font-weight:500;">${q.budget}</td>
         <td>${statusBadge[q.status]}</td>
         <td style="color:#475569;">hace ${q.time}</td>
-      </tr>
-    `;
+      </tr>`;
   });
 
-  // Animate metric values
-  function animateCount(el, target, suffix = '') {
-    const isPercent = suffix === '%';
-    let start = 0;
-    const num = parseInt(target.replace(/[^0-9]/g, ''));
-    const step = Math.ceil(num / 40);
-    const timer = setInterval(() => {
-      start = Math.min(start + step, num);
-      el.textContent = isPercent ? start + '%' : start;
-      if (start >= num) clearInterval(timer);
-    }, 30);
-  }
-
-  setTimeout(() => {
-    animateCount(document.getElementById('m1'), '47');
-    animateCount(document.getElementById('m2'), '12');
-    animateCount(document.getElementById('m3'), '89');
-    animateCount(document.getElementById('m4'), '34', '%');
-  }, 300);
+  /* ── INIT ── */
+  setTimeout(animateCounters, 300);
 </script>
 </body>
 </html>

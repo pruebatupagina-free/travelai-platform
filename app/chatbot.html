@@ -6,13 +6,85 @@
   <title>Chatbot IA — TravelAI Platform</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
   <link rel="stylesheet" href="../style.css">
+  <script src="../config.js"></script>
   <style>
-    /* Chat-specific styles */
-    .chat-layout {
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - var(--header-height));
+    /* ── API KEY MODAL ── */
+    .apikey-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
     }
+    .apikey-overlay.open { display: flex; }
+    .apikey-modal {
+      background: var(--bg-sidebar);
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%;
+      max-width: 460px;
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn { from { opacity:0;transform:scale(0.94); } to { opacity:1;transform:scale(1); } }
+    .apikey-modal .modal-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .apikey-modal h3 { font-size: 20px; margin-bottom: 8px; }
+    .apikey-modal p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .apikey-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .apikey-input-row input {
+      flex: 1;
+      font-family: monospace;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+    }
+    .apikey-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .apikey-hint a { color: var(--cyan); }
+
+    /* ── LOCK INDICATOR ── */
+    .lock-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+      transition: all 0.2s;
+    }
+    .lock-indicator.locked {
+      color: var(--green);
+      border-color: rgba(16,185,129,0.3);
+      background: rgba(16,185,129,0.08);
+    }
+    .lock-indicator.unlocked {
+      color: var(--amber);
+      border-color: rgba(245,158,11,0.3);
+      background: rgba(245,158,11,0.08);
+    }
+
+    /* ── CHAT LAYOUT ── */
+    .chat-layout { display: flex; flex-direction: column; height: calc(100vh - var(--header-height)); }
 
     .chat-container {
       flex: 1;
@@ -26,11 +98,10 @@
     .chat-intro {
       text-align: center;
       padding: 32px;
-      max-width: 480px;
+      max-width: 500px;
       margin: auto;
     }
-
-    .chat-intro .bot-avatar {
+    .bot-avatar-big {
       width: 72px; height: 72px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--cyan), var(--blue));
@@ -39,27 +110,16 @@
       margin: 0 auto 16px;
       box-shadow: 0 0 32px rgba(6,182,212,0.3);
     }
+    .chat-intro h3 { font-size: 20px; margin-bottom: 8px; }
+    .chat-intro p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
 
-    .chat-intro h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-
-    .chat-intro p {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .quick-actions {
+    .quick-chips {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
     }
-
-    .quick-btn {
+    .quick-chip {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -67,34 +127,15 @@
       font-size: 13px;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all var(--transition);
+      transition: all 0.2s;
       font-family: var(--font-body);
     }
+    .quick-chip:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
 
-    .quick-btn:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
-      background: var(--cyan-dim);
-    }
-
-    /* Messages */
-    .message {
-      display: flex;
-      gap: 10px;
-      max-width: 80%;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .message.user {
-      align-self: flex-end;
-      flex-direction: row-reverse;
-    }
-
+    /* ── MESSAGES ── */
+    .message { display: flex; gap: 10px; max-width: 80%; animation: fadeMsg 0.3s ease; }
+    @keyframes fadeMsg { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:translateY(0); } }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
     .message.bot { align-self: flex-start; }
 
     .msg-avatar {
@@ -105,90 +146,89 @@
       flex-shrink: 0;
       margin-top: 4px;
     }
+    .message.bot .msg-avatar { background: linear-gradient(135deg, var(--cyan), var(--blue)); }
+    .message.user .msg-avatar { background: linear-gradient(135deg, var(--purple), var(--blue)); }
 
-    .message.bot .msg-avatar {
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-    }
-
-    .message.user .msg-avatar {
-      background: linear-gradient(135deg, var(--purple), var(--blue));
-    }
+    .msg-wrap { display: flex; flex-direction: column; max-width: 100%; }
+    .message.user .msg-wrap { align-items: flex-end; }
 
     .msg-bubble {
       padding: 12px 16px;
       border-radius: 16px;
       font-size: 14px;
-      line-height: 1.6;
-      max-width: 100%;
+      line-height: 1.65;
     }
-
     .message.bot .msg-bubble {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-bottom-left-radius: 4px;
       color: var(--text-primary);
     }
-
     .message.user .msg-bubble {
       background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(59,130,246,0.2));
       border: 1px solid rgba(6,182,212,0.25);
       border-bottom-right-radius: 4px;
       color: var(--text-primary);
     }
-
-    .msg-time {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      padding: 0 4px;
-    }
+    .msg-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; padding: 0 2px; }
 
     /* Typing indicator */
-    .typing {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      padding: 12px 16px;
-    }
-
-    .typing span {
+    .typing-bubble { display: flex; gap: 4px; align-items: center; padding: 14px 18px; }
+    .typing-bubble span {
       width: 8px; height: 8px;
       border-radius: 50%;
       background: var(--cyan);
-      animation: bounce 1.2s infinite;
+      animation: typingBounce 1.2s infinite;
     }
-
-    .typing span:nth-child(2) { animation-delay: 0.2s; }
-    .typing span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    .typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%,60%,100% { transform: translateY(0); opacity: 0.4; }
       30% { transform: translateY(-6px); opacity: 1; }
     }
 
-    /* Input area */
+    /* ── INPUT AREA ── */
     .chat-input-area {
-      padding: 16px 24px;
-      background: rgba(10,15,30,0.8);
+      padding: 12px 24px 16px;
+      background: rgba(10,15,30,0.85);
       backdrop-filter: blur(12px);
       border-top: 1px solid var(--border);
     }
 
-    .chat-input-row {
+    .quick-actions-bar {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .quick-actions-bar::-webkit-scrollbar { height: 0; }
+
+    .quick-action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      font-family: var(--font-body);
+    }
+    .quick-action-btn:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
       align-items: flex-end;
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 16px;
-      transition: border-color var(--transition);
+      border-radius: 14px;
+      padding: 10px 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    .chat-input-row:focus-within {
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 3px rgba(6,182,212,0.1);
-    }
+    .input-row:focus-within { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(6,182,212,0.1); }
 
     #chat-input {
       flex: 1;
@@ -202,9 +242,7 @@
       max-height: 120px;
       outline: none;
       padding: 0;
-      width: 100%;
     }
-
     #chat-input::placeholder { color: var(--text-muted); }
 
     #send-btn {
@@ -215,40 +253,48 @@
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       font-size: 16px;
-      transition: all var(--transition);
+      transition: all 0.2s;
       flex-shrink: 0;
     }
-
     #send-btn:hover { opacity: 0.85; transform: scale(1.05); }
     #send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    .input-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 8px;
-      text-align: center;
-    }
+    .input-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; text-align: center; }
 
-    /* API key notice */
-    .api-notice {
-      background: rgba(245,158,11,0.1);
-      border: 1px solid rgba(245,158,11,0.25);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: var(--amber);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .msg-bubble ul { padding-left: 20px; }
-    .msg-bubble li { margin-bottom: 4px; }
     .msg-bubble strong { color: var(--cyan); }
+    .msg-bubble ul { padding-left: 18px; }
+    .msg-bubble li { margin-bottom: 3px; }
+
+    .error-bubble {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .message { max-width: 92%; }
+      .chat-container { padding: 16px; }
+      .chat-input-area { padding: 10px 16px 14px; }
+    }
   </style>
 </head>
 <body>
+
+<!-- API KEY MODAL -->
+<div class="apikey-overlay" id="apikey-modal">
+  <div class="apikey-modal">
+    <div class="modal-icon">🔐</div>
+    <h3>Ingresa tu API Key</h3>
+    <p>Para activar la IA necesitas una API Key de Anthropic. Se guarda solo en esta sesión y nunca se sube a ningún servidor.</p>
+    <div class="apikey-input-row">
+      <input type="password" id="apikey-input" placeholder="sk-ant-api03-..." />
+      <button class="btn btn-primary" onclick="saveApiKey()">Activar</button>
+    </div>
+    <div class="apikey-hint">
+      ¿No tienes una? <a href="https://console.anthropic.com" target="_blank">Crear en console.anthropic.com →</a>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="useDemoMode()">Continuar en modo demo sin API Key</button>
+  </div>
+</div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
@@ -279,11 +325,10 @@
   <div class="main-content">
     <header class="topbar">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      <span class="topbar-title">Chatbot IA</span>
+      <span class="topbar-title">Chatbot IA <span style="font-size:11px;background:rgba(6,182,212,0.15);color:var(--cyan);padding:2px 8px;border-radius:10px;font-family:var(--font-body);font-weight:500;">DEMO</span></span>
       <div class="topbar-actions">
-        <div class="topbar-status">
-          <span class="status-dot"></span>
-          IA conectada
+        <div id="lock-indicator" class="lock-indicator unlocked" onclick="openApiKeyModal()" title="Clic para cambiar API Key">
+          🔒 Sin API Key
         </div>
         <div class="avatar">JG</div>
       </div>
@@ -291,29 +336,30 @@
 
     <div class="chat-layout">
       <div class="chat-container" id="chat-container">
-        <!-- Intro -->
         <div class="chat-intro" id="chat-intro">
-          <div class="bot-avatar">🤖</div>
+          <div class="bot-avatar-big">🤖</div>
           <h3>Asistente de Viajes IA</h3>
-          <p>Soy tu agente de viajes inteligente. Puedo ayudarte a cotizar destinos, crear itinerarios, resolver dudas sobre visas, clima y presupuestos.</p>
-          <div class="quick-actions">
-            <button class="quick-btn" onclick="sendQuick('Quiero cotizar un viaje a Cancún para 2 personas')">✈️ Cotizar Cancún</button>
-            <button class="quick-btn" onclick="sendQuick('¿Qué destinos recomiendas para luna de miel con $80,000 MXN?')">💑 Luna de miel</button>
-            <button class="quick-btn" onclick="sendQuick('¿Necesito visa para viajar a Europa desde México?')">🛂 Info de visas</button>
-            <button class="quick-btn" onclick="sendQuick('Quiero un itinerario de 7 días en Japón')">🗾 Itinerario Japón</button>
+          <p>Soy tu agente de viajes inteligente. Puedo cotizar destinos, crear itinerarios, resolver dudas sobre visas, clima y presupuestos.</p>
+          <div class="quick-chips">
+            <button class="quick-chip" onclick="sendQuick('Quiero cotizar un viaje a Cancún para 2 personas')">✈️ Cotizar viaje</button>
+            <button class="quick-chip" onclick="sendQuick('¿Qué destinos recomiendas para luna de miel con $80,000 MXN?')">💑 Recomendar destino</button>
+            <button class="quick-chip" onclick="sendQuick('¿Necesito visa para viajar a Europa desde México?')">🛂 Info de visas</button>
+            <button class="quick-chip" onclick="sendQuick('Quiero un itinerario de 7 días en Japón')">🗾 Crear itinerario</button>
           </div>
         </div>
       </div>
 
       <div class="chat-input-area">
-        <div class="api-notice" id="api-notice">
-          ⚠️ Demo mode activo — en producción conecta tu API key de Claude en la variable <code>ANTHROPIC_API_KEY</code>
+        <div class="quick-actions-bar">
+          <button class="quick-action-btn" onclick="sendQuick('Quiero cotizar un viaje')">✈️ Cotizar viaje</button>
+          <button class="quick-action-btn" onclick="sendQuick('Recomiéndame un destino')">🗺️ Recomendar destino</button>
+          <button class="quick-action-btn" onclick="sendQuick('Crea un itinerario de viaje para mí')">📋 Crear itinerario</button>
         </div>
-        <div class="chat-input-row">
+        <div class="input-row">
           <textarea id="chat-input" placeholder="Escribe tu consulta de viaje..." rows="1"></textarea>
           <button id="send-btn" onclick="sendMessage()">➤</button>
         </div>
-        <div class="input-hint">Presiona Enter para enviar · Shift+Enter para nueva línea</div>
+        <div class="input-hint">Enter para enviar · Shift+Enter para nueva línea</div>
       </div>
     </div>
   </div>
@@ -321,166 +367,111 @@
 
 <script>
   /* ── CONFIG ── */
-  const ANTHROPIC_API_KEY = 'DEMO_KEY';
-  const MODEL = 'claude-sonnet-4-6';
-  const SYSTEM_PROMPT = `Eres un asistente experto de agencia de viajes. Ayudas a cotizar viajes, recomendar destinos, crear itinerarios y responder dudas sobre visas, clima y presupuestos. Responde siempre en español, de forma amigable y profesional. Usa emojis apropiados para hacer tus respuestas más visuales. Incluye siempre estimaciones de precios en pesos mexicanos (MXN) cuando sea relevante.`;
+  const SYSTEM_PROMPT = `Eres un asistente experto de agencia de viajes. Ayudas a cotizar viajes, recomendar destinos, crear itinerarios y responder dudas sobre visas, clima y presupuestos. Responde siempre en español, de forma amigable y profesional. Usa emojis apropiados. Incluye siempre estimaciones de precios en pesos mexicanos (MXN) cuando sea relevante.`;
 
-  const conversationHistory = [];
-  const isDemoMode = ANTHROPIC_API_KEY === 'DEMO_KEY';
+  let apiKey = sessionStorage.getItem('travelai_api_key') || null;
+  let isDemoMode = !apiKey;
+  let conversationHistory = JSON.parse(sessionStorage.getItem('travelai_chat_history') || '[]');
+  let isSending = false;
 
-  /* ── DEMO RESPONSES ── */
-  const demoResponses = {
-    cancun: `¡Excelente elección! ✈️ **Cancún** es uno de los destinos más populares de México.
-
-**Cotización estimada para 2 personas (7 noches):**
-
-🏨 **Hotel todo incluido 4⭐:** $28,000–$45,000 MXN
-✈️ **Vuelos CDMX–Cancún (ida y vuelta):** $6,000–$12,000 MXN por persona
-🎯 **Actividades:** $5,000–$10,000 MXN
-
-**Total estimado: $45,000–$79,000 MXN**
-
-📅 La mejor época para visitar es de noviembre a abril (temporada seca).
-
-¿Te gustaría que generara un itinerario completo día a día o prefieres ver opciones de hoteles específicos?`,
-
-    luna_de_miel: `¡Qué emocionante! 💑 Con $80,000 MXN tengo excelentes opciones para luna de miel:
-
-**Opción 1: Riviera Maya 🏖️**
-Todo incluido 5⭐ en Tulum + cenotes + cena romántica
-*Precio: $65,000–$75,000 MXN para 2 personas (7 noches)*
-
-**Opción 2: Cartagena, Colombia 🇨🇴**
-Hotel boutique colonial + city tour + isla privada
-*Precio: $60,000–$78,000 MXN para 2 personas (6 noches)*
-
-**Opción 3: Bali, Indonesia 🌺**
-Villa privada con piscina + templos + SPA
-*Precio: $75,000–$80,000 MXN para 2 personas (8 noches)*
-
-¿Cuál destino les llama más la atención? Puedo personalizar el itinerario completo con experiencias románticas incluidas 🌙`,
-
-    visa: `¡Claro! Te explico lo que necesitas para Europa desde México 🛂
-
-**Países de la Unión Europea / Zona Schengen:**
-Los mexicanos pueden **entrar sin visa** hasta 90 días para turismo.
-
-✅ **Solo necesitas:**
-- Pasaporte vigente (mínimo 6 meses de validez)
-- Seguro de viaje internacional
-- Reservas de hotel
-- Vuelos de ida y vuelta
-- Fondos suficientes (~€50–100/día)
-
-⚠️ **Excepción:** El Reino Unido (UK) sí requiere Electronic Travel Authorization (ETA) desde 2024. Costo: £10.
-
-🆕 **Importante:** Desde 2025 aplica el ETIAS (Sistema de Información y Autorización de Viaje), similar al ESTA de USA. Trámite online, costo ~€7.
-
-¿A qué países específicos de Europa planeas ir? Te puedo dar información más detallada según tu ruta.`,
-
-    japon: `¡Japón es increíble! 🗾 Aquí tu itinerario de 7 días:
-
-**Día 1: Llegada a Tokio**
-🏙️ Shinjuku, Akihabara, cena en izakaya local
-
-**Día 2: Tokio**
-⛩️ Templo Senso-ji, Harajuku, Shibuya Crossing
-
-**Día 3: Nikko → Tokio**
-🏔️ Santuarios UNESCO, cataratas Kegon
-
-**Día 4: Tokio → Kioto (Shinkansen)**
-🍵 Fushimi Inari, Gion, Cena kaiseki
-
-**Día 5: Kioto**
-🏯 Arashiyama, Pabellón Dorado, Nishiki Market
-
-**Día 6: Kioto → Osaka**
-🌸 Castillo de Osaka, Dotonbori, takoyaki y ramen
-
-**Día 7: Osaka → Vuelo de regreso**
-🛍️ Última compra en Den Den Town
-
-**💰 Presupuesto estimado (2 personas):**
-- Vuelos: $30,000–$50,000 MXN
-- Hoteles (7 noches): $18,000–$35,000 MXN
-- Comidas + actividades: $12,000–$20,000 MXN
-- **Total: $60,000–$105,000 MXN**
-
-¿Te genero el itinerario completo con reservaciones incluidas?`,
-
-    default: `¡Hola! Soy tu asistente de viajes IA 🌍✈️
-
-Estoy aquí para ayudarte con:
-- 💰 **Cotizaciones** personalizadas según tu presupuesto
-- 🗺️ **Itinerarios** día a día para cualquier destino
-- 🛂 **Información de visas** y requisitos de viaje
-- 🌤️ **Mejor época** para visitar cada destino
-- 🏨 **Recomendaciones** de hoteles y actividades
-
-¿A dónde quieres viajar? Cuéntame tu sueño de viaje y lo hacemos realidad. 😊`
-  };
-
-  function getDemoResponse(msg) {
-    const m = msg.toLowerCase();
-    if (m.includes('cancún') || m.includes('cancun')) return demoResponses.cancun;
-    if (m.includes('luna de miel') || m.includes('honeymoon') || m.includes('$80')) return demoResponses.luna_de_miel;
-    if (m.includes('visa') || m.includes('europa') || m.includes('europe')) return demoResponses.visa;
-    if (m.includes('japón') || m.includes('japon') || m.includes('japan')) return demoResponses.japon;
-    return demoResponses.default;
-  }
-
-  /* ── UI ── */
+  /* ── SIDEBAR ── */
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('open');
   }
 
+  /* ── API KEY ── */
+  function openApiKeyModal() {
+    document.getElementById('apikey-modal').classList.add('open');
+    document.getElementById('apikey-input').value = apiKey || '';
+    setTimeout(() => document.getElementById('apikey-input').focus(), 100);
+  }
+
+  function saveApiKey() {
+    const val = document.getElementById('apikey-input').value.trim();
+    if (!val) return;
+    apiKey = val;
+    isDemoMode = false;
+    sessionStorage.setItem('travelai_api_key', apiKey);
+    document.getElementById('apikey-modal').classList.remove('open');
+    updateLockIndicator();
+    appendSystem('✅ API Key activada. La IA está lista para responder en tiempo real.');
+  }
+
+  function useDemoMode() {
+    isDemoMode = true;
+    apiKey = null;
+    document.getElementById('apikey-modal').classList.remove('open');
+    updateLockIndicator();
+  }
+
+  function updateLockIndicator() {
+    const el = document.getElementById('lock-indicator');
+    if (!isDemoMode && apiKey) {
+      el.className = 'lock-indicator locked';
+      el.textContent = '🔓 API Key activa';
+    } else {
+      el.className = 'lock-indicator unlocked';
+      el.textContent = '🔒 Sin API Key';
+    }
+  }
+
+  /* ── CHAT UTILS ── */
   function getTime() {
     return new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
   }
 
-  function appendMessage(role, content) {
+  function removeIntro() {
     const intro = document.getElementById('chat-intro');
     if (intro) intro.remove();
+  }
 
+  function appendMessage(role, content, isError = false) {
+    removeIntro();
     const container = document.getElementById('chat-container');
     const isUser = role === 'user';
-
     const msgEl = document.createElement('div');
     msgEl.className = `message ${isUser ? 'user' : 'bot'}`;
 
-    const formattedContent = content
+    const formatted = content
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/\n/g, '<br>');
 
     msgEl.innerHTML = `
       <div class="msg-avatar">${isUser ? '👤' : '🤖'}</div>
-      <div>
-        <div class="msg-bubble">${formattedContent}</div>
+      <div class="msg-wrap">
+        <div class="msg-bubble${isError ? ' error-bubble' : ''}">${formatted}</div>
         <div class="msg-time">${getTime()}</div>
       </div>
     `;
-
     container.appendChild(msgEl);
     container.scrollTop = container.scrollHeight;
   }
 
-  function showTyping() {
+  function appendSystem(text) {
+    removeIntro();
     const container = document.getElementById('chat-container');
-    const typingEl = document.createElement('div');
-    typingEl.className = 'message bot';
-    typingEl.id = 'typing-indicator';
-    typingEl.innerHTML = `
+    const el = document.createElement('div');
+    el.style.cssText = 'text-align:center;font-size:12px;color:var(--text-muted);padding:4px;';
+    el.textContent = text;
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function showTyping() {
+    removeIntro();
+    const container = document.getElementById('chat-container');
+    const el = document.createElement('div');
+    el.className = 'message bot';
+    el.id = 'typing-indicator';
+    el.innerHTML = `
       <div class="msg-avatar">🤖</div>
       <div class="msg-bubble">
-        <div class="typing">
-          <span></span><span></span><span></span>
-        </div>
+        <div class="typing-bubble"><span></span><span></span><span></span></div>
       </div>
     `;
-    container.appendChild(typingEl);
+    container.appendChild(el);
     container.scrollTop = container.scrollHeight;
   }
 
@@ -489,7 +480,31 @@ Estoy aquí para ayudarte con:
     if (el) el.remove();
   }
 
+  function saveHistory() {
+    sessionStorage.setItem('travelai_chat_history', JSON.stringify(conversationHistory.slice(-20)));
+  }
+
+  /* ── DEMO RESPONSES ── */
+  const demoMap = [
+    { keywords: ['cancún','cancun'], response: `¡Excelente elección! ✈️ **Cancún** es uno de los destinos más populares de México.\n\n**Cotización para 2 personas (7 noches):**\n\n🏨 Hotel todo incluido 4⭐: $28,000–$45,000 MXN\n✈️ Vuelos ida y vuelta: $6,000–$12,000 por persona\n🎯 Actividades y tours: $5,000–$10,000\n\n**Total estimado: $45,000–$79,000 MXN**\n\n📅 Mejor época: noviembre–abril (temporada seca).\n\n¿Te genero un itinerario completo día a día?` },
+    { keywords: ['luna de miel','honeymoon','romántico','romantico'], response: `¡Qué emocionante! 💑 Con $80,000 MXN tengo excelentes opciones:\n\n**Opción 1: Riviera Maya 🏖️**\nTodo incluido 5⭐ + cenotes + cena romántica\n*$65,000–$75,000 MXN (7 noches, 2 pax)*\n\n**Opción 2: Cartagena, Colombia 🇨🇴**\nHotel boutique + isla privada\n*$60,000–$78,000 MXN (6 noches, 2 pax)*\n\n**Opción 3: Bali, Indonesia 🌺**\nVilla privada con piscina + SPA\n*$75,000–$80,000 MXN (8 noches, 2 pax)*\n\n¿Cuál les interesa? Personalizo el itinerario completo 🌙` },
+    { keywords: ['visa','visas','europa','europe'], response: `¡Claro! México → Europa 🛂\n\n**Zona Schengen:** Los mexicanos entran **sin visa** hasta 90 días.\n\n✅ **Necesitas:**\n- Pasaporte vigente (mínimo 6 meses)\n- Seguro de viaje internacional\n- Reservas de hotel y vuelo\n- Fondos suficientes (~€50–100/día)\n\n⚠️ **UK:** Requiere ETA desde 2024 (~£10).\n\n🆕 **ETIAS desde 2025:** Trámite online ~€7, similar al ESTA de USA.\n\n¿A qué países vas? Te doy info específica de tu ruta.` },
+    { keywords: ['japón','japon','japan'], response: `¡Japón es increíble! 🗾 Itinerario express 7 días:\n\n**Día 1–3: Tokio 🏙️**\nSenso-ji, Harajuku, Shibuya Crossing, Akihabara\n\n**Día 4: Nikko ⛩️**\nSantuarios UNESCO + Cataratas Kegon\n\n**Día 5–6: Kioto → Osaka 🏯**\nFushimi Inari, Arashiyama, Dotonbori\n\n**Día 7: Vuelo de regreso ✈️**\n\n**💰 Presupuesto (2 personas):**\n- Vuelos: $30,000–$50,000 MXN\n- Hoteles 7 noches: $18,000–$35,000\n- Comidas + tours: $12,000–$20,000\n- **Total: $60,000–$105,000 MXN**\n\n¿Genero el itinerario completo con reservaciones?` },
+    { keywords: ['recomienda','recomiendas','destino','donde ir'], response: `¡Con gusto! 🌍 Los mejores destinos ahora mismo:\n\n**🏖️ Playa:**\nCancún, Tulum, Huatulco, Los Cabos\n\n**🏛️ Cultura:**\nOaxaca, CDMX, Guanajuato, Mérida\n\n**🌍 Internacional:**\nEuropa, Japón, Colombia, Perú\n\n**💑 Luna de miel:**\nBali, Maldivas, Riviera Maya, Italia\n\n¿Tienes fechas y presupuesto en mente? Con eso te armo una recomendación personalizada.` },
+    { keywords: ['itinerario','viaje en'], response: `¡Por supuesto! Para crear tu itinerario necesito:\n\n1. 📍 **Destino** — ¿A dónde quieres ir?\n2. 📅 **Fechas** — ¿Cuándo y por cuántos días?\n3. 👥 **Personas** — ¿Cuántos viajan?\n4. 💰 **Presupuesto** — ¿Tienes un rango?\n5. 🎯 **Tipo de viaje** — ¿Playa, cultura, aventura?\n\nCon esos datos te genero un itinerario detallado día por día con hoteles, actividades y tips. 🗺️` },
+  ];
+
+  function getDemoResponse(msg) {
+    const m = msg.toLowerCase();
+    for (const item of demoMap) {
+      if (item.keywords.some(k => m.includes(k))) return item.response;
+    }
+    return `¡Hola! Soy tu asistente de viajes 🌍✈️\n\nEstoy aquí para ayudarte con:\n- 💰 Cotizaciones personalizadas\n- 🗺️ Itinerarios día a día\n- 🛂 Info de visas y requisitos\n- 🌤️ Mejor época para visitar\n- 🏨 Recomendaciones de hoteles\n\n¿A dónde quieres viajar? Cuéntame tu sueño y lo hacemos realidad. 😊`;
+  }
+
+  /* ── SEND MESSAGE ── */
   async function sendMessage() {
+    if (isSending) return;
     const input = document.getElementById('chat-input');
     const sendBtn = document.getElementById('send-btn');
     const text = input.value.trim();
@@ -498,52 +513,65 @@ Estoy aquí para ayudarte con:
     input.value = '';
     input.style.height = 'auto';
     sendBtn.disabled = true;
+    isSending = true;
 
     appendMessage('user', text);
     conversationHistory.push({ role: 'user', content: text });
+    saveHistory();
 
     showTyping();
 
-    if (isDemoMode) {
-      await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
+    let response = '';
+
+    if (isDemoMode || !apiKey) {
+      await new Promise(r => setTimeout(r, 1000 + Math.random() * 800));
       removeTyping();
-      const response = getDemoResponse(text);
+      response = getDemoResponse(text);
       appendMessage('bot', response);
-      conversationHistory.push({ role: 'assistant', content: response });
     } else {
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch(TRAVELAI_CONFIG.apiEndpoint, {
           method: 'POST',
           headers: {
-            'x-api-key': ANTHROPIC_API_KEY,
+            'x-api-key': apiKey,
             'anthropic-version': '2023-06-01',
             'content-type': 'application/json',
             'anthropic-dangerous-direct-browser-access': 'true',
           },
           body: JSON.stringify({
-            model: MODEL,
-            max_tokens: 1024,
+            model: TRAVELAI_CONFIG.model,
+            max_tokens: TRAVELAI_CONFIG.maxTokens,
             system: SYSTEM_PROMPT,
             messages: conversationHistory,
           }),
         });
 
-        const data = await res.json();
         removeTyping();
 
-        if (data.content && data.content[0]) {
-          const response = data.content[0].text;
-          appendMessage('bot', response);
-          conversationHistory.push({ role: 'assistant', content: response });
-        } else {
-          appendMessage('bot', 'Lo siento, hubo un error. Por favor intenta de nuevo.');
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const msg = err.error?.message || `HTTP ${res.status}`;
+          appendMessage('bot', `Error de conexión. Verifica tu API Key.\n\nDetalle: ${msg}`, true);
+          isSending = false;
+          sendBtn.disabled = false;
+          return;
         }
-      } catch {
+
+        const data = await res.json();
+        response = data.content?.[0]?.text || 'Respuesta vacía del servidor.';
+        appendMessage('bot', response);
+      } catch (e) {
         removeTyping();
-        appendMessage('bot', 'Error de conexión. Verifica tu API key y vuelve a intentar.');
+        appendMessage('bot', 'Error de conexión. Verifica tu API Key y que tengas acceso a internet.', true);
+        isSending = false;
+        sendBtn.disabled = false;
+        return;
       }
     }
 
+    conversationHistory.push({ role: 'assistant', content: response });
+    saveHistory();
+    isSending = false;
     sendBtn.disabled = false;
     input.focus();
   }
@@ -553,20 +581,39 @@ Estoy aquí para ayudarte con:
     sendMessage();
   }
 
-  /* ── AUTO-RESIZE & ENTER ── */
+  /* ── INPUT AUTO-RESIZE & ENTER ── */
   const chatInput = document.getElementById('chat-input');
-
   chatInput.addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
   });
-
   chatInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
+
+  document.getElementById('apikey-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveApiKey();
+  });
+
+  /* ── INIT ── */
+  function init() {
+    updateLockIndicator();
+
+    // Restore history
+    if (conversationHistory.length > 0) {
+      document.getElementById('chat-intro')?.remove();
+      conversationHistory.forEach(m => {
+        appendMessage(m.role, m.content);
+      });
+    }
+
+    // Show API key modal if no key stored
+    if (!apiKey) {
+      setTimeout(() => openApiKeyModal(), 400);
+    }
+  }
+
+  init();
 </script>
 </body>
 </html>
