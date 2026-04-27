@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propuesta Comercial — TravelAI Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,0.07);--bdr-c:rgba(6,182,212,0.3);--c:#06b6d4;--cd:rgba(6,182,212,0.1);--b:#3b82f6;--p:#6366f1;--g:#10b981;--a:#f59e0b;--r:#ef4444;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* SCREEN NAV */
+    .screen-nav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .snav-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px}
+    .snav-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .snav-sq span{color:var(--c)}
+    .snav-links{display:flex;gap:8px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+    .btn-g{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--t2)}
+    .btn-g:hover{background:rgba(255,255,255,.09);color:var(--t)}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);padding:6px 12px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back-link:hover{color:var(--c);border-color:var(--bdr-c)}
+
+    /* AGENCY INPUT */
+    .agency-bar{background:rgba(6,182,212,.06);border-bottom:1px solid var(--bdr-c);padding:12px 32px;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--t2)}
+    .agency-input{background:rgba(255,255,255,.06);border:1px solid var(--bdr-c);border-radius:8px;padding:7px 14px;color:var(--t);font-family:var(--fh);font-size:15px;font-weight:600;outline:none;min-width:280px;transition:border-color .2s}
+    .agency-input:focus{border-color:var(--c)}
+
+    /* DOCUMENT */
+    .doc{max-width:860px;margin:40px auto;background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;overflow:hidden}
+
+    /* HEADER */
+    .doc-header{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border-bottom:1px solid var(--bdr);padding:40px 48px}
+    .dh-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+    .dh-logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:700;font-size:20px}
+    .dh-sq{width:44px;height:44px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px}
+    .dh-sq span{color:var(--c)}
+    .dh-meta{text-align:right;font-size:13px;color:var(--t2);line-height:1.8}
+    .dh-meta strong{color:var(--t)}
+    .dh-title{font-size:clamp(22px,3vw,32px);font-weight:800;margin-bottom:6px}
+    .dh-sub{font-size:15px;color:var(--t2)}
+    .dh-to{display:flex;align-items:center;gap:12px;margin-top:20px;background:rgba(6,182,212,.06);border:1px solid var(--bdr-c);border-radius:10px;padding:14px 20px}
+    .dh-to-lbl{font-size:12px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+    .dh-to-val{font-family:var(--fh);font-size:17px;font-weight:700;color:var(--c)}
+
+    /* BODY */
+    .doc-body{padding:40px 48px}
+    .section{margin-bottom:36px}
+    .section h2{font-size:18px;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px}
+    .section h2 .icon{width:32px;height:32px;border-radius:8px;background:var(--cd);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+    .section p{font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:10px}
+
+    /* MODULE TABLE */
+    .mod-table{width:100%;border-collapse:collapse;font-size:14px}
+    .mod-table th{text-align:left;padding:10px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.02)}
+    .mod-table td{padding:12px 16px;border-bottom:1px solid var(--bdr);color:var(--t2)}
+    .mod-table tr:last-child td{border-bottom:none}
+    .mod-table tr:hover td{background:rgba(255,255,255,.02);color:var(--t)}
+    .ck{color:var(--g);font-weight:700}
+
+    /* PLAN CARDS */
+    .plan-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+    .pcard{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:20px;position:relative}
+    .pcard.pop{border-color:var(--c)}
+    .pcard .pt{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--c),var(--b));color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+    .pcard .pn{font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+    .pcard .pv{font-family:var(--fh);font-size:32px;font-weight:800;line-height:1;margin-bottom:2px}
+    .pcard .pv sup{font-size:15px;vertical-align:super}
+    .pcard .pv span{font-size:12px;font-weight:400;color:var(--t2)}
+    .pcard .pd{font-size:12px;color:var(--t2);margin-top:6px;padding-top:10px;border-top:1px solid var(--bdr)}
+
+    /* TIMELINE */
+    .timeline{display:flex;flex-direction:column;gap:0}
+    .tstep{display:flex;gap:16px;align-items:flex-start;position:relative;padding-bottom:20px}
+    .tstep:not(:last-child)::after{content:'';position:absolute;left:16px;top:36px;bottom:0;width:2px;background:linear-gradient(180deg,var(--c),transparent)}
+    .tnum{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--b));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:13px;flex-shrink:0}
+    .tcont h3{font-size:15px;font-weight:700;margin-bottom:3px}
+    .tcont p{font-size:13px;color:var(--t2);line-height:1.5}
+    .ttag{display:inline-block;margin-top:4px;background:var(--cd);border:1px solid var(--bdr-c);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--c);font-weight:600}
+
+    /* GUARANTEES */
+    .guar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .guar{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;text-align:center}
+    .guar .gi{font-size:26px;margin-bottom:8px}
+    .guar h4{font-size:14px;font-weight:700;margin-bottom:4px}
+    .guar p{font-size:12px;color:var(--t2);line-height:1.5}
+
+    /* SIGNATURE */
+    .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+    .sig-box{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:20px}
+    .sig-box .sl{font-size:12px;color:var(--t3);margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em}
+    .sig-line{border-bottom:1px solid var(--bdr);margin-bottom:8px;height:32px}
+    .sig-box .sn{font-size:13px;color:var(--t2)}
+
+    /* DOC FOOTER */
+    .doc-footer{background:var(--bg3);border-top:1px solid var(--bdr);padding:20px 48px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--t3)}
+    .doc-footer strong{color:var(--c)}
+
+    /* PRINT */
+    @media print{
+      .screen-nav,.agency-bar{display:none!important}
+      body{background:#fff;color:#000}
+      .doc{border:none;border-radius:0;margin:0;max-width:100%;box-shadow:none}
+      .doc-header{background:linear-gradient(135deg,#e0f7fa,#e3f2fd);border-bottom:1px solid #e0e0e0;-webkit-print-color-adjust:exact}
+      .doc-body{background:#fff;color:#000}
+      h2,h3,h4{color:#1a1a2e}
+      p,.tcont p,.guar p,.pcard .pd,.sig-box .sn{color:#555}
+      .dh-title,.dh-to-val{color:#06b6d4}
+      .plan-cards,.guar-grid,.sig-grid{break-inside:avoid}
+      .pcard.pop{border-color:#06b6d4}
+      .ck{color:#10b981}
+      .doc-footer{background:#f5f5f5;color:#666;border-top:1px solid #e0e0e0}
+    }
+    @media(max-width:768px){.doc-body,.doc-header{padding:24px 20px}.plan-cards,.guar-grid,.sig-grid{grid-template-columns:1fr}.dh-top{flex-direction:column;gap:12px}.dh-meta{text-align:left}.agency-bar{flex-direction:column;align-items:flex-start}.doc-footer{flex-direction:column;gap:4px;text-align:center}}
+  </style>
+</head>
+<body>
+
+<div class="screen-nav">
+  <div class="snav-logo"><div class="snav-sq">✈️</div>Travel<span style="color:var(--c)">AI</span></div>
+  <div class="snav-links">
+    <a href="../index.html" class="back-link">← Inicio</a>
+    <a href="pitch.html" class="back-link">Presentación</a>
+    <a href="../app/dashboard.html" class="btn btn-g">Demo →</a>
+  </div>
+  <button class="btn btn-p" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+</div>
+
+<div class="agency-bar">
+  <label for="agencyName" style="font-weight:600;color:var(--t)">Dirigida a:</label>
+  <input type="text" id="agencyName" class="agency-input" placeholder="Nombre de la Agencia" oninput="updateAgency(this.value)">
+  <span>· Personaliza el nombre antes de imprimir</span>
+</div>
+
+<div style="padding:24px">
+<div class="doc">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="dh-top">
+      <div>
+        <div class="dh-logo"><div class="dh-sq">✈️</div>Travel<span style="color:var(--c)">AI</span> Platform</div>
+      </div>
+      <div class="dh-meta">
+        <div>Fecha: <strong id="docDate"></strong></div>
+        <div>Vigencia: 30 días</div>
+        <div>Ref: TravelAI-2025-001</div>
+      </div>
+    </div>
+    <div class="dh-title">Propuesta Comercial</div>
+    <div class="dh-sub">Automatización con IA para agencias de viajes</div>
+    <div class="dh-to">
+      <div>
+        <div class="dh-to-lbl">Dirigida a</div>
+        <div class="dh-to-val" id="agencyDisplay">[Nombre de la Agencia]</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="doc-body">
+
+    <!-- RESUMEN EJECUTIVO -->
+    <div class="section">
+      <h2><span class="icon">📋</span> Resumen ejecutivo</h2>
+      <p>TravelAI Platform es una solución de automatización con inteligencia artificial diseñada específicamente para agencias de viajes que buscan aumentar su capacidad operativa sin incrementar su nómina. La plataforma integra un chatbot omnicanal, un generador de itinerarios, un CRM inteligente y un dashboard de control — todo en una sola herramienta.</p>
+      <p>Las agencias que implementan TravelAI reportan una reducción del 89% en tiempo de respuesta al cliente, triplicando el número de cotizaciones diarias por agente. La implementación completa toma 48 horas y no requiere conocimientos técnicos por parte del equipo.</p>
+    </div>
+
+    <!-- MÓDULOS -->
+    <div class="section">
+      <h2><span class="icon">⚙️</span> Módulos incluidos</h2>
+      <table class="mod-table">
+        <thead><tr><th>Módulo</th><th>Descripción</th><th>Beneficio clave</th><th>Incluido</th></tr></thead>
+        <tbody>
+          <tr><td><strong>💬 Chatbot IA Omnicanal</strong></td><td>Responde WhatsApp, Web e Instagram 24/7 con IA</td><td>-89% tiempo de respuesta</td><td><span class="ck">✓</span></td></tr>
+          <tr><td><strong>🗺️ Generador de Itinerarios</strong></td><td>Crea cotizaciones completas en segundos con PDF</td><td>45 min → 30 segundos</td><td><span class="ck">✓</span></td></tr>
+          <tr><td><strong>👥 CRM Inteligente</strong></td><td>Kanban visual con scoring automático de leads</td><td>+34% tasa de cierre</td><td><span class="ck">✓</span></td></tr>
+          <tr><td><strong>📊 Dashboard de Control</strong></td><td>Métricas en tiempo real y reportes semanales</td><td>Decisiones basadas en datos</td><td><span class="ck">✓</span></td></tr>
+          <tr><td><strong>📱 WhatsApp Business API</strong></td><td>Integración oficial con tu número de negocio</td><td>Sin cambios para tus clientes</td><td><span class="ck">✓</span></td></tr>
+          <tr><td><strong>🎓 Onboarding y capacitación</strong></td><td>Acompañamiento completo en la implementación</td><td>Sistema listo en 48 hrs</td><td><span class="ck">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- INVERSIÓN -->
+    <div class="section">
+      <h2><span class="icon">💎</span> Inversión</h2>
+      <p>Elige el plan que mejor se adapta al tamaño y necesidades de tu agencia. Todos incluyen 14 días de prueba gratis.</p>
+      <div class="plan-cards">
+        <div class="pcard">
+          <div class="pn">Starter</div>
+          <div class="pv"><sup>$</sup>299<span> USD/mes</span></div>
+          <div class="pd">Hasta 5 agentes · 500 consultas/mes · 1 canal · Soporte email</div>
+        </div>
+        <div class="pcard pop">
+          <div class="pt">⭐ Recomendado</div>
+          <div class="pn">Professional</div>
+          <div class="pv"><sup>$</sup>599<span> USD/mes</span></div>
+          <div class="pd">Hasta 20 agentes · Ilimitado · Todos los canales · Soporte 24/7 · Reportes automáticos</div>
+        </div>
+        <div class="pcard">
+          <div class="pn">Enterprise</div>
+          <div class="pv"><sup>$</sup>1,200<span> USD/mes</span></div>
+          <div class="pd">Ilimitado · Multi-sucursal · API propia · Soporte dedicado + SLA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="section">
+      <h2><span class="icon">🚀</span> Implementación en 48 horas</h2>
+      <div class="timeline">
+        <div class="tstep"><div class="tnum">1</div><div class="tcont"><h3>Contrato y acceso inicial</h3><p>Recibes acceso a tu panel y nuestro equipo se comunica para iniciar el proceso.</p><div class="ttag">Hora 0</div></div></div>
+        <div class="tstep"><div class="tnum">2</div><div class="tcont"><h3>Configuración con el perfil de tu agencia</h3><p>Destinos, precios, políticas, tono de comunicación y estilo de marca.</p><div class="ttag">Horas 1–8</div></div></div>
+        <div class="tstep"><div class="tnum">3</div><div class="tcont"><h3>Conexión de canales y pruebas</h3><p>WhatsApp Business, chat web e Instagram. Pruebas de funcionamiento y ajustes finos.</p><div class="ttag">Horas 8–24</div></div></div>
+        <div class="tstep"><div class="tnum">4</div><div class="tcont"><h3>Sistema activo con clientes reales</h3><p>Monitoreo en tiempo real las primeras 72 horas. Soporte disponible para cualquier ajuste.</p><div class="ttag">✅ Horas 24–48</div></div></div>
+      </div>
+    </div>
+
+    <!-- GARANTÍAS -->
+    <div class="section">
+      <h2><span class="icon">🛡️</span> Garantías</h2>
+      <div class="guar-grid">
+        <div class="guar"><div class="gi">🆓</div><h4>14 días gratis</h4><p>Prueba sin compromiso. Sin tarjeta de crédito requerida.</p></div>
+        <div class="guar"><div class="gi">🔓</div><h4>Sin contrato anual</h4><p>Mes a mes. Cancela cuando quieras sin penalización.</p></div>
+        <div class="guar"><div class="gi">🎯</div><h4>Soporte incluido</h4><p>Acompañamiento completo durante toda la implementación y más allá.</p></div>
+      </div>
+    </div>
+
+    <!-- FIRMA -->
+    <div class="section">
+      <h2><span class="icon">✍️</span> Autorización</h2>
+      <div class="sig-grid">
+        <div class="sig-box">
+          <div class="sl">Por TravelAI Platform</div>
+          <div class="sig-line"></div>
+          <div class="sn">Firma y nombre del representante</div>
+        </div>
+        <div class="sig-box">
+          <div class="sl">Por <span id="agencySig">[Nombre de la Agencia]</span></div>
+          <div class="sig-line"></div>
+          <div class="sn">Firma, nombre y cargo del representante</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end doc-body -->
+
+  <div class="doc-footer">
+    <span>TravelAI Platform · <strong>hola@travelai.mx</strong> · travelai.mx</span>
+    <span>Esta propuesta es válida por 30 días a partir de la fecha de emisión.</span>
+  </div>
+
+</div><!-- end doc -->
+</div><!-- end padding -->
+
+<script>
+  const d=new Date();
+  document.getElementById('docDate').textContent=d.toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  function updateAgency(v){
+    const val=v||'[Nombre de la Agencia]';
+    document.getElementById('agencyDisplay').textContent=val;
+    document.getElementById('agencySig').textContent=val;
+  }
+</script>
+</body>
+</html>

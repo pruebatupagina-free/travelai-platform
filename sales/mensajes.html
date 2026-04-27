@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensajes de Prospección — TravelAI Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,0.07);--bdr-c:rgba(6,182,212,0.3);--c:#06b6d4;--cd:rgba(6,182,212,0.1);--b:#3b82f6;--bd:rgba(59,130,246,0.1);--p:#6366f1;--g:#10b981;--a:#f59e0b;--r:#ef4444;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;min-height:100vh}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100}
+    .tn-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px}
+    .tn-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--t2);padding:6px 12px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back:hover{color:var(--c);border-color:var(--bdr-c)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+
+    /* AGENCY INPUT BAR */
+    .agency-bar{background:rgba(6,182,212,.06);border-bottom:1px solid var(--bdr-c);padding:12px 32px;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--t2);flex-wrap:wrap}
+    .ai{background:rgba(255,255,255,.06);border:1px solid var(--bdr-c);border-radius:8px;padding:7px 14px;color:var(--t);font-family:var(--fh);font-size:15px;font-weight:600;outline:none;min-width:240px;transition:border-color .2s}
+    .ai:focus{border-color:var(--c)}
+    .ai-note{font-size:12px;color:var(--t3)}
+
+    /* CONTENT */
+    .content{max-width:960px;margin:0 auto;padding:32px 24px}
+    .page-title{font-size:clamp(24px,3vw,36px);font-weight:800;margin-bottom:6px}
+    .page-sub{font-size:15px;color:var(--t2);margin-bottom:36px}
+
+    /* TABS */
+    .tabs{display:flex;gap:4px;margin-bottom:28px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--bdr);width:fit-content}
+    .tab{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s}
+    .tab.on{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .tab-content{display:none}
+    .tab-content.on{display:block}
+
+    /* MSG CARD */
+    .msg-section{margin-bottom:32px}
+    .msg-section-title{font-size:14px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .msg-section-title .dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
+    .msg-variants{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+    .msg-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;transition:border-color .2s}
+    .msg-card:hover{border-color:var(--bdr-c)}
+    .mc-header{padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+    .mc-tag{font-size:11px;font-weight:700;color:var(--c);text-transform:uppercase;letter-spacing:.06em;background:var(--cd);padding:2px 8px;border-radius:20px}
+    .mc-angle{font-size:12px;color:var(--t2)}
+    .mc-body{padding:16px}
+    .mc-subject{font-size:11px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+    .mc-text{font-size:14px;color:var(--t2);line-height:1.7;white-space:pre-line}
+    .mc-text .hl{color:var(--c);font-weight:600}
+    .mc-text .var{color:var(--a);background:rgba(245,158,11,.1);padding:0 4px;border-radius:4px;font-size:13px}
+    .mc-footer{padding:10px 16px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end}
+    .copy-btn{background:var(--cd);border:1px solid var(--bdr-c);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--c);cursor:pointer;font-weight:600;transition:all .2s;font-family:var(--fb)}
+    .copy-btn:hover{background:var(--c);color:#fff}
+    .copied{background:rgba(16,185,129,.15)!important;border-color:rgba(16,185,129,.4)!important;color:var(--g)!important}
+
+    /* SINGLE MSG CARD */
+    .single-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;margin-bottom:14px;overflow:hidden;transition:border-color .2s}
+    .single-card:hover{border-color:var(--bdr-c)}
+    .sc-header{padding:12px 20px;background:var(--bg3);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+    .sc-day{font-family:var(--fh);font-size:14px;font-weight:700}
+    .sc-tag{font-size:11px;color:var(--t2)}
+    .sc-body{padding:18px 20px}
+    .sc-text{font-size:14px;color:var(--t2);line-height:1.75;white-space:pre-line}
+    .sc-text .var{color:var(--a);background:rgba(245,158,11,.1);padding:0 4px;border-radius:4px;font-size:13px}
+    .sc-footer{padding:10px 20px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end}
+
+    /* URGENCY CARD */
+    .urgency-card{background:linear-gradient(135deg,rgba(239,68,68,.06),rgba(245,158,11,.06));border:1px solid rgba(239,68,68,.25);border-radius:12px;overflow:hidden}
+    .urgency-card .sc-header{background:rgba(239,68,68,.08);border-bottom-color:rgba(239,68,68,.2)}
+    .urgency-card .sc-day{color:#ef4444}
+
+    /* LEGEND */
+    .legend{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:13px;color:var(--t2);display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .legend-item{display:flex;align-items:center;gap:6px}
+    .legend-var{color:var(--a);background:rgba(245,158,11,.1);padding:0 6px;border-radius:4px}
+
+    @media(max-width:768px){.topnav{flex-wrap:wrap}.content{padding:20px 16px}.msg-variants{grid-template-columns:1fr}.tabs{flex-wrap:wrap}.agency-bar{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-logo"><div class="tn-sq">✈️</div>Travel<span style="color:var(--c)">AI</span> — Mensajes</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a href="../index.html" class="back">← Inicio</a>
+    <a href="script-ventas.html" class="back">Script de Ventas</a>
+    <a href="../app/dashboard.html" class="btn btn-p">Demo →</a>
+  </div>
+</div>
+
+<div class="agency-bar">
+  <span style="font-weight:600;color:var(--t)">Nombre de la agencia:</span>
+  <input type="text" class="ai" id="agName" placeholder="ej: Viajes del Sol" oninput="updateVars()">
+  <span style="font-weight:600;color:var(--t);margin-left:8px">Contacto:</span>
+  <input type="text" class="ai" id="contactName" placeholder="ej: Claudia" style="min-width:160px" oninput="updateVars()">
+  <div class="ai-note">💡 Escribe los datos para personalizar todos los mensajes automáticamente</div>
+</div>
+
+<div class="content">
+  <h1 class="page-title">Mensajes de Prospección</h1>
+  <p class="page-sub">Plantillas listas para copiar. Personaliza con los datos de la agencia y copia con un clic.</p>
+
+  <div class="legend">
+    <span>Variables en los mensajes:</span>
+    <div class="legend-item"><span class="legend-var">[NOMBRE_AGENCIA]</span><span>→ Nombre de la agencia</span></div>
+    <div class="legend-item"><span class="legend-var">[CONTACTO]</span><span>→ Nombre del contacto</span></div>
+    <div class="legend-item"><span class="legend-var">[LINK]</span><span>→ https://pruebatupagina-free.github.io/travelai-platform/</span></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="showTab('wa')">📱 WhatsApp frío</div>
+    <div class="tab" onclick="showTab('email')">📧 Email frío</div>
+    <div class="tab" onclick="showTab('seguimiento')">🔄 Seguimiento</div>
+    <div class="tab" onclick="showTab('urgencia')">🔥 Urgencia</div>
+  </div>
+
+  <!-- WHATSAPP FRÍO -->
+  <div class="tab-content on" id="tab-wa">
+    <div class="msg-section">
+      <div class="msg-section-title"><div class="dot"></div>3 versiones A/B/C para pruebas</div>
+      <div class="msg-variants">
+
+        <div class="msg-card">
+          <div class="mc-header">
+            <div class="mc-tag">Versión A</div>
+            <div class="mc-angle">⏰ Ahorro de tiempo</div>
+          </div>
+          <div class="mc-body">
+            <div class="mc-text" id="wa-a">Hola <span class="var">[CONTACTO]</span> de <span class="hl"><span class="var">[NOMBRE_AGENCIA]</span></span> 👋
+
+Me llamo [Tu nombre] y trabajo con agencias de viajes como la tuya.
+
+Una pregunta rápida: ¿cuánto tiempo pierde tu equipo al día respondiendo las mismas preguntas de los clientes?
+
+Tengo algo que podría ahorrarte entre 2 y 3 horas diarias por agente — con IA.
+
+¿Te mando un video de 2 minutos? No toma nada de tu tiempo 😊</div>
+          </div>
+          <div class="mc-footer"><button class="copy-btn" onclick="copyCard(this,'wa-a')">📋 Copiar</button></div>
+        </div>
+
+        <div class="msg-card">
+          <div class="mc-header">
+            <div class="mc-tag">Versión B</div>
+            <div class="mc-angle">📈 Más ventas</div>
+          </div>
+          <div class="mc-body">
+            <div class="mc-text" id="wa-b">Hola <span class="var">[CONTACTO]</span> 🙌
+
+Vi que <span class="hl"><span class="var">[NOMBRE_AGENCIA]</span></span> tiene muy buena presencia. ¿Sabías que las agencias que responden en menos de 5 minutos cierran 3x más ventas?
+
+Tenemos una plataforma de IA que atiende tus consultas 24/7 y genera cotizaciones en 30 segundos.
+
+¿Tienes 10 minutos para que te muestre cómo funciona? 📲</div>
+          </div>
+          <div class="mc-footer"><button class="copy-btn" onclick="copyCard(this,'wa-b')">📋 Copiar</button></div>
+        </div>
+
+        <div class="msg-card">
+          <div class="mc-header">
+            <div class="mc-tag">Versión C</div>
+            <div class="mc-angle">🏆 Competencia</div>
+          </div>
+          <div class="mc-body">
+            <div class="mc-text" id="wa-c">Hola <span class="var">[CONTACTO]</span> de <span class="hl"><span class="var">[NOMBRE_AGENCIA]</span></span> 👋
+
+Dato curioso: el 68% de las consultas de viajes llegan fuera del horario laboral.
+
+Las agencias que ya usan IA para atender esas consultas están cerrando ventas mientras sus competidores duermen 😅
+
+¿Quieres ver cómo funciona? Te lo muestro en 10 minutos — completamente gratis.</div>
+          </div>
+          <div class="mc-footer"><button class="copy-btn" onclick="copyCard(this,'wa-c')">📋 Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL FRÍO -->
+  <div class="tab-content" id="tab-email">
+    <div class="msg-section">
+      <div class="msg-section-title"><div class="dot"></div>3 variantes de email con diferentes ángulos</div>
+
+      <div class="single-card">
+        <div class="sc-header">
+          <div class="sc-day">Email A — Ángulo: ROI / Tiempo</div>
+          <div class="sc-tag">Industria: todas las agencias</div>
+        </div>
+        <div class="sc-body">
+          <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:var(--t2)">
+            <strong style="color:var(--c)">Asunto:</strong> Tu agencia atiende 3x más clientes con esto (sin contratar)
+          </div>
+          <div class="sc-text" id="email-a">Hola <span class="var">[CONTACTO]</span>,
+
+Me llamo [Tu nombre] y ayudo a agencias de viajes a automatizar sus consultas y cotizaciones con IA.
+
+Fui a ver el perfil de <span class="var">[NOMBRE_AGENCIA]</span> y tiene potencial para crecer significativamente — el único cuello de botella es el tiempo que el equipo gasta en tareas repetitivas.
+
+Lo que hacemos: tu chatbot IA atiende consultas 24/7 en WhatsApp y tu web. Genera itinerarios completos en 30 segundos. Tu equipo solo cierra ventas.
+
+Resultado típico: 3x más cotizaciones por agente al día, sin contratar a nadie.
+
+¿Tienes 10 minutos para que te lo muestre en video? No requiere nada de tu parte.
+
+Saludos,
+[Tu nombre]
+TravelAI Platform | <span class="var">[LINK]</span></div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'email-a')">📋 Copiar</button></div>
+        </div>
+      </div>
+
+      <div class="single-card">
+        <div class="sc-header">
+          <div class="sc-day">Email B — Ángulo: Problema específico</div>
+          <div class="sc-tag">Agencias medianas (10-30 agentes)</div>
+        </div>
+        <div class="sc-body">
+          <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:var(--t2)">
+            <strong style="color:var(--c)">Asunto:</strong> ¿Cuántos leads pierde <span class="var">[NOMBRE_AGENCIA]</span> fuera de horario?
+          </div>
+          <div class="sc-text" id="email-b">Hola <span class="var">[CONTACTO]</span>,
+
+Una pregunta directa: ¿qué pasa cuando un cliente escribe a las 9pm preguntando por un viaje a Cancún?
+
+Si la respuesta es "esperamos al día siguiente" — probablemente ya se fue con otra agencia.
+
+El 68% de las consultas de viajes llegan fuera del horario laboral. Con TravelAI Platform, <span class="var">[NOMBRE_AGENCIA]</span> tendría un asistente IA que:
+
+→ Responde en segundos, cualquier hora
+→ Genera cotizaciones completas en 30 segundos
+→ Agenda citas y pasa leads calificados a tu equipo
+
+Implementación en 48 horas. 14 días gratis.
+
+¿15 minutos para ver cómo funciona?
+
+Saludos,
+[Tu nombre] | TravelAI | <span class="var">[LINK]</span></div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'email-b')">📋 Copiar</button></div>
+        </div>
+      </div>
+
+      <div class="single-card">
+        <div class="sc-header">
+          <div class="sc-day">Email C — Ángulo: Social proof</div>
+          <div class="sc-tag">Agencias grandes (20+ agentes)</div>
+        </div>
+        <div class="sc-body">
+          <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:var(--t2)">
+            <strong style="color:var(--c)">Asunto:</strong> Cómo ToursMex triplicó sus cotizaciones en 30 días
+          </div>
+          <div class="sc-text" id="email-c">Hola <span class="var">[CONTACTO]</span>,
+
+Roberto M., CEO de ToursMex Guadalajara (30 agentes), implementó TravelAI hace 30 días.
+
+Resultados:
+• +210% cotizaciones mensuales sin contratar a nadie
+• -47% tiempo por consulta desde el día 1
+• 0 consultas sin respuesta, 24 horas al día
+
+Lo que cambió: automatizaron WhatsApp, web e Instagram con IA. Ahora sus agentes solo cierran ventas — no responden preguntas repetitivas.
+
+Creo que <span class="var">[NOMBRE_AGENCIA]</span> podría tener resultados similares o mejores.
+
+¿Una llamada de 15 minutos para explorar si tiene sentido para ustedes?
+
+Saludos,
+[Tu nombre] | TravelAI | <span class="var">[LINK]</span></div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'email-c')">📋 Copiar</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEGUIMIENTO -->
+  <div class="tab-content" id="tab-seguimiento">
+    <div class="msg-section">
+      <div class="msg-section-title"><div class="dot"></div>Secuencia de seguimiento — días 3, 7 y 14</div>
+
+      <div class="single-card">
+        <div class="sc-header">
+          <div class="sc-day">Día 3 — Seguimiento suave</div>
+          <div class="sc-tag">WhatsApp o Email</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-text" id="seg-3">Hola <span class="var">[CONTACTO]</span> 👋
+
+Solo verifico que hayas recibido mi mensaje sobre TravelAI.
+
+Esta semana implementamos la plataforma en 2 agencias de Monterrey — una de ellas ya atendió 89 consultas sin que nadie del equipo tuviera que responder manualmente 🤖
+
+¿Pudiste echarle un vistazo? Te comparto la demo: <span class="var">[LINK]</span></div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'seg-3')">📋 Copiar</button></div>
+        </div>
+      </div>
+
+      <div class="single-card">
+        <div class="sc-header">
+          <div class="sc-day">Día 7 — Valor adicional</div>
+          <div class="sc-tag">WhatsApp o Email</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-text" id="seg-7">Hola <span class="var">[CONTACTO]</span>, ¿cómo va la semana?
+
+Te comparto un dato que calculé para <span class="var">[NOMBRE_AGENCIA]</span>: si tienen 20 agentes y cada uno pierde 2.5 horas al día en consultas repetitivas, eso son 50 horas diarias — unos $600,000 MXN al año en tiempo perdido.
+
+TravelAI cuesta $7,188 al año en el plan Pro.
+
+El ROI se paga en el primer mes. ¿Tiene sentido conversar 10 minutos? 📊</div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'seg-7')">📋 Copiar</button></div>
+        </div>
+      </div>
+
+      <div class="single-card">
+        <div class="sc-header">
+          <div class="sc-day">Día 14 — Último seguimiento</div>
+          <div class="sc-tag">WhatsApp o Email</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-text" id="seg-14">Hola <span class="var">[CONTACTO]</span> 😊
+
+Último mensaje de mi parte, no quiero molestarte.
+
+Solo quería decirte que si en algún momento <span class="var">[NOMBRE_AGENCIA]</span> decide explorar la automatización de consultas, aquí estaré.
+
+Los 14 días gratis siguen disponibles sin fecha límite: <span class="var">[LINK]</span>
+
+¡Éxito con la agencia! 🚀</div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'seg-14')">📋 Copiar</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- URGENCIA -->
+  <div class="tab-content" id="tab-urgencia">
+    <div class="msg-section">
+      <div class="msg-section-title"><div class="dot" style="background:var(--r)"></div>Mensaje de cierre con urgencia</div>
+
+      <div class="single-card urgency-card">
+        <div class="sc-header">
+          <div class="sc-day">🔥 Mensaje de urgencia — Para prospectos tibios</div>
+          <div class="sc-tag">Usar solo cuando hay interés previo</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-text" id="urgencia">Hola <span class="var">[CONTACTO]</span> 👋
+
+Quería avisarte algo antes de que se cierre:
+
+Tenemos capacidad limitada para onboardings este mes — ya tenemos 4 agencias en lista de espera para la próxima semana.
+
+Sé que estuviste viendo TravelAI para <span class="var">[NOMBRE_AGENCIA]</span>. Si quieres empezar esta semana, te puedo garantizar:
+
+✅ Implementación esta semana (48 hrs)
+✅ Soporte prioritario los primeros 30 días
+✅ Los 14 días gratis sin tarjeta
+
+Después de este viernes, el siguiente slot disponible sería en 2 semanas.
+
+¿Te animas? Solo necesito un sí 😊</div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'urgencia')">📋 Copiar</button></div>
+        </div>
+      </div>
+
+      <div class="single-card" style="margin-top:14px">
+        <div class="sc-header">
+          <div class="sc-day">Re-activación de lead frío (30+ días sin respuesta)</div>
+          <div class="sc-tag">Para leads que no respondieron nada</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-text" id="reactivacion">Hola <span class="var">[CONTACTO]</span>, ¿cómo estás?
+
+Te escribo después de un tiempo porque algo cambió en TravelAI que creo que le interesa mucho a <span class="var">[NOMBRE_AGENCIA]</span>:
+
+Ahora el chatbot detecta cuando un cliente está listo para comprar y lo transfiere automáticamente al mejor agente disponible. Ningún lead se pierde.
+
+¿Tienes 10 minutos esta semana para una demo rápida? Te la hago en vivo. <span class="var">[LINK]</span></div>
+          <div class="sc-footer"><button class="copy-btn" onclick="copyCard(this,'reactivacion')">📋 Copiar</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const LINK='https://pruebatupagina-free.github.io/travelai-platform/';
+  function showTab(id){document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('on',['wa','email','seguimiento','urgencia'][i]===id)});document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));document.getElementById('tab-'+id).classList.add('on')}
+  function getRawText(id){const el=document.getElementById(id);if(!el)return'';return el.innerText}
+  function copyCard(btn,id){const raw=getRawText(id);navigator.clipboard.writeText(raw).then(()=>{const orig=btn.textContent;btn.textContent='✓ Copiado';btn.classList.add('copied');setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied')},2000)})}
+  function updateVars(){
+    const ag=document.getElementById('agName').value||'[NOMBRE_AGENCIA]';
+    const co=document.getElementById('contactName').value||'[CONTACTO]';
+    document.querySelectorAll('.var').forEach(el=>{const orig=el.textContent;if(orig.includes('NOMBRE_AGENCIA'))el.textContent=ag;else if(orig.includes('CONTACTO'))el.textContent=co;else if(orig.includes('LINK'))el.textContent=LINK;else if(orig===ag||orig===co||orig===LINK){}});
+    // Reset and re-apply
+    location.reload&&false; // Don't reload — just update spans
+  }
+  // Set link spans
+  document.querySelectorAll('.var').forEach(el=>{if(el.textContent.includes('LINK'))el.textContent=LINK});
+</script>
+</body>
+</html>

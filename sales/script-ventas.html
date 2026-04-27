@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Script de Ventas — TravelAI Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,0.07);--bdr-c:rgba(6,182,212,0.3);--c:#06b6d4;--cd:rgba(6,182,212,0.1);--b:#3b82f6;--p:#6366f1;--g:#10b981;--a:#f59e0b;--r:#ef4444;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased}
+    h1,h2,h3{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100}
+    .tn-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px}
+    .tn-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .tn-links{display:flex;gap:8px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+    .btn-g{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--t2)}
+    .btn-g:hover{color:var(--t);background:rgba(255,255,255,.09)}
+    .back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--t2);padding:6px 12px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back:hover{color:var(--c);border-color:var(--bdr-c)}
+
+    /* SIDEBAR + MAIN */
+    .layout{display:flex;min-height:calc(100vh - 52px)}
+    .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--bdr);padding:20px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;flex-shrink:0}
+    .sb-item{display:flex;align-items:center;gap:8px;padding:10px 20px;font-size:13px;color:var(--t2);cursor:pointer;transition:all .2s;border-left:2px solid transparent}
+    .sb-item:hover{background:rgba(255,255,255,.04);color:var(--t)}
+    .sb-item.active{color:var(--c);border-left-color:var(--c);background:var(--cd)}
+    .sb-num{width:22px;height:22px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+    .sb-item.active .sb-num{background:var(--c);color:#fff}
+    .main{flex:1;padding:32px 40px;max-width:860px}
+
+    /* SECTIONS */
+    .section{margin-bottom:40px;scroll-margin-top:80px}
+    .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--bdr)}
+    .sh-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--b));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0}
+    .sh-title{font-family:var(--fh);font-size:20px;font-weight:700}
+    .sh-time{font-size:12px;color:var(--t3);background:var(--bg2);border:1px solid var(--bdr);padding:3px 10px;border-radius:20px;margin-left:auto}
+
+    /* SCRIPT BOX */
+    .script-box{background:var(--bg2);border:1px solid var(--bdr-c);border-left:4px solid var(--c);border-radius:10px;padding:20px 24px;margin-bottom:14px;position:relative}
+    .script-box .label{font-size:11px;color:var(--c);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+    .script-box .text{font-size:15px;color:var(--t);line-height:1.75;font-style:italic}
+    .script-box .text strong{color:var(--c);font-style:normal}
+    .copy-btn{position:absolute;top:14px;right:14px;background:var(--cd);border:1px solid var(--bdr-c);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--c);cursor:pointer;font-weight:600;transition:all .2s}
+    .copy-btn:hover{background:var(--c);color:#fff}
+    .copied{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.4);color:var(--g)!important}
+
+    /* QUESTIONS */
+    .q-list{display:flex;flex-direction:column;gap:10px}
+    .q-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 20px}
+    .q-num{font-size:11px;color:var(--c);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+    .q-text{font-size:14px;color:var(--t);margin-bottom:8px;font-weight:600}
+    .q-note{font-size:12px;color:var(--t2)}
+    .q-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:6px;padding:8px 12px;color:var(--t);font-family:var(--fb);font-size:13px;margin-top:8px;resize:vertical;min-height:40px;outline:none;transition:border-color .2s}
+    .q-input:focus{border-color:var(--c)}
+
+    /* DEMO CHECKLIST */
+    .check-list{display:flex;flex-direction:column;gap:8px}
+    .check-item{display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px 16px;cursor:pointer;transition:all .2s;user-select:none}
+    .check-item:hover{border-color:var(--bdr-c)}
+    .check-item.done{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.25)}
+    .cb{width:20px;height:20px;border:2px solid var(--t3);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s}
+    .check-item.done .cb{background:var(--g);border-color:var(--g);color:#fff}
+    .ci-content{flex:1}
+    .ci-main{font-size:14px;font-weight:500;margin-bottom:2px}
+    .ci-sub{font-size:12px;color:var(--t2)}
+
+    /* OBJECTIONS */
+    .obj-list{display:flex;flex-direction:column;gap:12px}
+    .obj-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+    .obj-q{width:100%;background:none;border:none;color:var(--t);font-family:var(--fh);font-size:15px;font-weight:600;text-align:left;padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .obj-q .ico{color:var(--r);font-size:16px;flex-shrink:0;transition:transform .2s}
+    .obj-item.on{border-color:rgba(16,185,129,.3)}
+    .obj-item.on .obj-q .ico{transform:rotate(45deg);color:var(--g)}
+    .obj-a{display:none;padding:0 20px 18px;font-size:14px;color:var(--t2);line-height:1.7;border-top:1px solid var(--bdr)}
+    .obj-item.on .obj-a{display:block}
+    .obj-a strong{color:var(--t)}
+    .obj-a em{color:var(--c)}
+
+    /* CLOSE TECHNIQUES */
+    .close-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px;margin-bottom:12px}
+    .close-card .ct{display:inline-block;background:var(--cd);border:1px solid var(--bdr-c);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--c);font-weight:600;margin-bottom:10px}
+    .close-card h3{font-size:15px;font-weight:700;margin-bottom:10px}
+
+    /* FOLLOW UP */
+    .fu-grid{display:flex;flex-direction:column;gap:12px}
+    .fu-day{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 20px}
+    .fu-day .fd{font-size:12px;color:var(--c);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+
+    @media(max-width:768px){.layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative;top:0;display:flex;overflow-x:auto;padding:12px 0;border-right:none;border-bottom:1px solid var(--bdr)}.sb-item{white-space:nowrap;border-left:none;border-bottom:2px solid transparent}.sb-item.active{border-bottom-color:var(--c)}.main{padding:20px}}
+  </style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-logo"><div class="tn-sq">✈️</div>Travel<span style="color:var(--c)">AI</span> — Script de Ventas</div>
+  <div class="tn-links">
+    <a href="../index.html" class="back">← Inicio</a>
+    <a href="pitch.html" class="back">Presentación</a>
+    <a href="../app/dashboard.html" class="btn btn-p">Demo en vivo →</a>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sb-item active" onclick="scrollTo('apertura')"><div class="sb-num">1</div>Apertura</div>
+    <div class="sb-item" onclick="scrollTo('calificacion')"><div class="sb-num">2</div>Calificación</div>
+    <div class="sb-item" onclick="scrollTo('demo')"><div class="sb-num">3</div>Demo</div>
+    <div class="sb-item" onclick="scrollTo('objeciones')"><div class="sb-num">4</div>Objeciones</div>
+    <div class="sb-item" onclick="scrollTo('cierre')"><div class="sb-num">5</div>Cierre</div>
+    <div class="sb-item" onclick="scrollTo('seguimiento')"><div class="sb-num">6</div>Seguimiento</div>
+  </div>
+
+  <div class="main">
+
+    <!-- APERTURA -->
+    <div class="section" id="apertura">
+      <div class="section-header">
+        <div class="sh-num">1</div>
+        <div class="sh-title">Apertura</div>
+        <div class="sh-time">⏱ 30 segundos</div>
+      </div>
+      <p style="font-size:14px;color:var(--t2);margin-bottom:16px">Objetivo: captar atención y establecer credibilidad en los primeros 30 segundos. No vender todavía.</p>
+
+      <div class="script-box">
+        <div class="label">Guión exacto — Llamada en frío</div>
+        <button class="copy-btn" onclick="copyScript(this)">Copiar</button>
+        <div class="text">"Hola, buenos días, ¿hablo con [nombre]? … Perfecto. Soy [tu nombre] de TravelAI. Te llamo porque trabajamos con agencias de viajes de 20 a 50 personas y vi que [Nombre Agencia] tiene buen volumen de operaciones. Te robo literalmente 2 minutos, ¿tienes un momento?"</div>
+      </div>
+
+      <div class="script-box" style="border-left-color:var(--b)">
+        <div class="label" style="color:var(--b)">Si dicen "sí, dime" — Continuar con:</div>
+        <button class="copy-btn" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:var(--b)" onclick="copyScript(this)">Copiar</button>
+        <div class="text">"Gracias. Lo que hacemos es simple: <strong>automatiamos las consultas y cotizaciones de tu agencia con IA</strong> para que tu equipo atienda 3 veces más clientes sin contratar a nadie nuevo. ¿Suena interesante?"</div>
+      </div>
+
+      <div class="script-box" style="border-left-color:var(--a)">
+        <div class="label" style="color:var(--a)">Si dicen "estoy ocupado" — Responder:</div>
+        <button class="copy-btn" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--a)" onclick="copyScript(this)">Copiar</button>
+        <div class="text">"Te entiendo perfectamente. ¿Cuándo sería un buen momento para hablar 10 minutos? Me adapto a tu horario."</div>
+      </div>
+    </div>
+
+    <!-- CALIFICACIÓN -->
+    <div class="section" id="calificacion">
+      <div class="section-header">
+        <div class="sh-num">2</div>
+        <div class="sh-title">Calificación</div>
+        <div class="sh-time">⏱ 2 minutos</div>
+      </div>
+      <p style="font-size:14px;color:var(--t2);margin-bottom:16px">Objetivo: entender si es un prospecto calificado antes de invertir tiempo en la demo. Anota las respuestas.</p>
+      <div class="q-list">
+        <div class="q-item">
+          <div class="q-num">Pregunta 1</div>
+          <div class="q-text">"¿Cuántos agentes de ventas tiene tu equipo actualmente?"</div>
+          <div class="q-note">Cualificado si tiene 5+. Ideal: 20+. Plan sugerido según tamaño.</div>
+          <textarea class="q-input" placeholder="Notas..."></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Pregunta 2</div>
+          <div class="q-text">"¿Por cuántos canales reciben consultas hoy? (WhatsApp, web, redes…)"</div>
+          <div class="q-note">Más canales = más dolor = más valor de TravelAI.</div>
+          <textarea class="q-input" placeholder="Notas..."></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Pregunta 3</div>
+          <div class="q-text">"¿Cuánto tiempo le toma a tu equipo responder una consulta y armar una cotización?"</div>
+          <div class="q-note">Si dice "mucho tiempo" o "horas" → activar dolor de la solución.</div>
+          <textarea class="q-input" placeholder="Notas..."></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Pregunta 4</div>
+          <div class="q-text">"¿Tienen alguna herramienta de CRM o sistema para gestionar leads hoy?"</div>
+          <div class="q-note">Si dicen Excel o WhatsApp = oportunidad de oro.</div>
+          <textarea class="q-input" placeholder="Notas..."></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-num">Pregunta 5</div>
+          <div class="q-text">"Si pudieras automatizar una sola cosa en tu agencia ahora mismo, ¿qué sería?"</div>
+          <div class="q-note">Escucha activamente. Usa su respuesta en el cierre.</div>
+          <textarea class="q-input" placeholder="Notas..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO -->
+    <div class="section" id="demo">
+      <div class="section-header">
+        <div class="sh-num">3</div>
+        <div class="sh-title">Demo</div>
+        <div class="sh-time">⏱ 10 minutos</div>
+      </div>
+      <p style="font-size:14px;color:var(--t2);margin-bottom:16px">Objetivo: mostrar el producto en el orden correcto, empezando por lo que más le dolió en la calificación. Marca cuando lo hayas mostrado.</p>
+      <div class="check-list">
+        <div class="check-item" onclick="toggle(this)"><div class="cb"></div><div class="ci-content"><div class="ci-main">1. Abrir dashboard.html — mostrar métricas en tiempo real</div><div class="ci-sub">Decir: "Esto es lo que ve tu equipo cada mañana: cuántas consultas se atendieron, cuántos leads activos tienes y tu tasa de conversión."</div></div></div>
+        <div class="check-item" onclick="toggle(this)"><div class="cb"></div><div class="ci-content"><div class="ci-main">2. Chatbot — mostrar conversación de ejemplo</div><div class="ci-sub">Decir: "Aquí el bot responde exactamente como lo haría tu mejor agente — en 2 segundos, a las 2am si es necesario."</div></div></div>
+        <div class="check-item" onclick="toggle(this)"><div class="cb"></div><div class="ci-content"><div class="ci-main">3. Generador de itinerarios — demo en vivo</div><div class="ci-sub">Llenar el formulario en tiempo real. Decir: "Tarda 28 segundos. Tu equipo tarda 45 minutos."</div></div></div>
+        <div class="check-item" onclick="toggle(this)"><div class="cb"></div><div class="ci-content"><div class="ci-main">4. CRM Kanban — mostrar pipeline de leads</div><div class="ci-sub">Decir: "Aquí ves todos tus leads en una pantalla. Este en rojo lleva 3 días sin respuesta. El sistema ya te avisó."</div></div></div>
+        <div class="check-item" onclick="toggle(this)"><div class="cb"></div><div class="ci-content"><div class="ci-main">5. Calculadora ROI — mostrar números de su agencia</div><div class="ci-sub">Usar los datos que te dio en la calificación. Mostrar cuánto recuperan en el primer mes.</div></div></div>
+      </div>
+    </div>
+
+    <!-- OBJECIONES -->
+    <div class="section" id="objeciones">
+      <div class="section-header">
+        <div class="sh-num">4</div>
+        <div class="sh-title">Manejo de Objeciones</div>
+      </div>
+      <p style="font-size:14px;color:var(--t2);margin-bottom:16px">Respuestas exactas para las 6 objeciones más comunes. Haz clic para ver la respuesta.</p>
+      <div class="obj-list">
+        <div class="obj-item">
+          <button class="obj-q" onclick="this.parentElement.classList.toggle('on')">
+            😤 "Ya tenemos un sistema para eso"
+            <span class="ico">+</span>
+          </button>
+          <div class="obj-a"><strong>Respuesta:</strong> "Qué bueno que ya tienen algo. Muchas agencias nos dicen lo mismo y después de ver TravelAI se dan cuenta de que hacen cosas muy distintas. ¿Me cuentas qué sistema usan? … <em>[escuchar]</em> … Entiendo. Lo que TravelAI agrega es la capa de IA que atiende al cliente antes de llegar a tu sistema. Son complementarios, no competencia."</div>
+        </div>
+        <div class="obj-item">
+          <button class="obj-q" onclick="this.parentElement.classList.toggle('on')">
+            💸 "Está muy caro"
+            <span class="ico">+</span>
+          </button>
+          <div class="obj-a"><strong>Respuesta:</strong> "Entiendo. Déjame ponérselo en perspectiva. Si un agente gana $15,000 al mes y pierde 3 horas al día en consultas repetitivas, estás pagando <em>$6,000 al mes por tarea que la IA puede hacer</em>. TravelAI cuesta $599. El ROI es en el primer mes. ¿Quieres que calculemos los números con los datos de tu agencia?"</div>
+        </div>
+        <div class="obj-item">
+          <button class="obj-q" onclick="this.parentElement.classList.toggle('on')">
+            🤝 "Lo tengo que consultar con mi socio"
+            <span class="ico">+</span>
+          </button>
+          <div class="obj-a"><strong>Respuesta:</strong> "Con mucho gusto. Para facilitarle la presentación a tu socio, ¿me permites enviarles la propuesta formal con los números? Así la revisión es más rápida y tienen todo en un documento. ¿A qué email se la mando? … Y ¿para cuándo crees que podrías tener una respuesta?"</div>
+        </div>
+        <div class="obj-item">
+          <button class="obj-q" onclick="this.parentElement.classList.toggle('on')">
+            ⏰ "No tenemos tiempo para implementarlo"
+            <span class="ico">+</span>
+          </button>
+          <div class="obj-a"><strong>Respuesta:</strong> "Ese es exactamente el problema que resolvemos. TravelAI se implementa en 48 horas y de tu parte lo que necesitamos es una hora para la configuración inicial. Nosotros hacemos todo lo demás. De hecho, <em>cuanto más ocupado estás, más te conviene tenerlo funcionando hoy</em>."</div>
+        </div>
+        <div class="obj-item">
+          <button class="obj-q" onclick="this.parentElement.classList.toggle('on')">
+            ❓ "¿Y si no funciona para mi agencia?"
+            <span class="ico">+</span>
+          </button>
+          <div class="obj-a"><strong>Respuesta:</strong> "Por eso tenemos 14 días completamente gratis, sin tarjeta de crédito. Lo pruebas con tus clientes reales, con tu WhatsApp, con tus destinos. Si en 14 días no ves al menos 2 horas ahorradas por agente al día, lo cancelas sin costo y sin preguntas. El riesgo es cero."</div>
+        </div>
+        <div class="obj-item">
+          <button class="obj-q" onclick="this.parentElement.classList.toggle('on')">
+            🤔 "Necesito pensarlo"
+            <span class="ico">+</span>
+          </button>
+          <div class="obj-a"><strong>Respuesta:</strong> "Completamente válido. Solo quiero entender qué información te haría falta para tomar la decisión. ¿Es el precio? ¿La funcionalidad? ¿La implementación? … <em>[escuchar]</em> … Perfecto. Lo que te puedo ofrecer es que empieces los 14 días hoy mismo, sin compromiso. Así 'lo piensas' mientras lo usas en vivo."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CIERRE -->
+    <div class="section" id="cierre">
+      <div class="section-header">
+        <div class="sh-num">5</div>
+        <div class="sh-title">Técnicas de Cierre</div>
+      </div>
+      <p style="font-size:14px;color:var(--t2);margin-bottom:16px">Usa la que mejor se adapte a la energía de la conversación.</p>
+
+      <div class="close-card">
+        <div class="ct">Cierre Asuntivo</div>
+        <h3>"Entonces, ¿empezamos hoy o prefieres el lunes?"</h3>
+        <div class="script-box" style="margin-bottom:0;border:none;background:var(--bg3);border-left:3px solid var(--c)">
+          <div class="text" style="font-size:14px">"Perfecto, entonces ya que vimos todo esto — ¿te parece si empezamos hoy mismo con la prueba gratuita? En 10 minutos tienes el acceso. ¿O prefieres que te lo mande el lunes para que empieces la semana con el sistema activo?"</div>
+        </div>
+      </div>
+
+      <div class="close-card">
+        <div class="ct">Cierre por Urgencia</div>
+        <h3>"Cada semana sin TravelAI son ventas que se van"</h3>
+        <div class="script-box" style="margin-bottom:0;border:none;background:var(--bg3);border-left:3px solid var(--a)">
+          <div class="text" style="font-size:14px">"Mira, lo que me preocupa de esperar es esto: si tienes 10 consultas diarias fuera de horario y cierras el 20%, son 2 ventas por semana que tu competencia se está llevando. En un mes son 8 ventas. ¿Cuánto vale una venta promedio para ti? … Eso es lo que se va cada mes que esperas."</div>
+        </div>
+      </div>
+
+      <div class="close-card">
+        <div class="ct">Cierre de Prueba</div>
+        <h3>"¿Qué te impediría empezar la prueba gratis hoy?"</h3>
+        <div class="script-box" style="margin-bottom:0;border:none;background:var(--bg3);border-left:3px solid var(--g)">
+          <div class="text" style="font-size:14px">"Una pregunta directa: los 14 días son gratis, sin tarjeta, se cancela en un clic. ¿Hay algo que te impediría empezar la prueba hoy mismo? … <em>[escuchar y resolver]</em> … Entonces no hay razón para no probarlo. ¿Te hago el acceso ahora?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEGUIMIENTO -->
+    <div class="section" id="seguimiento">
+      <div class="section-header">
+        <div class="sh-num">6</div>
+        <div class="sh-title">Seguimiento Post-Demo</div>
+      </div>
+      <p style="font-size:14px;color:var(--t2);margin-bottom:16px">Mensajes de WhatsApp para dar seguimiento si no cerró en la llamada.</p>
+      <div class="fu-grid">
+        <div class="fu-day">
+          <div class="fd">Día 1 — Inmediatamente después de la llamada</div>
+          <div class="script-box" style="margin-bottom:0">
+            <button class="copy-btn" onclick="copyScript(this)">Copiar</button>
+            <div class="text">"Hola [Nombre], fue un gusto hablar contigo 🙌 Te adjunto la propuesta con todo lo que vimos. El link de la demo también está aquí para que lo compartas con tu equipo: [LINK] Quedo pendiente para cualquier duda."</div>
+          </div>
+        </div>
+        <div class="fu-day">
+          <div class="fd">Día 3</div>
+          <div class="script-box" style="margin-bottom:0">
+            <button class="copy-btn" onclick="copyScript(this)">Copiar</button>
+            <div class="text">"Hola [Nombre], ¿pudiste revisar la propuesta? Esta semana implementamos TravelAI en 2 agencias de Monterrey con resultados muy buenos desde el primer día 📈 ¿Tienes alguna duda o quieres agendar 15 min para aclarar algo?"</div>
+          </div>
+        </div>
+        <div class="fu-day">
+          <div class="fd">Día 7</div>
+          <div class="script-box" style="margin-bottom:0">
+            <button class="copy-btn" onclick="copyScript(this)">Copiar</button>
+            <div class="text">"Hola [Nombre], te escribo de nuevo. Solo un dato rápido: las agencias que empezaron la prueba esta semana ya están viendo el impacto en sus métricas de respuesta ⚡ La prueba de 14 días es completamente gratis. ¿Le damos? 😊"</div>
+          </div>
+        </div>
+        <div class="fu-day">
+          <div class="fd">Día 14 — Último aviso</div>
+          <div class="script-box" style="margin-bottom:0">
+            <button class="copy-btn" onclick="copyScript(this)">Copiar</button>
+            <div class="text">"Hola [Nombre], último aviso antes de cerrar este espacio 👋 Tenemos disponibilidad limitada para onboarding este mes. Si decides empezar antes del viernes, te garantizo implementación esta semana. ¿Qué me dices?"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+  function toggle(el){el.classList.toggle('done');const cb=el.querySelector('.cb');cb.textContent=el.classList.contains('done')?'✓':''}
+  function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));const map={apertura:0,calificacion:1,demo:2,objeciones:3,cierre:4,seguimiento:5};const idx=map[id];if(idx!==undefined)document.querySelectorAll('.sb-item')[idx].classList.add('active')}
+  function copyScript(btn){const text=btn.parentElement.querySelector('.text').innerText;navigator.clipboard.writeText(text).then(()=>{const orig=btn.textContent;btn.textContent='✓ Copiado';btn.classList.add('copied');setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied')},2000)})}
+  // Highlight sidebar on scroll
+  const sections=['apertura','calificacion','demo','objeciones','cierre','seguimiento'];
+  const items=document.querySelectorAll('.sb-item');
+  window.addEventListener('scroll',()=>{let cur=0;sections.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<120)cur=i});items.forEach((it,i)=>it.classList.toggle('active',i===cur))});
+</script>
+</body>
+</html>

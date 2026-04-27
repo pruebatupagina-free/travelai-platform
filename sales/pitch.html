@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelAI Platform — Presentación para Agencias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,0.07);--bdr-c:rgba(6,182,212,0.3);--c:#06b6d4;--cd:rgba(6,182,212,0.1);--b:#3b82f6;--p:#6366f1;--g:#10b981;--a:#f59e0b;--r:#ef4444;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;overflow:hidden}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.15}
+
+    /* TOP BAR */
+    .topbar{height:52px;background:var(--bg3);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;gap:16px}
+    .tb-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px}
+    .tb-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .tb-sq span{color:var(--c)}
+    .tb-nav{display:flex;align-items:center;gap:8px}
+    .tb-nav span{font-size:13px;color:var(--t2)}
+    .slide-counter{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--c)}
+    .tb-actions{display:flex;align-items:center;gap:8px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+    .btn-g{background:rgba(255,255,255,.06);border:1px solid var(--bdr);color:var(--t2)}
+    .btn-g:hover{background:rgba(255,255,255,.1);color:var(--t)}
+
+    /* SLIDES AREA */
+    .slides-area{flex:1;position:relative;overflow:hidden}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:40px;opacity:0;pointer-events:none;transform:translateX(60px);transition:all .4s cubic-bezier(.4,0,.2,1)}
+    .slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+    .slide.exit{opacity:0;transform:translateX(-60px)}
+    .slide-inner{width:100%;max-width:1000px;margin:0 auto}
+
+    /* PROGRESS BAR */
+    .progress{height:3px;background:var(--bdr);flex-shrink:0}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--c),var(--b));transition:width .4s ease}
+
+    /* BOTTOM NAV */
+    .bottom-nav{height:60px;background:var(--bg3);border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;gap:16px;flex-shrink:0}
+    .nav-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--bdr);color:var(--t);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .nav-btn:hover{background:var(--cd);border-color:var(--bdr-c);color:var(--c)}
+    .nav-btn:disabled{opacity:.3;cursor:default}
+    .dot-nav{display:flex;gap:8px;align-items:center}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--t3);cursor:pointer;transition:all .2s}
+    .dot.on{background:var(--c);width:22px;border-radius:4px}
+
+    /* SLIDE COMPONENTS */
+    .grad{background:linear-gradient(135deg,var(--c),var(--b) 50%,var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .lbl{display:inline-flex;align-items:center;gap:6px;background:var(--cd);border:1px solid var(--bdr-c);color:var(--c);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+    .card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:24px}
+    .card-accent{border-left:3px solid var(--c)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .feat{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--t2);line-height:1.5;margin-bottom:8px}
+    .feat::before{content:'✓';color:var(--g);font-weight:700;flex-shrink:0;margin-top:1px}
+    .num-big{font-family:var(--fh);font-size:clamp(40px,5vw,64px);font-weight:800;line-height:1}
+    .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .tag-c{background:var(--cd);color:var(--c)}
+    .tag-g{background:rgba(16,185,129,.12);color:var(--g)}
+    .tag-r{background:rgba(239,68,68,.12);color:var(--r)}
+
+    /* S1 — PORTADA */
+    #s1{background:radial-gradient(ellipse at 50% -20%,rgba(6,182,212,.12) 0%,transparent 60%)}
+    #s1 .si{text-align:center}
+    #s1 h1{font-size:clamp(40px,6vw,72px);font-weight:800;margin-bottom:18px;letter-spacing:-.02em}
+    #s1 .sub{font-size:clamp(16px,2vw,20px);color:var(--t2);max-width:580px;margin:0 auto 36px;line-height:1.6}
+    #s1 .logo-big{width:64px;height:64px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 28px}
+    #s1 .badge-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    #s1 .badge{padding:8px 20px;border:1px solid var(--bdr);border-radius:20px;font-size:13px;color:var(--t2)}
+
+    /* S2 — PROBLEMA */
+    #s2 h2{font-size:clamp(28px,4vw,44px);font-weight:800;margin-bottom:32px}
+    .pain-row{display:flex;flex-direction:column;gap:16px}
+    .pain-item{background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid var(--r);border-radius:10px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px}
+    .pain-ic{font-size:28px;flex-shrink:0;margin-top:2px}
+    .pain-item h3{font-size:17px;font-weight:700;margin-bottom:4px}
+    .pain-item p{font-size:14px;color:var(--t2);line-height:1.55}
+    .pain-stat{display:inline-block;margin-top:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;color:var(--r)}
+
+    /* S3 — SOLUCIÓN */
+    #s3 h2{font-size:clamp(26px,4vw,40px);font-weight:800;margin-bottom:8px}
+    .mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
+    .mod{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s}
+    .mod::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .mod.mc::before{background:linear-gradient(90deg,var(--c),transparent)}
+    .mod.mb::before{background:linear-gradient(90deg,var(--b),transparent)}
+    .mod.mp::before{background:linear-gradient(90deg,var(--p),transparent)}
+    .mod.mg::before{background:linear-gradient(90deg,var(--g),transparent)}
+    .mod-ico{font-size:22px;margin-bottom:10px}
+    .mod h3{font-size:15px;font-weight:700;margin-bottom:6px}
+    .mod p{font-size:13px;color:var(--t2);line-height:1.55}
+
+    /* S7 — NÚMEROS */
+    #s7 h2{font-size:clamp(26px,4vw,40px);font-weight:800;margin-bottom:8px;text-align:center}
+    .nums{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px}
+    .ncard{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:28px;text-align:center}
+    .ncard .v{font-family:var(--fh);font-size:clamp(36px,4vw,52px);font-weight:800;background:linear-gradient(135deg,var(--c),var(--b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:8px}
+    .ncard .l{font-size:14px;color:var(--t2)}
+    .ncard .sub{font-size:12px;color:var(--t3);margin-top:4px}
+
+    /* S8 — PRECIOS */
+    .pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+    .prc{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;position:relative}
+    .prc.pop{border-color:var(--c)}
+    .prc .ptag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--c),var(--b));color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 12px;border-radius:20px}
+    .prc .pn{font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .prc .pv{font-family:var(--fh);font-size:38px;font-weight:800;line-height:1;margin-bottom:2px}
+    .prc .pv sup{font-size:18px;vertical-align:super}
+    .prc .pv span{font-size:13px;font-weight:400;color:var(--t2)}
+    .prc .pd{font-size:12px;color:var(--t2);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bdr)}
+    .prc .pf{font-size:12px;color:var(--t2);margin-bottom:5px;padding-left:16px;position:relative}
+    .prc .pf::before{content:'✓';position:absolute;left:0;color:var(--g);font-weight:700}
+
+    /* S9 — TIMELINE */
+    .timeline{display:flex;flex-direction:column;gap:0;margin-top:28px;max-width:640px;margin-left:auto;margin-right:auto}
+    .tstep{display:flex;gap:20px;align-items:flex-start;position:relative}
+    .tstep:not(:last-child)::after{content:'';position:absolute;left:19px;top:44px;bottom:-8px;width:2px;background:linear-gradient(180deg,var(--c),transparent)}
+    .tnum{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--b));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0}
+    .tcontent{padding-bottom:28px;flex:1}
+    .tcontent h3{font-size:16px;font-weight:700;margin-bottom:4px}
+    .tcontent p{font-size:13px;color:var(--t2);line-height:1.5}
+    .ttag{display:inline-block;margin-top:6px;background:var(--cd);border:1px solid var(--bdr-c);border-radius:5px;padding:2px 9px;font-size:11px;color:var(--c);font-weight:600}
+
+    /* S10 — CTA */
+    #s10{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.1) 0%,transparent 60%)}
+    #s10 .si{text-align:center;max-width:680px;margin:0 auto}
+    #s10 h2{font-size:clamp(30px,5vw,56px);font-weight:800;margin-bottom:16px}
+    #s10 p{font-size:17px;color:var(--t2);margin-bottom:32px;line-height:1.6}
+    .cta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+    .btn-lg{padding:14px 28px;font-size:15px;border-radius:10px}
+    .trust-row{display:flex;justify-content:center;gap:24px;margin-top:28px;flex-wrap:wrap}
+    .trust{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)}
+    .trust::before{content:'✓';color:var(--g);font-weight:700}
+
+    /* BACK LINK */
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);padding:6px 12px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back-link:hover{color:var(--c);border-color:var(--bdr-c)}
+
+    @media(max-width:768px){.slide{padding:20px}.grid2,.mod-grid,.pr-grid,.nums{grid-template-columns:1fr}.prc.pop{transform:none}.bottom-nav{gap:8px}}
+    @media print{body{background:#fff;color:#000}.topbar,.progress,.bottom-nav{display:none}.slides-area{overflow:visible;height:auto}.slide{position:static;opacity:1;transform:none;padding:40px 20px;page-break-after:always;border-bottom:1px solid #eee}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-sq">✈️</div>
+    Travel<span style="color:var(--c)">AI</span>
+  </div>
+  <div class="tb-nav">
+    <a href="../index.html" class="back-link">← Landing</a>
+    <span>·</span>
+    <span>Slide <span id="sc">1</span> de 10</span>
+  </div>
+  <div class="tb-actions">
+    <a href="../app/dashboard.html" class="btn btn-g">Ver demo →</a>
+    <button class="btn btn-p" onclick="exportPDF()">⬇ Descargar PDF</button>
+  </div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="pb" style="width:10%"></div></div>
+
+<div class="slides-area" id="area">
+
+  <!-- S1: PORTADA -->
+  <div class="slide active" id="s1">
+    <div class="slide-inner si" style="text-align:center">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 28px">✈️</div>
+      <div class="lbl" style="display:inline-flex">Presentación Ejecutiva 2025</div>
+      <h1><span class="grad">TravelAI Platform</span></h1>
+      <p class="sub" style="font-size:clamp(16px,2vw,20px);color:var(--t2);max-width:580px;margin:0 auto 36px;line-height:1.6">La plataforma de automatización con IA diseñada para agencias de viajes que quieren atender más, trabajar menos y vender más.</p>
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+        <span style="padding:8px 20px;border:1px solid var(--bdr);border-radius:20px;font-size:13px;color:var(--t2)">🤖 IA de última generación</span>
+        <span style="padding:8px 20px;border:1px solid var(--bdr);border-radius:20px;font-size:13px;color:var(--t2)">📱 Multicanal</span>
+        <span style="padding:8px 20px;border:1px solid var(--bdr);border-radius:20px;font-size:13px;color:var(--t2)">⚡ Implementación en 48 hrs</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: PROBLEMA -->
+  <div class="slide" id="s2">
+    <div class="slide-inner">
+      <div class="lbl">⚠️ El problema</div>
+      <h2>Tu agencia pierde dinero<br>en tareas que la IA puede hacer</h2>
+      <div class="pain-row">
+        <div class="pain-item"><div class="pain-ic">⏰</div><div><h3>3 horas perdidas por agente al día</h3><p>Responder las mismas preguntas: precios, disponibilidad, requisitos de visa. Tiempo que debería usarse en cerrar ventas.</p><div class="pain-stat">Costo real: $6,000–$18,000 MXN al mes en tiempo perdido</div></div></div>
+        <div class="pain-item"><div class="pain-ic">📵</div><div><h3>68% de consultas fuera de horario</h3><p>Los clientes no esperan. Si tu competencia tiene respuesta automática y tú no, ellos se llevan la venta. Así de simple.</p><div class="pain-stat">Pérdida estimada: 2-5 ventas por semana fuera de horario</div></div></div>
+        <div class="pain-item"><div class="pain-ic">📋</div><div><h3>45 minutos por itinerario manual</h3><p>Cada cotización detallada consume casi una hora. Con 10 solicitudes al día, son 7.5 horas solo en itinerarios.</p><div class="pain-stat">TravelAI genera el mismo itinerario en 30 segundos</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: SOLUCIÓN -->
+  <div class="slide" id="s3">
+    <div class="slide-inner">
+      <div class="lbl">✨ La solución</div>
+      <h2>TravelAI Platform:<br>4 módulos integrados</h2>
+      <p style="color:var(--t2);font-size:15px;margin-bottom:0">Una plataforma que automatiza todo el flujo de ventas — desde la primera consulta hasta el cierre.</p>
+      <div class="mod-grid">
+        <div class="mod mc"><div class="mod-ico">💬</div><h3>Chatbot IA Omnicanal</h3><p>Responde WhatsApp, web e Instagram 24/7. Cotiza, agenda y escala a humano cuando necesario.</p></div>
+        <div class="mod mb"><div class="mod-ico">🗺️</div><h3>Generador de Itinerarios</h3><p>Itinerarios completos en 30 segundos. Con hoteles, actividades, costos y PDF con tu marca.</p></div>
+        <div class="mod mp"><div class="mod-ico">👥</div><h3>CRM Inteligente</h3><p>Kanban visual. Sabe quién está listo para comprar y te avisa antes de que se enfríe el lead.</p></div>
+        <div class="mod mg"><div class="mod-ico">📊</div><h3>Dashboard de Control</h3><p>Todas tus métricas en tiempo real. Decisiones basadas en datos, no en intuición.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: CHATBOT DEMO -->
+  <div class="slide" id="s4">
+    <div class="slide-inner">
+      <div class="lbl">💬 Módulo 1</div>
+      <h2>Chatbot IA — Tu vendedor<br>que nunca duerme</h2>
+      <div class="grid2" style="margin-top:24px;align-items:start">
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div style="font-size:12px;color:var(--t3);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Conversación real (simulada)</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:var(--bg3);border-radius:10px 10px 10px 2px;padding:10px 14px;font-size:13px;color:var(--t2);max-width:85%">Hola, ¿cuánto cuesta un viaje a Cancún para 2 personas en julio? 🌴</div>
+              <div style="background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(59,130,246,.15));border:1px solid var(--bdr-c);border-radius:10px 10px 2px 10px;padding:10px 14px;font-size:13px;max-width:90%;align-self:flex-end">¡Hola! Con gusto. Para 2 personas en julio tenemos paquetes desde $18,500 MXN/persona (vuelo + hotel 4★ + traslados 7 noches). ¿Te envío un itinerario detallado? 🏖️</div>
+              <div style="background:var(--bg3);border-radius:10px 10px 10px 2px;padding:10px 14px;font-size:13px;color:var(--t2);max-width:85%">Sí por favor, y ¿tienen algo más económico?</div>
+              <div style="background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(59,130,246,.15));border:1px solid var(--bdr-c);border-radius:10px 10px 2px 10px;padding:10px 14px;font-size:13px;max-width:90%;align-self:flex-end">Claro, también tenemos opción desde $14,200 con hotel 3★. Te genero ambas propuestas en PDF ahora mismo. ¿Tu email? 📄</div>
+            </div>
+            <div style="margin-top:12px;font-size:11px;color:var(--t3)">⚡ Tiempo de respuesta: 2.4 segundos</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card card-accent"><div style="font-size:22px;margin-bottom:8px">📱</div><div style="font-weight:700;margin-bottom:4px">WhatsApp Business API</div><div style="font-size:13px;color:var(--t2)">Conectado con tu número oficial. Sin cambiar nada para tus clientes.</div></div>
+          <div class="card card-accent"><div style="font-size:22px;margin-bottom:8px">🌐</div><div style="font-weight:700;margin-bottom:4px">Chat en tu sitio web</div><div style="font-size:13px;color:var(--t2)">Widget embebible. Se instala en 5 minutos en cualquier plataforma.</div></div>
+          <div class="card card-accent"><div style="font-size:22px;margin-bottom:8px">🤝</div><div style="font-weight:700;margin-bottom:4px">Escalamiento inteligente</div><div style="font-size:13px;color:var(--t2)">Transfiere al agente humano cuando detecta intención de cierre.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: ITINERARIOS DEMO -->
+  <div class="slide" id="s5">
+    <div class="slide-inner">
+      <div class="lbl">🗺️ Módulo 2</div>
+      <h2>Generador de Itinerarios —<br>45 min → 30 segundos</h2>
+      <div class="grid2" style="margin-top:24px;align-items:start">
+        <div>
+          <div class="card">
+            <div style="font-size:12px;color:var(--t3);margin-bottom:14px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Formulario de generación</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--t2)">🌍 Destino: <strong style="color:var(--t)">Cancún, México</strong></div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--t2)">👥 Personas: <strong style="color:var(--t)">2 adultos</strong> &nbsp;·&nbsp; 🗓️ <strong style="color:var(--t)">7 noches — julio</strong></div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--t2)">💰 Presupuesto: <strong style="color:var(--t)">$40,000 MXN</strong> total</div>
+              <div style="background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--t2)">✈️ Vuelo + 🏨 Hotel + 🎭 Actividades</div>
+              <div style="background:linear-gradient(135deg,var(--c),var(--b));border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;text-align:center">⚡ Generar itinerario en PDF</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="border-color:var(--bdr-c)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="font-size:12px;color:var(--c);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Itinerario generado</div>
+              <div style="font-size:11px;color:var(--g)">✓ Listo en 28 seg</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+              <div style="padding:8px 0;border-bottom:1px solid var(--bdr)"><strong>Día 1:</strong> <span style="color:var(--t2)">Llegada AICM → traslado Hotel Xcaret 4★ → tour nocturno</span></div>
+              <div style="padding:8px 0;border-bottom:1px solid var(--bdr)"><strong>Día 2:</strong> <span style="color:var(--t2)">Zona Hotelera + snorkel Isla Mujeres ($850/p)</span></div>
+              <div style="padding:8px 0;border-bottom:1px solid var(--bdr)"><strong>Día 3–5:</strong> <span style="color:var(--t2)">Tulum + Cobá + Cenotes + tiempo libre</span></div>
+              <div style="padding:8px 0"><strong>Costo total:</strong> <span style="color:var(--c)">$37,400 MXN para 2 personas</span></div>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:8px">
+              <div style="flex:1;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:7px;font-size:12px;color:var(--g);text-align:center">📄 Exportar PDF</div>
+              <div style="flex:1;background:var(--cd);border:1px solid var(--bdr-c);border-radius:6px;padding:7px;font-size:12px;color:var(--c);text-align:center">📤 Enviar por WA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: CRM DEMO -->
+  <div class="slide" id="s6">
+    <div class="slide-inner">
+      <div class="lbl">👥 Módulo 3</div>
+      <h2>CRM Inteligente — Nunca<br>pierdas otro lead</h2>
+      <div style="margin-top:24px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+          <div style="text-align:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Nuevo</div>
+            <div class="card" style="margin-bottom:8px;padding:12px;border-left:2px solid var(--c)"><div style="font-size:12px;font-weight:600">Ana G.</div><div style="font-size:11px;color:var(--t2)">Cancún × 4 pers</div><div class="tag tag-c" style="margin-top:4px;font-size:10px">+5 días</div></div>
+            <div class="card" style="padding:12px;border-left:2px solid var(--c)"><div style="font-size:12px;font-weight:600">Luis M.</div><div style="font-size:11px;color:var(--t2)">Europa × 2 pers</div><div class="tag tag-c" style="margin-top:4px;font-size:10px">Hoy</div></div>
+          </div>
+          <div style="text-align:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Cotizando</div>
+            <div class="card" style="padding:12px;border-left:2px solid var(--a)"><div style="font-size:12px;font-weight:600">Pedro R.</div><div style="font-size:11px;color:var(--t2)">Caribe × 3 pers</div><div style="background:rgba(245,158,11,.1);color:var(--a);font-size:10px;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:4px">⚠️ 3 días sin resp.</div></div>
+          </div>
+          <div style="text-align:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Seguimiento</div>
+            <div class="card" style="padding:12px;border-left:2px solid var(--b)"><div style="font-size:12px;font-weight:600">María F.</div><div style="font-size:11px;color:var(--t2)">Orlando × 5 pers</div><div class="tag" style="background:var(--bd);color:var(--b);margin-top:4px;font-size:10px">🔥 Listo para cerrar</div></div>
+          </div>
+          <div style="text-align:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+            <div style="font-size:11px;color:var(--g);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Cerrado ✓</div>
+            <div class="card" style="padding:12px;border-left:2px solid var(--g)"><div style="font-size:12px;font-weight:600">Carlos V.</div><div style="font-size:11px;color:var(--t2)">Riviera Maya</div><div class="tag tag-g" style="margin-top:4px;font-size:10px">$42,000 MXN</div></div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card card-accent"><div style="font-weight:700;margin-bottom:6px">🔔 Alertas inteligentes</div><div style="font-size:13px;color:var(--t2)">El sistema te avisa cuando un lead lleva más de 48 horas sin respuesta o cuando detecta intención de compra.</div></div>
+          <div class="card card-accent"><div style="font-weight:700;margin-bottom:6px">📊 Scoring automático</div><div style="font-size:13px;color:var(--t2)">Cada lead recibe una puntuación de probabilidad de cierre basada en su comportamiento e interacciones.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: NÚMEROS -->
+  <div class="slide" id="s7">
+    <div class="slide-inner">
+      <div style="text-align:center;margin-bottom:8px"><div class="lbl" style="display:inline-flex">📈 Resultados</div></div>
+      <h2 style="text-align:center;font-size:clamp(26px,4vw,40px);font-weight:800;margin-bottom:24px">Números reales de<br>agencias que ya usan TravelAI</h2>
+      <div class="nums">
+        <div class="ncard"><div class="v">89%</div><div class="l">Reducción en tiempo de respuesta</div><div class="sub">De 4 horas a menos de 30 minutos promedio</div></div>
+        <div class="ncard"><div class="v">3x</div><div class="l">Más cotizaciones por agente/día</div><div class="sub">De 8 a 24+ cotizaciones diarias sin contratar más</div></div>
+        <div class="ncard"><div class="v">+34%</div><div class="l">Tasa de cierre</div><div class="sub">Mayor seguimiento = más ventas en el mismo tiempo</div></div>
+        <div class="ncard"><div class="v">48 hrs</div><div class="l">Tiempo de implementación</div><div class="sub">Desde el contrato hasta sistema funcionando en vivo</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8: PRECIOS -->
+  <div class="slide" id="s8">
+    <div class="slide-inner">
+      <div class="lbl">💎 Inversión</div>
+      <h2>Planes diseñados para<br>el tamaño de tu agencia</h2>
+      <p style="color:var(--t2);font-size:14px;margin-bottom:0">14 días de prueba gratis en todos los planes. Sin tarjeta de crédito.</p>
+      <div class="pr-grid">
+        <div class="prc">
+          <div class="pn">Starter</div>
+          <div class="pv"><sup>$</sup>299<span>/mes</span></div>
+          <div class="pd">Hasta 5 agentes · 500 consultas/mes</div>
+          <div class="pf">1 canal (WhatsApp o Web)</div>
+          <div class="pf">Generador de itinerarios</div>
+          <div class="pf">CRM básico</div>
+          <div class="pf">Soporte por email</div>
+        </div>
+        <div class="prc pop">
+          <div class="ptag">⭐ Popular</div>
+          <div class="pn">Professional</div>
+          <div class="pv"><sup>$</sup>599<span>/mes</span></div>
+          <div class="pd">Hasta 20 agentes · ilimitado</div>
+          <div class="pf">Todos los canales (WA + Web + IG)</div>
+          <div class="pf">CRM completo + Kanban</div>
+          <div class="pf">Reportes semanales automáticos</div>
+          <div class="pf">Soporte prioritario 24/7</div>
+          <div class="pf">Integración calendario y email</div>
+        </div>
+        <div class="prc">
+          <div class="pn">Enterprise</div>
+          <div class="pv"><sup>$</sup>1,200<span>/mes</span></div>
+          <div class="pd">Ilimitado · multi-sucursal</div>
+          <div class="pf">Todo lo del plan Pro</div>
+          <div class="pf">Multi-agencia / sucursales</div>
+          <div class="pf">API personalizada</div>
+          <div class="pf">Soporte dedicado + SLA</div>
+          <div class="pf">Capacitación al equipo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9: IMPLEMENTACIÓN -->
+  <div class="slide" id="s9">
+    <div class="slide-inner">
+      <div class="lbl">🚀 Próximos pasos</div>
+      <h2>De la firma al sistema activo<br>en 48 horas</h2>
+      <div class="timeline">
+        <div class="tstep"><div class="tnum">1</div><div class="tcontent"><h3>Hora 0 — Contrato y acceso</h3><p>Firmas el contrato y recibes acceso a tu panel de TravelAI. Nuestro equipo de onboarding se comunica contigo.</p><div class="ttag">Mismo día</div></div></div>
+        <div class="tstep"><div class="tnum">2</div><div class="tcontent"><h3>Horas 1–8 — Configuración inicial</h3><p>Configuramos la plataforma con el perfil de tu agencia: destinos, precios, políticas, estilo de comunicación y tono de marca.</p><div class="ttag">Primer día</div></div></div>
+        <div class="tstep"><div class="tnum">3</div><div class="tcontent"><h3>Horas 8–24 — Conexión de canales</h3><p>Conectamos tu WhatsApp Business, chat web e Instagram. Hacemos pruebas de funcionamiento y ajustes.</p><div class="ttag">Primer día</div></div></div>
+        <div class="tstep"><div class="tnum">4</div><div class="tcontent"><h3>Horas 24–48 — En vivo</h3><p>Activamos el sistema con clientes reales. Monitoreo en tiempo real las primeras 72 horas con soporte disponible.</p><div class="ttag">✅ Sistema activo</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S10: CTA -->
+  <div class="slide" id="s10">
+    <div class="slide-inner" style="text-align:center;max-width:680px;margin:0 auto">
+      <div class="lbl" style="display:inline-flex">🎯 Empieza hoy</div>
+      <h2 style="font-size:clamp(30px,5vw,52px);font-weight:800;margin-bottom:16px">14 días gratis.<br>Sin tarjeta de crédito.</h2>
+      <p style="font-size:17px;color:var(--t2);margin-bottom:32px;line-height:1.6">Prueba TravelAI Platform sin compromiso. Si en 14 días no ves resultados, cancelas sin cargo. Así de seguro estamos.</p>
+      <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:28px">
+        <a href="../index.html#cta-final" class="btn btn-p btn-lg" style="padding:14px 28px;font-size:15px;border-radius:10px">Empezar prueba gratis →</a>
+        <a href="../app/dashboard.html" class="btn btn-g btn-lg" style="padding:14px 28px;font-size:15px;border-radius:10px">Ver demo en vivo</a>
+      </div>
+      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)"><span style="color:var(--g);font-weight:700">✓</span> Sin tarjeta</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)"><span style="color:var(--g);font-weight:700">✓</span> Implementación en 48 hrs</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)"><span style="color:var(--g);font-weight:700">✓</span> Soporte incluido</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)"><span style="color:var(--g);font-weight:700">✓</span> Cancela cuando quieras</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn" id="prev" onclick="goSlide(-1)" disabled>←</button>
+  <div class="dot-nav" id="dots"></div>
+  <button class="nav-btn" id="next" onclick="goSlide(1)">→</button>
+</div>
+
+<script>
+  const total=10;let cur=0;
+  const slides=document.querySelectorAll('.slide');
+  const dots=document.getElementById('dots');
+  // Create dots
+  for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===0?' on':'');d.onclick=()=>gotoSlide(i);dots.appendChild(d)}
+  function update(){slides.forEach((s,i)=>{s.classList.remove('active','exit');if(i===cur)s.classList.add('active')});document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));document.getElementById('pb').style.width=((cur+1)/total*100)+'%';document.getElementById('sc').textContent=cur+1;document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=cur===total-1}
+  function goSlide(dir){if(cur+dir>=0&&cur+dir<total){slides[cur].classList.add('exit');cur+=dir;update()}}
+  function gotoSlide(i){slides[cur].classList.add('exit');cur=i;update()}
+  update();
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')goSlide(1);if(e.key==='ArrowLeft')goSlide(-1)});
+  function exportPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF('landscape','mm','a4');doc.setFillColor(8,13,26);doc.rect(0,0,297,210,'F');doc.setFont('helvetica','bold');doc.setFontSize(32);doc.setTextColor(6,182,212);doc.text('TravelAI Platform',148.5,80,{align:'center'});doc.setFontSize(16);doc.setTextColor(148,163,184);doc.text('Presentación para Agencias de Viajes 2025',148.5,100,{align:'center'});doc.setFontSize(12);doc.setTextColor(71,85,105);doc.text('Para ver la presentación completa visita: pruebatupagina-free.github.io/travelai-platform/sales/pitch.html',148.5,125,{align:'center'});doc.save('TravelAI-Presentacion.pdf')}
+</script>
+</body>
+</html>

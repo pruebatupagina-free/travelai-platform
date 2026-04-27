@@ -3,1241 +3,550 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TravelAI Platform — Automatiza tu agencia de viajes con IA</title>
-  <meta name="description" content="Plataforma de inteligencia artificial para agencias de viajes. Chatbot IA, generador de itinerarios, CRM inteligente y dashboard en tiempo real.">
+  <title>TravelAI Platform — Tu agencia de viajes en piloto automático</title>
+  <meta name="description" content="Atiende más clientes, genera itinerarios en segundos y cierra más ventas con IA integrada en todos tus canales. Para agencias de viajes.">
   <meta property="og:title" content="TravelAI Platform">
-  <meta property="og:description" content="Automatiza tu agencia de viajes con IA. Starter desde $299/mes.">
+  <meta property="og:description" content="Tu agencia de viajes en piloto automático. IA que atiende, cotiza y cierra ventas las 24 horas.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap');
-
     :root {
-      --bg: #0a0f1e;
-      --bg-card: #0f172a;
-      --bg-card2: #111827;
-      --border: rgba(255,255,255,0.06);
-      --cyan: #06b6d4;
-      --blue: #3b82f6;
-      --purple: #6366f1;
-      --green: #10b981;
-      --text: #f1f5f9;
-      --text-2: #94a3b8;
-      --text-3: #475569;
-      --radius: 16px;
-      --radius-sm: 10px;
-      --font-h: 'Space Grotesk', sans-serif;
-      --font-b: 'DM Sans', sans-serif;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--font-b);
-      background: var(--bg);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    h1, h2, h3, h4 { font-family: var(--font-h); line-height: 1.2; }
-    a { color: inherit; text-decoration: none; }
-
-    /* ── NAVBAR ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      padding: 0 48px;
-      height: 64px;
-      background: rgba(10,15,30,0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--font-h);
-      font-weight: 700;
-      font-size: 18px;
-      flex: 1;
-    }
-
-    .nav-logo .icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-    }
-
-    .nav-logo span { color: var(--cyan); }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 14px;
-      color: var(--text-2);
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    .nav-cta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-left: 32px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 20px;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-b);
-      font-size: 14px;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: white;
-    }
-
-    .btn-primary:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(6,182,212,0.3);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-2);
-      border: 1px solid var(--border);
-    }
-
-    .btn-ghost:hover {
-      color: var(--text);
-      border-color: rgba(6,182,212,0.4);
-    }
-
-    .btn-lg {
-      padding: 14px 32px;
-      font-size: 16px;
-      border-radius: 12px;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 120px 24px 80px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(6,182,212,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(59,130,246,0.08) 0%, transparent 60%);
-    }
-
-    .hero-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
-    }
-
-    .hero-content {
-      position: relative;
-      max-width: 800px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(6,182,212,0.1);
-      border: 1px solid rgba(6,182,212,0.25);
-      border-radius: 20px;
-      padding: 6px 16px;
-      font-size: 13px;
-      color: var(--cyan);
-      font-weight: 500;
-      margin-bottom: 24px;
-    }
-
-    .hero-badge .dot {
-      width: 6px; height: 6px;
-      background: var(--cyan);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    h1 {
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
-      line-height: 1.1;
-    }
-
-    h1 .gradient {
-      background: linear-gradient(135deg, var(--cyan), var(--blue), var(--purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-desc {
-      font-size: 18px;
-      color: var(--text-2);
-      max-width: 560px;
-      margin: 0 auto 36px;
-      line-height: 1.7;
-    }
-
-    .hero-actions {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .hero-social-proof {
-      margin-top: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-      flex-wrap: wrap;
-    }
-
-    .proof-item {
-      text-align: center;
-    }
-
-    .proof-num {
-      font-family: var(--font-h);
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .proof-label {
-      font-size: 13px;
-      color: var(--text-2);
-    }
-
-    .proof-divider {
-      width: 1px;
-      height: 40px;
-      background: var(--border);
-    }
-
-    /* ── SECTIONS ── */
-    section {
-      padding: 96px 24px;
-    }
-
-    .section-inner {
-      max-width: 1140px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--cyan);
-      margin-bottom: 16px;
-    }
-
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 20px; height: 1px;
-      background: var(--cyan);
-    }
-
-    h2 {
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-    }
-
-    .section-desc {
-      font-size: 17px;
-      color: var(--text-2);
-      max-width: 560px;
-      line-height: 1.7;
-    }
-
-    /* ── MODULES ── */
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      margin-top: 64px;
-    }
-
-    .module-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.25s;
-    }
-
-    .module-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-    }
-
-    .module-card.m1::before { background: linear-gradient(90deg, var(--cyan), transparent); }
-    .module-card.m2::before { background: linear-gradient(90deg, var(--blue), transparent); }
-    .module-card.m3::before { background: linear-gradient(90deg, var(--purple), transparent); }
-    .module-card.m4::before { background: linear-gradient(90deg, var(--green), transparent); }
-
-    .module-card:hover {
-      border-color: rgba(255,255,255,0.12);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-
-    .module-icon {
-      width: 52px; height: 52px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px;
-      margin-bottom: 20px;
-    }
-
-    .m1 .module-icon { background: rgba(6,182,212,0.12); }
-    .m2 .module-icon { background: rgba(59,130,246,0.12); }
-    .m3 .module-icon { background: rgba(99,102,241,0.12); }
-    .m4 .module-icon { background: rgba(16,185,129,0.12); }
-
-    .module-card h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .module-card p {
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.7;
-      margin-bottom: 20px;
-    }
-
-    .module-features {
-      list-style: none;
-    }
-
-    .module-features li {
-      font-size: 13px;
-      color: var(--text-2);
-      padding: 4px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .module-features li::before {
-      content: '✓';
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .m1 .module-features li::before { color: var(--cyan); }
-    .m2 .module-features li::before { color: var(--blue); }
-    .m3 .module-features li::before { color: var(--purple); }
-    .m4 .module-features li::before { color: var(--green); }
-
-    /* ── HOW IT WORKS ── */
-    .how-bg { background: var(--bg-card2); }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0;
-      margin-top: 64px;
-      position: relative;
-    }
-
-    .steps-grid::before {
-      content: '';
-      position: absolute;
-      top: 28px; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan), var(--blue), transparent);
-    }
-
-    .step {
-      text-align: center;
-      padding: 0 24px;
-      position: relative;
-    }
-
-    .step-num {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-h);
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0 auto 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .step:nth-child(1) .step-num { background: rgba(6,182,212,0.15); border: 2px solid var(--cyan); color: var(--cyan); }
-    .step:nth-child(2) .step-num { background: rgba(59,130,246,0.15); border: 2px solid var(--blue); color: var(--blue); }
-    .step:nth-child(3) .step-num { background: rgba(99,102,241,0.15); border: 2px solid var(--purple); color: var(--purple); }
-    .step:nth-child(4) .step-num { background: rgba(16,185,129,0.15); border: 2px solid var(--green); color: var(--green); }
-
-    .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
-    .step p { font-size: 14px; color: var(--text-2); line-height: 1.6; }
-
-    /* ── PRICING ── */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 64px;
-      align-items: start;
-    }
-
-    .pricing-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-      position: relative;
-      transition: all 0.25s;
-    }
-
-    .pricing-card:hover {
-      border-color: rgba(6,182,212,0.3);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-
-    .pricing-card.featured {
-      border-color: rgba(6,182,212,0.4);
-      background: linear-gradient(180deg, rgba(6,182,212,0.06) 0%, var(--bg-card) 100%);
-    }
-
-    .featured-badge {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 16px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-
-    .plan-name {
-      font-family: var(--font-h);
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .plan-desc {
-      font-size: 13px;
-      color: var(--text-2);
-      margin-bottom: 24px;
-    }
-
-    .plan-price {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      margin-bottom: 24px;
-    }
-
-    .price-currency {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-2);
-    }
-
-    .price-amount {
-      font-family: var(--font-h);
-      font-size: 48px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .price-period {
-      font-size: 14px;
-      color: var(--text-2);
-    }
-
-    .plan-features {
-      list-style: none;
-      margin-bottom: 28px;
-    }
-
-    .plan-features li {
-      font-size: 14px;
-      color: var(--text-2);
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .plan-features li:last-child { border-bottom: none; }
-
-    .plan-features li .check { color: var(--cyan); font-weight: 700; }
-    .plan-features li .x { color: var(--text-3); }
-
-    .plan-features li.included { color: var(--text); }
-
-    /* ── CTA SECTION ── */
-    .cta-section {
-      text-align: center;
-      padding: 96px 24px;
-    }
-
-    .cta-box {
-      max-width: 640px;
-      margin: 0 auto;
-      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.08));
-      border: 1px solid rgba(6,182,212,0.2);
-      border-radius: 24px;
-      padding: 56px 48px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-box::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: radial-gradient(circle at 50% 50%, rgba(6,182,212,0.05), transparent 60%);
-      pointer-events: none;
-    }
-
-    .cta-box h2 { font-size: 2.2rem; margin-bottom: 16px; }
-    .cta-box p { color: var(--text-2); margin-bottom: 32px; font-size: 16px; }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--bg-card2);
-      border-top: 1px solid var(--border);
-      padding: 40px 24px;
-    }
-
-    .footer-inner {
-      max-width: 1140px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font-h);
-      font-weight: 700;
-      font-size: 16px;
-    }
-
-    .footer-logo .icon {
-      width: 28px; height: 28px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-    }
-
-    .footer-logo span { color: var(--cyan); }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-      list-style: none;
-    }
-
-    .footer-links a {
-      font-size: 13px;
-      color: var(--text-2);
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover { color: var(--text); }
-
-    .footer-copy {
-      font-size: 12px;
-      color: var(--text-3);
-    }
-
-    /* ── MOBILE ── */
-    .ham {
-      display: none;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .nav-links, .nav-cta { display: none; }
-      .ham { display: flex; margin-left: auto; }
-      .hero-social-proof { gap: 20px; }
-      .proof-divider { display: none; }
-      .steps-grid::before { display: none; }
-      .cta-box { padding: 36px 24px; }
-      section { padding: 64px 20px; }
-    }
-
-    /* ── VIDEO PLACEHOLDER ── */
-    .video-section { padding: 0 24px 96px; }
-    .video-wrap {
-      max-width: 860px;
-      margin: 0 auto;
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: var(--bg-card);
-      aspect-ratio: 16/9;
-      cursor: pointer;
-    }
-    .video-bg {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.08) 50%, rgba(99,102,241,0.08) 100%);
-    }
-    .video-grid-overlay {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-    .video-mock-ui {
-      position: absolute; inset: 16px;
-      display: flex; gap: 12px;
-    }
-    .mock-sidebar {
-      width: 120px; background: rgba(17,24,39,0.8);
-      border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);
-      padding: 10px 8px;
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    .mock-nav { height: 10px; background: rgba(255,255,255,0.06); border-radius: 4px; }
-    .mock-nav.active { background: rgba(6,182,212,0.3); }
-    .mock-content {
-      flex: 1; display: flex; flex-direction: column; gap: 10px;
-    }
-    .mock-row { display: flex; gap: 8px; }
-    .mock-card {
-      flex: 1; height: 60px;
-      background: rgba(17,24,39,0.8);
-      border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
-    }
-    .mock-chart {
-      flex: 1; height: 100px;
-      background: rgba(17,24,39,0.8);
-      border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
-    }
-    .play-btn {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 72px; height: 72px;
-      background: rgba(6,182,212,0.9);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-      transition: all 0.3s;
-      box-shadow: 0 0 0 0 rgba(6,182,212,0.4);
-      animation: playPulse 2.5s infinite;
-      z-index: 2;
-    }
-    .video-wrap:hover .play-btn {
-      transform: translate(-50%, -50%) scale(1.1);
-      background: rgba(6,182,212,1);
-    }
-    @keyframes playPulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
-      50% { box-shadow: 0 0 0 16px rgba(6,182,212,0); }
-    }
-    .video-label {
-      text-align: center;
-      margin-top: 16px;
-      font-size: 13px;
-      color: var(--text-3);
-    }
-
-    /* ── TESTIMONIALS ── */
-    .testi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 52px;
-    }
-    .testi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      position: relative;
-      transition: all 0.25s;
-    }
-    .testi-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-3px); }
-    .testi-card::before {
-      content: '"';
-      position: absolute;
-      top: 16px; right: 20px;
-      font-size: 64px;
-      line-height: 1;
-      color: rgba(6,182,212,0.15);
-      font-family: Georgia, serif;
-      font-weight: 700;
-    }
-    .testi-stars { color: #fbbf24; font-size: 14px; margin-bottom: 14px; }
-    .testi-text { font-size: 14px; color: var(--text-2); line-height: 1.75; margin-bottom: 20px; }
-    .testi-author { display: flex; align-items: center; gap: 12px; }
-    .testi-avatar {
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 16px;
-      color: white;
-    }
-    .testi-name { font-size: 14px; font-weight: 600; color: var(--text); }
-    .testi-role { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-
-    /* ── TECH LOGOS ── */
-    .logos-section { padding: 48px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .logos-inner { max-width: 900px; margin: 0 auto; text-align: center; }
-    .logos-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 28px; }
-    .logos-grid { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
-    .logo-item {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 15px; font-weight: 600; color: var(--text-3);
-      opacity: 0.6;
-      transition: opacity 0.2s;
-      font-family: var(--font-h);
-    }
-    .logo-item:hover { opacity: 1; }
-    .logo-item .logo-emoji { font-size: 22px; }
-
-    /* ── FAQ ── */
-    .faq-list { margin-top: 52px; max-width: 720px; margin-left: auto; margin-right: auto; }
-    .faq-item {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      margin-bottom: 10px;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    .faq-item.open { border-color: rgba(6,182,212,0.3); }
-    .faq-q {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 20px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text);
-      background: var(--bg-card);
-      user-select: none;
-      gap: 12px;
-      transition: background 0.2s;
-    }
-    .faq-item.open .faq-q { background: rgba(6,182,212,0.05); }
-    .faq-chevron {
-      font-size: 12px;
-      color: var(--text-3);
-      transition: transform 0.25s;
-      flex-shrink: 0;
-    }
-    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--cyan); }
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.7;
-      background: var(--bg-card);
-      padding: 0 20px;
-    }
-    .faq-item.open .faq-a { max-height: 200px; padding: 0 20px 18px; }
+      --bg:#080d1a; --bg2:#0e1528; --bg3:#111827;
+      --bdr:rgba(255,255,255,0.07); --bdr-c:rgba(6,182,212,0.3);
+      --c:#06b6d4; --cd:rgba(6,182,212,0.1);
+      --b:#3b82f6; --bd:rgba(59,130,246,0.1);
+      --p:#6366f1; --g:#10b981; --a:#f59e0b; --r:#ef4444;
+      --t:#f1f5f9; --t2:#94a3b8; --t3:#475569;
+      --fh:'Space Grotesk',sans-serif; --fb:'DM Sans',sans-serif;
+      --rad:14px; --rads:8px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.15}
+    a{color:inherit;text-decoration:none}
+
+    /* SALES BAR */
+    .sbar{background:rgba(6,182,212,0.06);border-bottom:1px solid var(--bdr-c);padding:9px 24px;display:flex;align-items:center;justify-content:center;gap:20px;font-size:13px}
+    .sbar span{color:var(--t2)}
+    .sbar a{color:var(--c);font-weight:600;padding:5px 14px;border:1px solid var(--bdr-c);border-radius:20px;transition:background .2s}
+    .sbar a:hover{background:var(--cd)}
+
+    /* NAV */
+    nav{position:sticky;top:0;z-index:200;background:rgba(8,13,26,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--bdr)}
+    .nav-i{max-width:1160px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:28px}
+    .logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:700;font-size:17px;flex-shrink:0}
+    .logo-sq{width:34px;height:34px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .logo span{color:var(--c)}
+    .nav-links{display:flex;align-items:center;gap:2px;flex:1}
+    .nav-links a{padding:6px 13px;border-radius:var(--rads);font-size:14px;color:var(--t2);transition:all .2s}
+    .nav-links a:hover{color:var(--t);background:rgba(255,255,255,.05)}
+    .nav-ctas{display:flex;align-items:center;gap:10px}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:var(--rads);font-family:var(--fb);font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 0 24px rgba(6,182,212,.3)}
+    .btn-o{background:transparent;border:1px solid var(--bdr-c);color:var(--c)}
+    .btn-o:hover{background:var(--cd)}
+    .btn-g{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--t2)}
+    .btn-g:hover{background:rgba(255,255,255,.09);color:var(--t)}
+    .btn-lg{padding:14px 28px;font-size:15px;border-radius:10px}
+    .ham{display:none;background:none;border:none;color:var(--t);font-size:22px;cursor:pointer}
+    .mob-nav{display:none;flex-direction:column;gap:4px;padding:12px 20px 20px;border-top:1px solid var(--bdr);background:var(--bg2)}
+    .mob-nav a{padding:11px 14px;border-radius:var(--rads);font-size:15px;color:var(--t2)}
+    .mob-nav a:hover{background:rgba(255,255,255,.05);color:var(--t)}
+    .mob-nav .btn{width:100%;justify-content:center;margin-top:6px}
+
+    /* SECTIONS */
+    section{padding:88px 24px}
+    .wrap{max-width:1100px;margin:0 auto}
+    .lbl{display:inline-flex;align-items:center;gap:6px;background:var(--cd);border:1px solid var(--bdr-c);color:var(--c);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px}
+    .stitle{font-size:clamp(28px,4vw,44px);font-weight:800;color:var(--t);margin-bottom:14px}
+    .ssub{font-size:17px;color:var(--t2);max-width:580px;line-height:1.65}
+
+    /* HERO */
+    #hero{padding:76px 24px 96px;position:relative;overflow:hidden;text-align:center}
+    .hglow{position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:720px;height:520px;background:radial-gradient(ellipse,rgba(6,182,212,.11) 0%,transparent 70%);pointer-events:none}
+    .hbadge{display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.08);border:1px solid var(--bdr-c);padding:7px 16px;border-radius:20px;font-size:13px;color:var(--c);font-weight:500;margin-bottom:26px}
+    .dot-live{width:7px;height:7px;background:var(--g);border-radius:50%;animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+    #hero h1{font-size:clamp(36px,6vw,68px);font-weight:800;line-height:1.08;margin-bottom:18px;letter-spacing:-.02em}
+    .grad{background:linear-gradient(135deg,var(--c),var(--b) 50%,var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hsub{font-size:clamp(16px,2vw,19px);color:var(--t2);max-width:620px;margin:0 auto 34px;line-height:1.62}
+    .hctas{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+    .cstrip{display:inline-flex;align-items:center;gap:9px;background:rgba(6,182,212,.07);border:1px solid var(--bdr-c);border-radius:12px;padding:13px 22px;font-size:14px;color:var(--t2);margin-bottom:56px}
+    .cnum{font-family:var(--fh);font-size:22px;font-weight:700;color:var(--c);min-width:34px;display:inline-block}
+    .hmock{max-width:860px;margin:0 auto;background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 60px rgba(6,182,212,.05)}
+    .mbar{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 20px;display:flex;align-items:center;gap:10px}
+    .mdots{display:flex;gap:6px}
+    .mdots span{width:11px;height:11px;border-radius:50%}
+    .mdots span:nth-child(1){background:#ef4444}
+    .mdots span:nth-child(2){background:var(--a)}
+    .mdots span:nth-child(3){background:var(--g)}
+    .murl{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--t3);text-align:center}
+    .mbody{padding:20px;display:grid;grid-template-columns:200px 1fr;gap:16px;min-height:260px}
+    .mside{background:var(--bg3);border-radius:10px;border:1px solid var(--bdr);padding:14px 12px}
+    .mlogo{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--bdr);margin-bottom:12px}
+    .mlogo-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px}
+    .mlogo-t{font-size:11px;font-weight:600;font-family:var(--fh)}
+    .mnav{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:11px;color:var(--t3);margin-bottom:2px}
+    .mnav.on{background:var(--cd);color:var(--c)}
+    .mmain{display:flex;flex-direction:column;gap:12px}
+    .mmets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .mcard{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:10px}
+    .mcard .v{font-size:18px;font-weight:700;font-family:var(--fh);color:var(--c)}
+    .mcard .l{font-size:9px;color:var(--t3);margin-top:2px}
+    .mchart{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:12px;height:110px;overflow:hidden}
+    .mcl{font-size:10px;color:var(--t3);margin-bottom:8px}
+    .mbars{display:flex;align-items:flex-end;gap:6px;height:72px}
+    .mbar-b{flex:1;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--c),var(--b));opacity:.7}
+
+    /* PAIN */
+    #pain{background:linear-gradient(180deg,var(--bg) 0%,rgba(14,21,40,.5) 100%)}
+    .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+    .pcard{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad);padding:28px 24px;transition:all .25s}
+    .pcard:hover{border-color:rgba(239,68,68,.35);transform:translateY(-4px)}
+    .pico{width:48px;height:48px;border-radius:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+    .pcard h3{font-size:17px;font-weight:700;margin-bottom:10px}
+    .pcard p{font-size:14px;color:var(--t2);line-height:1.62}
+    .pstat{display:inline-block;margin-top:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;color:#ef4444}
+
+    /* MÓDULOS */
+    .mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:48px}
+    .modc{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad);padding:32px 28px;transition:all .25s;position:relative;overflow:hidden}
+    .modc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .modc.mc::before{background:linear-gradient(90deg,var(--c),transparent)}
+    .modc.mb::before{background:linear-gradient(90deg,var(--b),transparent)}
+    .modc.mp::before{background:linear-gradient(90deg,var(--p),transparent)}
+    .modc.mg::before{background:linear-gradient(90deg,var(--g),transparent)}
+    .modc:hover{border-color:var(--bdr-c);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+    .modc h3{font-size:20px;font-weight:700;margin-bottom:10px}
+    .modc p{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:18px}
+    .mico{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px}
+    .mico.mc{background:var(--cd)} .mico.mb{background:var(--bd)} .mico.mp{background:rgba(99,102,241,.1)} .mico.mg{background:rgba(16,185,129,.1)}
+    .mfeats{display:flex;flex-direction:column;gap:7px}
+    .mfeat{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2)}
+    .mfeat::before{content:'✓';color:var(--g);font-weight:700;flex-shrink:0}
+
+    /* NÚMEROS */
+    #numeros{background:linear-gradient(135deg,rgba(6,182,212,.04) 0%,rgba(59,130,246,.04) 100%);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+    .ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+    .nitem{text-align:center}
+    .nval{font-family:var(--fh);font-size:clamp(36px,5vw,56px);font-weight:800;background:linear-gradient(135deg,var(--c),var(--b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:8px}
+    .nlbl{font-size:15px;color:var(--t2);max-width:160px;margin:0 auto}
+
+    /* PRECIOS */
+    .prgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;align-items:start}
+    .prcard{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad);padding:32px 28px;transition:all .25s;position:relative}
+    .prcard.pop{border-color:var(--c);box-shadow:0 0 40px rgba(6,182,212,.12);transform:scale(1.03)}
+    .ptag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--c),var(--b));color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 14px;border-radius:20px}
+    .pplan{font-size:13px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .pval{font-family:var(--fh);font-size:48px;font-weight:800;line-height:1;margin-bottom:4px}
+    .pval sup{font-size:22px;vertical-align:super}
+    .pval span{font-size:16px;font-weight:400;color:var(--t2)}
+    .pdesc{font-size:13px;color:var(--t2);margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--bdr)}
+    .pfeats{display:flex;flex-direction:column;gap:9px;margin-bottom:26px}
+    .pfeat{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--t2);line-height:1.4}
+    .ck{color:var(--g);font-weight:700;flex-shrink:0;margin-top:1px}
+    .xk{color:var(--t3);flex-shrink:0;margin-top:1px}
+    .pbtn{width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:600;text-align:center;justify-content:center}
+
+    /* TESTIMONIOS */
+    .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+    .tcard{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad);padding:28px 24px;transition:all .25s}
+    .tcard:hover{border-color:var(--bdr-c);transform:translateY(-3px)}
+    .tstars{color:var(--a);font-size:15px;margin-bottom:14px;letter-spacing:2px}
+    .ttxt{font-size:15px;color:var(--t2);line-height:1.7;margin-bottom:20px;font-style:italic}
+    .tauth{display:flex;align-items:center;gap:12px}
+    .tav{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0}
+    .tname{font-weight:600;font-size:14px;margin-bottom:2px}
+    .trole{font-size:12px;color:var(--t3)}
+    .tmet{margin-top:18px;padding-top:16px;border-top:1px solid var(--bdr);font-size:12px;color:var(--t3)}
+    .tmet strong{color:var(--g)}
+
+    /* FAQ */
+    .flist{max-width:720px;margin:48px auto 0;display:flex;flex-direction:column;gap:12px}
+    .fitem{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad);overflow:hidden;transition:border-color .2s}
+    .fitem.on{border-color:var(--bdr-c)}
+    .fq{width:100%;background:none;border:none;color:var(--t);font-family:var(--fh);font-size:16px;font-weight:600;text-align:left;padding:20px 24px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .fq .ico{color:var(--c);font-size:20px;flex-shrink:0;transition:transform .2s}
+    .fitem.on .fq .ico{transform:rotate(45deg)}
+    .fa{display:none;padding:0 24px 20px;font-size:15px;color:var(--t2);line-height:1.7}
+    .fitem.on .fa{display:block}
+
+    /* CTA FINAL */
+    .cbox{background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(59,130,246,.07));border:1px solid var(--bdr-c);border-radius:20px;padding:64px 48px;position:relative;overflow:hidden;text-align:center}
+    .cbox::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(6,182,212,.09),transparent 70%);pointer-events:none}
+    .cbox h2{font-size:clamp(26px,4vw,42px);font-weight:800;margin-bottom:14px}
+    .cbox p{font-size:17px;color:var(--t2);max-width:500px;margin:0 auto 36px;line-height:1.6}
+    .cform{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;margin:0 auto 16px}
+    .cform input{background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:10px;padding:13px 16px;color:var(--t);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .2s}
+    .cform input:focus{border-color:var(--c)}
+    .cform input::placeholder{color:var(--t3)}
+    .csub{grid-column:1/-1;background:linear-gradient(135deg,var(--c),var(--b));color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--fh);font-size:16px;font-weight:700;cursor:pointer;transition:all .2s}
+    .csub:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 0 30px rgba(6,182,212,.3)}
+    .cnote{font-size:13px;color:var(--t3)}
+
+    /* FOOTER */
+    footer{background:var(--bg3);border-top:1px solid var(--bdr);padding:48px 24px 32px}
+    .ftop{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:40px;padding-bottom:40px;border-bottom:1px solid var(--bdr);margin-bottom:28px}
+    .fbrand p{font-size:14px;color:var(--t2);margin-top:12px;max-width:240px;line-height:1.6}
+    .fcol h4{font-size:13px;font-weight:700;color:var(--t);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+    .fcol a{display:block;font-size:14px;color:var(--t2);margin-bottom:8px;transition:color .2s}
+    .fcol a:hover{color:var(--c)}
+    .fbot{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--t3)}
+    .fbot a{color:var(--t3);transition:color .2s}
+    .fbot a:hover{color:var(--c)}
+
+    /* RESPONSIVE */
+    @media(max-width:1024px){.mgrid{grid-template-columns:1fr 1fr}.ngrid{grid-template-columns:repeat(2,1fr);gap:24px}.ftop{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){section{padding:60px 20px}.pgrid,.mgrid,.prgrid,.tgrid{grid-template-columns:1fr}.prcard.pop{transform:none}.cform{grid-template-columns:1fr}.csub{grid-column:1}.ftop{grid-template-columns:1fr;gap:24px}.fbot{flex-direction:column;gap:8px;text-align:center}.nav-links{display:none}.ham{display:block}.mob-nav.on{display:flex}.cbox{padding:40px 24px}.mbody{grid-template-columns:1fr}.mside{display:none}.mmets{grid-template-columns:repeat(2,1fr)}.sbar{flex-wrap:wrap;gap:10px;justify-content:center}}
+    @media(max-width:480px){.ngrid{grid-template-columns:repeat(2,1fr)}.hctas{flex-direction:column;align-items:stretch;text-align:center}}
   </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
-<nav>
-  <div class="nav-logo">
-    <div class="icon">✈️</div>
-    Travel<span>AI</span>
+<div class="sbar">
+  <span>¿Eres una agencia grande?</span>
+  <a href="sales/pitch.html">Ver presentación →</a>
+  <a href="app/dashboard.html">Demo en vivo →</a>
+</div>
+
+<nav id="nav">
+  <div class="nav-i">
+    <div class="logo"><div class="logo-sq">✈️</div>Travel<span>AI</span></div>
+    <div class="nav-links">
+      <a href="#pain">Problema</a>
+      <a href="#modulos">Solución</a>
+      <a href="#numeros">Resultados</a>
+      <a href="#precios">Precios</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-ctas">
+      <a href="sales/pitch.html" class="btn btn-g">Para agencias →</a>
+      <a href="app/dashboard.html" class="btn btn-p">Ver demo →</a>
+    </div>
+    <button class="ham" onclick="document.getElementById('mob').classList.toggle('on')">☰</button>
   </div>
-  <ul class="nav-links">
-    <li><a href="#modulos">Módulos</a></li>
-    <li><a href="#como-funciona">Cómo funciona</a></li>
-    <li><a href="#precios">Precios</a></li>
-  </ul>
-  <div class="nav-cta">
-    <a href="#precios" class="btn btn-ghost">Ver planes</a>
-    <a href="app/dashboard.html" class="btn btn-primary">Ver demo en vivo →</a>
+  <div class="mob-nav" id="mob">
+    <a href="#pain">Problema</a>
+    <a href="#modulos">Solución</a>
+    <a href="#numeros">Resultados</a>
+    <a href="#precios">Precios</a>
+    <a href="#faq">FAQ</a>
+    <a href="sales/pitch.html" class="btn btn-g">Para agencias →</a>
+    <a href="app/dashboard.html" class="btn btn-p">Ver demo →</a>
   </div>
-  <button class="ham" onclick="document.querySelector('nav ul').style.display='flex'">☰</button>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      Plataforma con IA · Disponible ahora
+<section id="hero">
+  <div class="hglow"></div>
+  <div class="wrap">
+    <div class="hbadge"><span class="dot-live"></span> Sistema activo — <strong id="liveCount">47</strong> consultas atendidas hoy</div>
+    <h1>Tu agencia de viajes<br>en <span class="grad">piloto automático</span></h1>
+    <p class="hsub">Atiende más clientes, genera itinerarios en segundos y cierra más ventas — con IA integrada en todos tus canales.</p>
+    <div class="hctas">
+      <a href="#cta-final" class="btn btn-p btn-lg">Ver demo gratis →</a>
+      <a href="sales/pitch.html" class="btn btn-g btn-lg">Agendar llamada</a>
     </div>
-    <h1>
-      Automatiza tu agencia<br>de viajes con <span class="gradient">Inteligencia Artificial</span>
-    </h1>
-    <p class="hero-desc">
-      Chatbot 24/7, itinerarios personalizados en segundos, CRM inteligente y métricas en tiempo real. Todo en una sola plataforma.
-    </p>
-    <div class="hero-actions">
-      <a href="app/dashboard.html" class="btn btn-primary btn-lg">Ver demo en vivo →</a>
-      <a href="#modulos" class="btn btn-ghost btn-lg">Explorar módulos</a>
+    <div class="cstrip">
+      🤖 Consultas atendidas hoy:&nbsp;<span class="cnum" id="cc">47</span>&nbsp;— y contando en tiempo real
     </div>
-    <div class="hero-social-proof">
-      <div class="proof-item">
-        <div class="proof-num">+340%</div>
-        <div class="proof-label">más consultas atendidas</div>
+    <div class="hmock">
+      <div class="mbar">
+        <div class="mdots"><span></span><span></span><span></span></div>
+        <div class="murl">app.travelai.mx/dashboard</div>
       </div>
-      <div class="proof-divider"></div>
-      <div class="proof-item">
-        <div class="proof-num">34%</div>
-        <div class="proof-label">tasa de conversión</div>
+      <div class="mbody">
+        <div class="mside">
+          <div class="mlogo"><div class="mlogo-sq"></div><div class="mlogo-t">TravelAI</div></div>
+          <div class="mnav on">📊 Dashboard</div>
+          <div class="mnav">💬 Chatbot</div>
+          <div class="mnav">🗺️ Itinerarios</div>
+          <div class="mnav">👥 CRM</div>
+        </div>
+        <div class="mmain">
+          <div class="mmets">
+            <div class="mcard"><div class="v">47</div><div class="l">Consultas hoy</div></div>
+            <div class="mcard"><div class="v">12</div><div class="l">Itinerarios</div></div>
+            <div class="mcard"><div class="v">89</div><div class="l">Leads activos</div></div>
+            <div class="mcard"><div class="v">34%</div><div class="l">Conversión</div></div>
+          </div>
+          <div class="mchart">
+            <div class="mcl">Consultas esta semana</div>
+            <div class="mbars">
+              <div class="mbar-b" style="height:40%"></div>
+              <div class="mbar-b" style="height:65%"></div>
+              <div class="mbar-b" style="height:50%"></div>
+              <div class="mbar-b" style="height:82%"></div>
+              <div class="mbar-b" style="height:60%"></div>
+              <div class="mbar-b" style="height:93%"></div>
+              <div class="mbar-b" style="height:74%"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="proof-divider"></div>
-      <div class="proof-item">
-        <div class="proof-num">24/7</div>
-        <div class="proof-label">atención automatizada</div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN POINTS -->
+<section id="pain">
+  <div class="wrap">
+    <div class="lbl">⚠️ El problema</div>
+    <h2 class="stitle">Tu equipo trabaja al límite.<br>Los clientes siguen esperando.</h2>
+    <p class="ssub">Cada minuto que tu equipo pierde en tareas repetitivas es un cliente que tu competencia ya atendió.</p>
+    <div class="pgrid">
+      <div class="pcard">
+        <div class="pico">⏰</div>
+        <h3>3 horas perdidas cada día</h3>
+        <p>Tu equipo responde las mismas preguntas una y otra vez: precios, disponibilidad, requisitos. Tiempo que debería usarse en cerrar ventas.</p>
+        <div class="pstat">3 hrs/agente/día en consultas repetitivas</div>
       </div>
-      <div class="proof-divider"></div>
-      <div class="proof-item">
-        <div class="proof-num">2 min</div>
-        <div class="proof-label">itinerario completo</div>
+      <div class="pcard">
+        <div class="pico">📵</div>
+        <h3>Los clientes no esperan</h3>
+        <p>Un cliente pregunta a las 11pm. Tu agencia está cerrada. Tu competencia tiene IA que responde en segundos. ¿Quién se lleva la venta?</p>
+        <div class="pstat">68% de consultas fuera de horario laboral</div>
+      </div>
+      <div class="pcard">
+        <div class="pico">📋</div>
+        <h3>45 minutos por itinerario</h3>
+        <p>Construir una cotización detallada toma casi una hora. Con TravelAI, el mismo itinerario sale en 30 segundos — listo para enviar.</p>
+        <div class="pstat">45 min → 30 seg con TravelAI IA</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- MÓDULOS -->
-<section id="modulos">
-  <div class="section-inner">
-    <div class="section-label">Módulos</div>
-    <h2>Todo lo que tu agencia necesita</h2>
-    <p class="section-desc">Cuatro módulos integrados que trabajan juntos para maximizar tus ventas y automatizar tu operación.</p>
-
-    <div class="modules-grid">
-      <!-- Chatbot -->
-      <div class="module-card m1">
-        <div class="module-icon">🤖</div>
-        <h3>Chatbot IA</h3>
-        <p>Asistente inteligente entrenado en turismo. Cotiza viajes, recomienda destinos y resuelve dudas en tiempo real.</p>
-        <ul class="module-features">
-          <li>Respuestas instantáneas 24/7</li>
-          <li>Multiidioma (ES, EN, PT)</li>
-          <li>Cotizaciones automáticas</li>
-          <li>Integración WhatsApp</li>
-        </ul>
+<section id="modulos" style="background:var(--bg)">
+  <div class="wrap">
+    <div class="lbl">✨ La solución</div>
+    <h2 class="stitle">Cuatro módulos.<br>Una sola plataforma.</h2>
+    <p class="ssub">Todo lo que necesita tu agencia para automatizar, crecer y cerrar más ventas — sin complicaciones técnicas.</p>
+    <div class="mgrid">
+      <div class="modc mc">
+        <div class="mico mc">💬</div>
+        <h3>Chatbot IA Omnicanal</h3>
+        <p>Responde WhatsApp, web e Instagram las 24 horas. Cotiza paquetes, resuelve dudas y agenda citas — completamente solo.</p>
+        <div class="mfeats">
+          <div class="mfeat">Respuesta en menos de 3 segundos</div>
+          <div class="mfeat">Integración WhatsApp Business API oficial</div>
+          <div class="mfeat">Escalamiento automático a agente humano</div>
+          <div class="mfeat">Disponible 24/7, sin descanso</div>
+        </div>
       </div>
-
-      <!-- Itinerarios -->
-      <div class="module-card m2">
-        <div class="module-icon">🗺️</div>
+      <div class="modc mb">
+        <div class="mico mb">🗺️</div>
         <h3>Generador de Itinerarios</h3>
-        <p>Crea itinerarios detallados día a día en menos de 2 minutos. Hoteles, actividades y tips incluidos.</p>
-        <ul class="module-features">
-          <li>Itinerarios personalizados por presupuesto</li>
-          <li>Exportar a PDF</li>
-          <li>Sugerencias de hoteles</li>
-          <li>Tips de visas y clima</li>
-        </ul>
+        <p>Crea itinerarios detallados y personalizados en segundos. Con destinos, hoteles, actividades y costos — formato profesional listo para enviar.</p>
+        <div class="mfeats">
+          <div class="mfeat">Itinerario completo en menos de 30 segundos</div>
+          <div class="mfeat">Exportación a PDF con tu marca</div>
+          <div class="mfeat">Personalización por presupuesto y perfil</div>
+          <div class="mfeat">Base de datos de 500+ destinos</div>
+        </div>
       </div>
-
-      <!-- CRM -->
-      <div class="module-card m3">
-        <div class="module-icon">📊</div>
+      <div class="modc mp">
+        <div class="mico mp">👥</div>
         <h3>CRM Inteligente</h3>
-        <p>Pipeline visual de leads con seguimiento automatizado. Nunca pierdas un cliente potencial.</p>
-        <ul class="module-features">
-          <li>Pipeline Kanban visual</li>
-          <li>Seguimiento automático</li>
-          <li>Historial de conversaciones</li>
-          <li>Alertas de seguimiento</li>
-        </ul>
+        <p>Gestiona todos tus leads en tablero visual Kanban. Sabe quién está listo para comprar y qué oportunidades están en riesgo.</p>
+        <div class="mfeats">
+          <div class="mfeat">Kanban visual por etapa de venta</div>
+          <div class="mfeat">Alertas de leads sin atender</div>
+          <div class="mfeat">Historial completo de conversaciones</div>
+          <div class="mfeat">Scoring automático de probabilidad de cierre</div>
+        </div>
       </div>
-
-      <!-- Dashboard -->
-      <div class="module-card m4">
-        <div class="module-icon">📈</div>
-        <h3>Dashboard Analytics</h3>
-        <p>Métricas en tiempo real de consultas, conversiones y rendimiento. Toma decisiones basadas en datos.</p>
-        <ul class="module-features">
-          <li>KPIs en tiempo real</li>
-          <li>Gráficas semanales</li>
-          <li>Reportes exportables</li>
-          <li>Alertas inteligentes</li>
-        </ul>
+      <div class="modc mg">
+        <div class="mico mg">📊</div>
+        <h3>Dashboard de Control</h3>
+        <p>Ve todo tu negocio en una pantalla: consultas atendidas, itinerarios generados, leads activos y tasa de conversión en tiempo real.</p>
+        <div class="mfeats">
+          <div class="mfeat">Métricas en tiempo real</div>
+          <div class="mfeat">Reportes semanales automáticos</div>
+          <div class="mfeat">Top destinos y temporadas de alta demanda</div>
+          <div class="mfeat">Comparativa con períodos anteriores</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CÓMO FUNCIONA -->
-<section id="como-funciona" class="how-bg">
-  <div class="section-inner">
-    <div class="section-label">Proceso</div>
-    <h2>En marcha en 48 horas</h2>
-    <p class="section-desc">Sin conocimientos técnicos. Sin instalaciones complicadas. Solo resultados desde el primer día.</p>
-
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Registro</h3>
-        <p>Crea tu cuenta y selecciona el plan que mejor se adapta a tu agencia.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Configuración</h3>
-        <p>Personaliza el chatbot con tu catálogo de destinos, precios y políticas.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Integración</h3>
-        <p>Conecta con tu web, WhatsApp Business o redes sociales en minutos.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Resultados</h3>
-        <p>Empieza a recibir leads calificados y generar itinerarios automáticamente.</p>
-      </div>
+<!-- NÚMEROS -->
+<section id="numeros">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="lbl" style="display:inline-flex">📈 Números que importan</div>
+      <h2 class="stitle">Resultados reales. No promesas.</h2>
+    </div>
+    <div class="ngrid">
+      <div class="nitem"><div class="nval" data-target="89" data-suf="%">0%</div><div class="nlbl">Reducción en tiempo de respuesta al cliente</div></div>
+      <div class="nitem"><div class="nval" data-target="3" data-suf="x">0x</div><div class="nlbl">Más cotizaciones generadas por agente al día</div></div>
+      <div class="nitem"><div class="nval" data-pre="$" data-target="0" data-suf="">$0</div><div class="nlbl">Costo por consulta automatizada con el chatbot</div></div>
+      <div class="nitem"><div class="nval" data-static="24/7">24/7</div><div class="nlbl">Horas de atención sin personal extra</div></div>
     </div>
   </div>
 </section>
 
 <!-- PRECIOS -->
-<section id="precios">
-  <div class="section-inner">
-    <div class="section-label">Precios</div>
-    <h2>Inversión que se paga sola</h2>
-    <p class="section-desc">Planes flexibles para agencias de todos los tamaños. Sin permanencia. Cancela cuando quieras.</p>
-
-    <div class="pricing-grid">
-      <!-- Starter -->
-      <div class="pricing-card">
-        <div class="plan-name">Starter</div>
-        <div class="plan-desc">Perfecto para agencias pequeñas</div>
-        <div class="plan-price">
-          <span class="price-currency">$</span>
-          <span class="price-amount">299</span>
-          <span class="price-period">/mes</span>
+<section id="precios" style="background:var(--bg)">
+  <div class="wrap">
+    <div style="text-align:center">
+      <div class="lbl" style="display:inline-flex">💎 Planes y precios</div>
+      <h2 class="stitle">Escoge el plan de tu agencia</h2>
+      <p class="ssub" style="margin:0 auto 48px">14 días de prueba gratis en todos los planes. Sin tarjeta de crédito.</p>
+    </div>
+    <div class="prgrid">
+      <div class="prcard">
+        <div class="pplan">Starter</div>
+        <div class="pval"><sup>$</sup>299<span>/mes</span></div>
+        <div class="pdesc">Ideal para agencias pequeñas que quieren empezar a automatizar</div>
+        <div class="pfeats">
+          <div class="pfeat"><span class="ck">✓</span> Hasta 500 consultas/mes</div>
+          <div class="pfeat"><span class="ck">✓</span> 1 canal (WhatsApp o Web)</div>
+          <div class="pfeat"><span class="ck">✓</span> Generador de itinerarios</div>
+          <div class="pfeat"><span class="ck">✓</span> CRM básico</div>
+          <div class="pfeat"><span class="ck">✓</span> Soporte por email</div>
+          <div class="pfeat"><span class="xk">✗</span> <span style="color:var(--t3)">Multicanal</span></div>
+          <div class="pfeat"><span class="xk">✗</span> <span style="color:var(--t3)">API personalizada</span></div>
         </div>
-        <ul class="plan-features">
-          <li class="included"><span class="check">✓</span> Chatbot IA (hasta 500 consultas/mes)</li>
-          <li class="included"><span class="check">✓</span> Generador de itinerarios</li>
-          <li class="included"><span class="check">✓</span> CRM básico (hasta 100 leads)</li>
-          <li class="included"><span class="check">✓</span> Dashboard básico</li>
-          <li><span class="x">✗</span> WhatsApp Business</li>
-          <li><span class="x">✗</span> Soporte prioritario</li>
-          <li><span class="x">✗</span> API personalizada</li>
-        </ul>
-        <a href="app/dashboard.html" class="btn btn-ghost" style="width:100%;justify-content:center;">Ver demo →</a>
+        <a href="#cta-final" class="btn btn-g pbtn">Empezar gratis →</a>
       </div>
-
-      <!-- Pro -->
-      <div class="pricing-card featured">
-        <div class="featured-badge">⭐ Más popular</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-desc">Para agencias en crecimiento</div>
-        <div class="plan-price">
-          <span class="price-currency">$</span>
-          <span class="price-amount">599</span>
-          <span class="price-period">/mes</span>
+      <div class="prcard pop">
+        <div class="ptag">⭐ Más popular</div>
+        <div class="pplan">Professional</div>
+        <div class="pval"><sup>$</sup>599<span>/mes</span></div>
+        <div class="pdesc">Para agencias en crecimiento que necesitan automatización completa</div>
+        <div class="pfeats">
+          <div class="pfeat"><span class="ck">✓</span> Consultas ilimitadas</div>
+          <div class="pfeat"><span class="ck">✓</span> Todos los canales (WhatsApp + Web + IG)</div>
+          <div class="pfeat"><span class="ck">✓</span> Generador de itinerarios avanzado</div>
+          <div class="pfeat"><span class="ck">✓</span> CRM completo con Kanban</div>
+          <div class="pfeat"><span class="ck">✓</span> Reportes semanales automáticos</div>
+          <div class="pfeat"><span class="ck">✓</span> Soporte prioritario 24/7</div>
+          <div class="pfeat"><span class="ck">✓</span> Integración calendario y email</div>
+          <div class="pfeat"><span class="xk">✗</span> <span style="color:var(--t3)">Multi-agencia</span></div>
         </div>
-        <ul class="plan-features">
-          <li class="included"><span class="check">✓</span> Chatbot IA ilimitado</li>
-          <li class="included"><span class="check">✓</span> Generador de itinerarios avanzado</li>
-          <li class="included"><span class="check">✓</span> CRM completo (leads ilimitados)</li>
-          <li class="included"><span class="check">✓</span> Dashboard analytics completo</li>
-          <li class="included"><span class="check">✓</span> Integración WhatsApp Business</li>
-          <li class="included"><span class="check">✓</span> Soporte prioritario 24/7</li>
-          <li><span class="x">✗</span> API personalizada</li>
-        </ul>
-        <a href="app/dashboard.html" class="btn btn-primary" style="width:100%;justify-content:center;">Empezar ahora →</a>
+        <a href="#cta-final" class="btn btn-p pbtn">Empezar gratis →</a>
       </div>
-
-      <!-- Enterprise -->
-      <div class="pricing-card">
-        <div class="plan-name">Enterprise</div>
-        <div class="plan-desc">Para grandes operadores</div>
-        <div class="plan-price">
-          <span class="price-currency">$</span>
-          <span class="price-amount">1,200</span>
-          <span class="price-period">/mes</span>
+      <div class="prcard">
+        <div class="pplan">Enterprise</div>
+        <div class="pval"><sup>$</sup>1,200<span>/mes</span></div>
+        <div class="pdesc">Para grupos y agencias con múltiples sucursales o marcas</div>
+        <div class="pfeats">
+          <div class="pfeat"><span class="ck">✓</span> Todo lo del plan Pro</div>
+          <div class="pfeat"><span class="ck">✓</span> Multi-agencia / multi-sucursal</div>
+          <div class="pfeat"><span class="ck">✓</span> API personalizada</div>
+          <div class="pfeat"><span class="ck">✓</span> Onboarding dedicado</div>
+          <div class="pfeat"><span class="ck">✓</span> Soporte dedicado con SLA</div>
+          <div class="pfeat"><span class="ck">✓</span> Capacitación al equipo</div>
+          <div class="pfeat"><span class="ck">✓</span> Reportes personalizados</div>
+          <div class="pfeat"><span class="ck">✓</span> Integración con tu sistema actual</div>
         </div>
-        <ul class="plan-features">
-          <li class="included"><span class="check">✓</span> Todo lo del plan Pro</li>
-          <li class="included"><span class="check">✓</span> API personalizada + webhooks</li>
-          <li class="included"><span class="check">✓</span> Entrenamiento IA personalizado</li>
-          <li class="included"><span class="check">✓</span> Multi-agencia (hasta 10)</li>
-          <li class="included"><span class="check">✓</span> Manager dedicado</li>
-          <li class="included"><span class="check">✓</span> Onboarding presencial</li>
-          <li class="included"><span class="check">✓</span> SLA garantizado 99.9%</li>
-        </ul>
-        <a href="#" class="btn btn-ghost" style="width:100%;justify-content:center;">Contactar ventas →</a>
+        <a href="#cta-final" class="btn btn-g pbtn">Contactar ventas →</a>
       </div>
     </div>
   </div>
 </section>
-
-<!-- VIDEO DEMO -->
-<div class="video-section">
-  <div class="section-inner" style="text-align:center;margin-bottom:32px;">
-    <div class="section-label" style="justify-content:center;">Demo en vivo</div>
-    <h2>Mira cómo funciona en 2 minutos</h2>
-    <p class="section-desc" style="margin:0 auto;">Una plataforma diseñada para que tu equipo opere más rápido con menos esfuerzo.</p>
-  </div>
-  <div class="video-wrap" onclick="location.href='app/dashboard.html'">
-    <div class="video-bg"></div>
-    <div class="video-grid-overlay"></div>
-    <div class="video-mock-ui">
-      <div class="mock-sidebar">
-        <div class="mock-nav active"></div>
-        <div class="mock-nav"></div>
-        <div class="mock-nav"></div>
-        <div class="mock-nav"></div>
-      </div>
-      <div class="mock-content">
-        <div class="mock-row">
-          <div class="mock-card"></div>
-          <div class="mock-card"></div>
-          <div class="mock-card"></div>
-          <div class="mock-card"></div>
-        </div>
-        <div class="mock-row">
-          <div class="mock-chart"></div>
-          <div class="mock-chart" style="flex:0.6;"></div>
-        </div>
-      </div>
-    </div>
-    <div class="play-btn">▶</div>
-  </div>
-  <p class="video-label">Haz clic para explorar el dashboard en vivo →</p>
-</div>
 
 <!-- TESTIMONIOS -->
-<section style="padding:96px 24px;">
-  <div class="section-inner">
-    <div class="section-label">Testimonios</div>
-    <h2>Lo que dicen nuestros clientes</h2>
-    <p class="section-desc">Agencias reales con resultados reales. Así es como TravelAI está cambiando la industria.</p>
-    <div class="testi-grid">
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"En el primer mes duplicamos las consultas atendidas sin contratar más personal. El chatbot responde a las 3am cuando nosotros dormimos y los clientes quedan felices."</p>
-        <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);">MV</div>
-          <div>
-            <div class="testi-name">Martina Vega</div>
-            <div class="testi-role">Directora — Viajes del Sol, CDMX</div>
-          </div>
+<section id="testimonios" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(14,21,40,.7) 100%)">
+  <div class="wrap">
+    <div class="lbl">💬 Testimonios</div>
+    <h2 class="stitle">Lo que dicen las agencias<br>que ya lo usan</h2>
+    <div class="tgrid">
+      <div class="tcard">
+        <div class="tstars">★★★★★</div>
+        <p class="ttxt">"Antes tardábamos 45 minutos en armar una cotización. Ahora el chatbot la genera en segundos y mi equipo solo la revisa y la manda. Triplicamos las cotizaciones diarias."</p>
+        <div class="tauth">
+          <div class="tav" style="background:linear-gradient(135deg,var(--c),var(--b))">CR</div>
+          <div><div class="tname">Claudia R.</div><div class="trole">Directora — Viajes Premium Monterrey</div></div>
         </div>
+        <div class="tmet">Resultado: <strong>+210% cotizaciones/mes</strong> en 60 días</div>
       </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"Los itinerarios que genera la IA son increíbles. Antes me tardaba 2 horas en hacer uno personalizado. Ahora lo tengo en 2 minutos y mis clientes no notan la diferencia."</p>
-        <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">RC</div>
-          <div>
-            <div class="testi-name">Ricardo Cortez</div>
-            <div class="testi-role">Agente Senior — TourMex, Guadalajara</div>
-          </div>
+      <div class="tcard">
+        <div class="tstars">★★★★★</div>
+        <p class="ttxt">"El CRM nos cambió la vida. Antes perdíamos leads porque nadie hacía el seguimiento. Ahora el sistema nos avisa quién está a punto de cerrar y quién lleva 3 días sin respuesta."</p>
+        <div class="tauth">
+          <div class="tav" style="background:linear-gradient(135deg,var(--p),var(--b))">RM</div>
+          <div><div class="tname">Roberto M.</div><div class="trole">CEO — ToursMex Guadalajara</div></div>
         </div>
+        <div class="tmet">Resultado: <strong>+34% tasa de cierre</strong> en el primer mes</div>
       </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"El CRM me tiene todo organizado. Antes perdía leads porque no tenía seguimiento. Ahora tengo un 34% de conversión y sé exactamente en qué etapa está cada cliente."</p>
-        <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">AL</div>
-          <div>
-            <div class="testi-name">Andrea López</div>
-            <div class="testi-role">Fundadora — Travesías Premium, MTY</div>
-          </div>
+      <div class="tcard">
+        <div class="tstars">★★★★★</div>
+        <p class="ttxt">"Pensé que iba a ser complicado de implementar. En 48 horas ya estaba funcionando con WhatsApp. Mi equipo de 8 personas ahora produce lo que antes hacían 15. Increíble."</p>
+        <div class="tauth">
+          <div class="tav" style="background:linear-gradient(135deg,var(--g),var(--c))">SP</div>
+          <div><div class="tname">Sandra P.</div><div class="trole">Gerente — Mundoviajes CDMX</div></div>
         </div>
+        <div class="tmet">Resultado: <strong>-47% tiempo por consulta</strong> desde el día 1</div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- TECNOLOGÍA -->
-<div class="logos-section">
-  <div class="logos-inner">
-    <div class="logos-label">Tecnología que impulsa TravelAI</div>
-    <div class="logos-grid">
-      <div class="logo-item"><span class="logo-emoji">🤖</span> Anthropic Claude</div>
-      <div class="logo-item"><span class="logo-emoji">💬</span> WhatsApp Business</div>
-      <div class="logo-item"><span class="logo-emoji">📧</span> Gmail API</div>
-      <div class="logo-item"><span class="logo-emoji">📍</span> Google Maps</div>
-      <div class="logo-item"><span class="logo-emoji">📊</span> Google Analytics</div>
-    </div>
-  </div>
-</div>
-
-<!-- CTA -->
-<section class="cta-section">
-  <div class="cta-box">
-    <h2>¿Listo para automatizar<br>tu agencia?</h2>
-    <p>Prueba la demo en vivo y descubre cómo TravelAI transforma la operación de tu agencia de viajes.</p>
-    <a href="app/dashboard.html" class="btn btn-primary btn-lg">Ver demo en vivo →</a>
   </div>
 </section>
 
 <!-- FAQ -->
-<section id="faq" style="padding:96px 24px;background:var(--bg-card2);">
-  <div class="section-inner">
-    <div class="section-label">FAQ</div>
-    <h2 style="text-align:center;">Preguntas frecuentes</h2>
-    <p class="section-desc" style="margin:0 auto 0;text-align:center;">Todo lo que necesitas saber antes de empezar.</p>
-    <div class="faq-list">
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          ¿Necesito conocimientos técnicos para usar TravelAI?
-          <span class="faq-chevron">▼</span>
-        </div>
-        <div class="faq-a">No. TravelAI está diseñado para agentes de viajes, no para desarrolladores. La configuración inicial toma menos de 1 hora y contamos con soporte dedicado para guiarte en cada paso. Si sabes usar WhatsApp, puedes usar TravelAI.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          ¿Cuánto tiempo tarda en estar lista la plataforma?
-          <span class="faq-chevron">▼</span>
-        </div>
-        <div class="faq-a">En menos de 48 horas. El día 1 configuras tu cuenta y personalizas el chatbot con tu catálogo. El día 2 integramos con tu sitio web o WhatsApp Business. El día 3 ya estás recibiendo leads y generando itinerarios automáticamente.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          ¿El chatbot puede responder en otros idiomas además del español?
-          <span class="faq-chevron">▼</span>
-        </div>
-        <div class="faq-a">Sí. El chatbot responde en más de 40 idiomas automáticamente, detectando el idioma del cliente. En los planes Pro y Enterprise puedes configurar idiomas prioritarios y tono personalizado por mercado (formal, casual, etc.).</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          ¿Mis datos de clientes están seguros?
-          <span class="faq-chevron">▼</span>
-        </div>
-        <div class="faq-a">Absolutamente. Toda la información se almacena con cifrado AES-256. No compartimos datos con terceros. Cumplimos con GDPR y la Ley Federal de Protección de Datos de México. Puedes exportar o eliminar tus datos en cualquier momento desde la configuración.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          ¿Puedo cancelar en cualquier momento?
-          <span class="faq-chevron">▼</span>
-        </div>
-        <div class="faq-a">Sí, sin penalizaciones. Los planes son mes a mes. Si decides cancelar, tu cuenta queda activa hasta el final del período pagado y puedes exportar todos tus datos. No hay contratos mínimos ni cuotas de cancelación.</div>
-      </div>
-
+<section id="faq" style="background:linear-gradient(180deg,var(--bg) 0%,rgba(14,21,40,.6) 100%)">
+  <div class="wrap">
+    <div style="text-align:center">
+      <div class="lbl" style="display:inline-flex">❓ FAQ</div>
+      <h2 class="stitle">Todo lo que necesitas saber</h2>
+    </div>
+    <div class="flist">
+      <div class="fitem"><button class="fq" onclick="faq(this)">¿Necesito conocimientos técnicos para usarlo? <span class="ico">+</span></button><div class="fa">No. TravelAI está diseñado para dueños y gerentes, no para programadores. La implementación toma menos de 48 horas y nuestro equipo te acompaña en todo el proceso.</div></div>
+      <div class="fitem"><button class="fq" onclick="faq(this)">¿Funciona con WhatsApp Business? <span class="ico">+</span></button><div class="fa">Sí, es uno de los canales principales. Conectamos con la WhatsApp Business API oficial. Tu número sigue siendo el mismo, solo le agregamos el cerebro de IA para que responda automáticamente.</div></div>
+      <div class="fitem"><button class="fq" onclick="faq(this)">¿Cuánto tiempo toma la implementación? <span class="ico">+</span></button><div class="fa">48 horas para los planes Starter y Professional. Día 1: configuramos la plataforma y conectamos tus canales. Día 2: entrenamos el chatbot con tu información. Día 3: ya funciona con clientes reales.</div></div>
+      <div class="fitem"><button class="fq" onclick="faq(this)">¿Puedo cancelar en cualquier momento? <span class="ico">+</span></button><div class="fa">Sí, sin penalizaciones. No hay contratos anuales obligatorios ni cargos de cancelación. Si decides cancelar, lo haces desde tu panel en un clic. Tus datos quedan disponibles 30 días.</div></div>
+      <div class="fitem"><button class="fq" onclick="faq(this)">¿Los datos de mis clientes están seguros? <span class="ico">+</span></button><div class="fa">Sí. Todos los datos se almacenan con cifrado AES-256, en servidores en México, bajo cumplimiento de la LFPDPPP. Nunca compartimos ni vendemos datos de tus clientes.</div></div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-logo">
-      <div class="icon">✈️</div>
-      Travel<span>AI</span>
+<!-- CTA FINAL -->
+<section id="cta-final" style="background:var(--bg)">
+  <div class="wrap">
+    <div class="cbox">
+      <div class="lbl" style="display:inline-flex">🚀 Empieza hoy</div>
+      <h2>14 días gratis.<br>Sin tarjeta de crédito.</h2>
+      <p>Completa el formulario y en menos de 24 horas tendrás tu agencia en piloto automático.</p>
+      <form class="cform" onsubmit="submit(event)">
+        <input type="text" placeholder="Tu nombre" required>
+        <input type="text" placeholder="Nombre de tu agencia" required>
+        <input type="tel" placeholder="WhatsApp" required>
+        <input type="email" placeholder="Email" required>
+        <button type="submit" class="csub">Quiero mi prueba gratis de 14 días →</button>
+      </form>
+      <p class="cnote">✓ Sin tarjeta &nbsp;·&nbsp; ✓ Implementación en 48 hrs &nbsp;·&nbsp; ✓ Soporte incluido</p>
     </div>
-    <ul class="footer-links">
-      <li><a href="#modulos">Módulos</a></li>
-      <li><a href="#precios">Precios</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="app/dashboard.html">Demo</a></li>
-    </ul>
-    <div class="footer-copy">© 2025 TravelAI Platform. Todos los derechos reservados.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="ftop">
+      <div class="fbrand">
+        <div class="logo"><div class="logo-sq">✈️</div>Travel<span>AI</span></div>
+        <p>La plataforma de automatización con IA diseñada para agencias de viajes en México y Latinoamérica.</p>
+      </div>
+      <div class="fcol"><h4>Producto</h4><a href="#modulos">Chatbot IA</a><a href="#modulos">Itinerarios</a><a href="#modulos">CRM</a><a href="#modulos">Dashboard</a></div>
+      <div class="fcol"><h4>Ventas</h4><a href="sales/pitch.html">Presentación</a><a href="sales/calculadora-roi.html">Calculadora ROI</a><a href="sales/propuesta.html">Propuesta</a><a href="sales/mensajes.html">Mensajes</a></div>
+      <div class="fcol"><h4>Empresa</h4><a href="#precios">Precios</a><a href="#faq">FAQ</a><a href="#cta-final">Contacto</a><a href="app/dashboard.html">Demo</a></div>
+    </div>
+    <div class="fbot"><span>© 2025 TravelAI Platform. Todos los derechos reservados.</span><span>Hecho con IA · <a href="#">Privacidad</a> · <a href="#">Términos</a></span></div>
   </div>
 </footer>
 
 <script>
-  function toggleFaq(el) {
-    const item = el.parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
-  }
+  function faq(btn){btn.parentElement.classList.toggle('on')}
+  function submit(e){e.preventDefault();const b=e.target.querySelector('.csub');b.textContent='✓ ¡Listo! Te contactamos en menos de 24 hrs';b.style.background='linear-gradient(135deg,#10b981,#06b6d4)';b.disabled=true}
+  let base=47;
+  setInterval(()=>{if(Math.random()<.3){base++;document.getElementById('cc').textContent=base;const lc=document.getElementById('liveCount');if(lc)lc.textContent=base}},4200);
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target,t=parseInt(el.dataset.target),suf=el.dataset.suf||'%',pre=el.dataset.pre||'';if(isNaN(t))return;let cur=0;const step=t/60;const ti=setInterval(()=>{cur=Math.min(cur+step,t);el.textContent=pre+Math.round(cur)+suf;if(cur>=t)clearInterval(ti)},18);obs.unobserve(el)}})},{threshold:.5});
+  document.querySelectorAll('.nval[data-target]').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>

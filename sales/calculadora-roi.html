@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora ROI — TravelAI Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,0.07);--bdr-c:rgba(6,182,212,0.3);--c:#06b6d4;--cd:rgba(6,182,212,0.1);--b:#3b82f6;--bd:rgba(59,130,246,0.1);--p:#6366f1;--g:#10b981;--a:#f59e0b;--r:#ef4444;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;min-height:100vh}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100}
+    .tn-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px}
+    .tn-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--t2);padding:6px 12px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back:hover{color:var(--c);border-color:var(--bdr-c)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+
+    /* LAYOUT */
+    .main{max-width:1100px;margin:0 auto;padding:32px 24px}
+    .page-header{margin-bottom:36px}
+    .page-header h1{font-size:clamp(24px,3vw,38px);font-weight:800;margin-bottom:8px}
+    .page-header p{font-size:15px;color:var(--t2)}
+
+    .layout{display:grid;grid-template-columns:400px 1fr;gap:24px;align-items:start}
+
+    /* INPUTS PANEL */
+    .inputs-panel{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:28px;position:sticky;top:76px}
+    .ip-title{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .ip-title .ico{width:32px;height:32px;background:var(--cd);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+
+    /* SLIDERS */
+    .slider-group{margin-bottom:20px}
+    .sg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .sg-label{font-size:13px;font-weight:500;color:var(--t2)}
+    .sg-val{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--c)}
+    .sg-val-wrap{background:var(--cd);border:1px solid var(--bdr-c);border-radius:6px;padding:2px 10px}
+    input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:rgba(255,255,255,.1);outline:none;cursor:pointer}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--b));cursor:pointer;box-shadow:0 0 0 3px rgba(6,182,212,.2)}
+    input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--b));cursor:pointer;border:none}
+    .sg-range{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px}
+
+    /* RESULTS PANEL */
+    .results-panel{display:flex;flex-direction:column;gap:16px}
+    .plan-rec{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid var(--bdr-c);border-radius:12px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .pr-label{font-size:12px;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+    .pr-plan{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--c)}
+    .pr-price{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--t)}
+    .pr-price span{font-size:14px;font-weight:400;color:var(--t2)}
+
+    /* METRIC CARDS */
+    .metrics-row{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .mcard{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:all .2s}
+    .mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .mcard.mc::before{background:linear-gradient(90deg,var(--c),transparent)}
+    .mcard.mb::before{background:linear-gradient(90deg,var(--b),transparent)}
+    .mcard.mg::before{background:linear-gradient(90deg,var(--g),transparent)}
+    .mcard.ma::before{background:linear-gradient(90deg,var(--a),transparent)}
+    .mcard .lbl{font-size:12px;color:var(--t2);margin-bottom:8px}
+    .mcard .val{font-family:var(--fh);font-size:clamp(24px,3vw,36px);font-weight:800;color:var(--t);line-height:1;margin-bottom:4px}
+    .mcard .sub{font-size:11px;color:var(--t3)}
+
+    /* ROI HIGHLIGHT */
+    .roi-box{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(6,182,212,.08));border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .roi-main{flex:1}
+    .roi-main .rl{font-size:12px;color:var(--g);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+    .roi-main .rv{font-family:var(--fh);font-size:clamp(36px,5vw,56px);font-weight:800;background:linear-gradient(135deg,var(--g),var(--c));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+    .roi-main .rs{font-size:14px;color:var(--t2);margin-top:6px}
+    .roi-side{text-align:center}
+    .roi-side .rl{font-size:12px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+    .roi-side .rv2{font-family:var(--fh);font-size:28px;font-weight:700;color:var(--g)}
+
+    /* CHART */
+    .chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:20px}
+    .chart-title{font-size:14px;font-weight:600;color:var(--t2);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+    .chart-wrap{position:relative;height:220px}
+
+    /* TABLE */
+    .detail-table{width:100%;border-collapse:collapse;font-size:13px}
+    .detail-table th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.02)}
+    .detail-table td{padding:11px 14px;border-bottom:1px solid var(--bdr);color:var(--t2)}
+    .detail-table tr:last-child td{border-bottom:none;font-weight:700;color:var(--t)}
+    .detail-table td.pos{color:var(--g);font-weight:600}
+    .detail-table td.neg{color:var(--r)}
+
+    /* CTA */
+    .cta-row{background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(59,130,246,.07));border:1px solid var(--bdr-c);border-radius:12px;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .cta-row h3{font-size:18px;font-weight:700}
+    .cta-row p{font-size:14px;color:var(--t2);margin-top:4px}
+
+    @media(max-width:1024px){.layout{grid-template-columns:1fr}.inputs-panel{position:relative;top:0}}
+    @media(max-width:640px){.metrics-row{grid-template-columns:1fr}.roi-box{flex-direction:column;text-align:center}.cta-row{flex-direction:column;text-align:center}}
+  </style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-logo"><div class="tn-sq">✈️</div>Travel<span style="color:var(--c)">AI</span> — Calculadora ROI</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a href="../index.html" class="back">← Inicio</a>
+    <a href="pitch.html" class="back">Presentación</a>
+    <a href="../app/dashboard.html" class="btn btn-p">Ver demo →</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>¿Cuánto vale TravelAI para tu agencia?</h1>
+    <p>Ajusta los sliders con los datos de tu agencia y ve el ROI calculado en tiempo real.</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- INPUTS -->
+    <div class="inputs-panel">
+      <div class="ip-title"><div class="ico">⚙️</div>Datos de tu agencia</div>
+
+      <div class="slider-group">
+        <div class="sg-header">
+          <span class="sg-label">Número de agentes</span>
+          <div class="sg-val-wrap"><span class="sg-val" id="vAgentes">15</span></div>
+        </div>
+        <input type="range" id="sAgentes" min="5" max="50" value="15" oninput="update()">
+        <div class="sg-range"><span>5</span><span>50</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="sg-header">
+          <span class="sg-label">Consultas por día</span>
+          <div class="sg-val-wrap"><span class="sg-val" id="vConsultas">60</span></div>
+        </div>
+        <input type="range" id="sConsultas" min="10" max="500" value="60" oninput="update()">
+        <div class="sg-range"><span>10</span><span>500</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="sg-header">
+          <span class="sg-label">Tiempo por consulta (min)</span>
+          <div class="sg-val-wrap"><span class="sg-val" id="vTiempo">20</span> min</div>
+        </div>
+        <input type="range" id="sTiempo" min="5" max="60" value="20" oninput="update()">
+        <div class="sg-range"><span>5 min</span><span>60 min</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="sg-header">
+          <span class="sg-label">Costo hora / agente (MXN)</span>
+          <div class="sg-val-wrap">$<span class="sg-val" id="vCosto">120</span></div>
+        </div>
+        <input type="range" id="sCosto" min="50" max="300" value="120" oninput="update()">
+        <div class="sg-range"><span>$50</span><span>$300</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="sg-header">
+          <span class="sg-label">Tasa de cierre actual (%)</span>
+          <div class="sg-val-wrap"><span class="sg-val" id="vCierre">20</span>%</div>
+        </div>
+        <input type="range" id="sCierre" min="5" max="60" value="20" oninput="update()">
+        <div class="sg-range"><span>5%</span><span>60%</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="sg-header">
+          <span class="sg-label">Venta promedio (MXN)</span>
+          <div class="sg-val-wrap">$<span class="sg-val" id="vVenta">15,000</span></div>
+        </div>
+        <input type="range" id="sVenta" min="3000" max="80000" step="1000" value="15000" oninput="update()">
+        <div class="sg-range"><span>$3K</span><span>$80K</span></div>
+      </div>
+
+      <div style="margin-top:4px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--t3)">
+        <strong style="color:var(--t2)">Plan recomendado:</strong> <span id="planRec" style="color:var(--c);font-weight:600">Professional $599/mes</span>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-panel">
+
+      <!-- Plan Rec Banner -->
+      <div class="plan-rec">
+        <div>
+          <div class="pr-label">Plan recomendado para tu agencia</div>
+          <div class="pr-plan" id="planName">Professional</div>
+        </div>
+        <div>
+          <div class="pr-label">Inversión mensual</div>
+          <div class="pr-price" id="planPrice">$599<span>/mes</span></div>
+        </div>
+        <a href="../index.html#cta-final" class="btn btn-p" style="padding:10px 20px;font-size:14px">Empezar gratis →</a>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metrics-row">
+        <div class="mcard mc">
+          <div class="lbl">Horas ahorradas / mes</div>
+          <div class="val" id="mHoras">—</div>
+          <div class="sub" id="mHorasSub">—</div>
+        </div>
+        <div class="mcard mb">
+          <div class="lbl">Costo actual en tiempo / mes</div>
+          <div class="val" id="mCostoActual">—</div>
+          <div class="sub">MXN en tiempo de agentes</div>
+        </div>
+        <div class="mcard mg">
+          <div class="lbl">Ventas adicionales / mes</div>
+          <div class="val" id="mVentasExtra">—</div>
+          <div class="sub" id="mVentasSub">Con respuesta 24/7 automática</div>
+        </div>
+        <div class="mcard ma">
+          <div class="lbl">Ahorro neto / mes</div>
+          <div class="val" id="mAhorro">—</div>
+          <div class="sub">Después de descontar TravelAI</div>
+        </div>
+      </div>
+
+      <!-- ROI Box -->
+      <div class="roi-box">
+        <div class="roi-main">
+          <div class="rl">ROI total</div>
+          <div class="rv" id="roi">—</div>
+          <div class="rs" id="roiDesc">—</div>
+        </div>
+        <div style="width:1px;height:60px;background:var(--bdr)"></div>
+        <div class="roi-side">
+          <div class="rl">Recuperas la inversión en</div>
+          <div class="rv2" id="payback">—</div>
+          <div style="font-size:12px;color:var(--t2);margin-top:4px">días desde el día 1</div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-box">
+        <div class="chart-title">
+          Costo mensual: Sin TravelAI vs Con TravelAI
+          <span style="font-size:11px;color:var(--t3)">(en miles de MXN)</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="roiChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Breakdown Table -->
+      <div class="chart-box">
+        <div class="chart-title">Desglose del cálculo</div>
+        <table class="detail-table">
+          <thead><tr><th>Concepto</th><th>Sin TravelAI</th><th>Con TravelAI</th><th>Diferencia</th></tr></thead>
+          <tbody>
+            <tr><td>Horas en consultas/mes</td><td id="t1a">—</td><td id="t1b">—</td><td class="pos" id="t1d">—</td></tr>
+            <tr><td>Costo tiempo agentes/mes</td><td id="t2a">—</td><td id="t2b">$0</td><td class="pos" id="t2d">—</td></tr>
+            <tr><td>Consultas respondidas fuera de horario</td><td id="t3a">—</td><td id="t3b">—</td><td class="pos" id="t3d">—</td></tr>
+            <tr><td>Ventas adicionales estimadas/mes</td><td id="t4a">$0</td><td id="t4b">—</td><td class="pos" id="t4d">—</td></tr>
+            <tr><td>Costo plataforma TravelAI/mes</td><td>$0</td><td id="t5b">—</td><td class="neg" id="t5d">—</td></tr>
+            <tr><td><strong>Beneficio neto mensual</strong></td><td class="neg" id="t6a">—</td><td class="pos" id="t6b">—</td><td class="pos" id="t6d">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-row">
+        <div>
+          <h3>¿Listo para ver estos números en tu agencia?</h3>
+          <p>14 días gratis. Sin tarjeta de crédito. Implementación en 48 horas.</p>
+        </div>
+        <a href="../index.html#cta-final" class="btn btn-p" style="padding:12px 24px;font-size:15px;white-space:nowrap">Empezar prueba gratis →</a>
+      </div>
+
+    </div><!-- end results -->
+  </div><!-- end layout -->
+</div>
+
+<script>
+  const fmt=n=>'$'+Math.round(n).toLocaleString('es-MX');
+  const fmtN=n=>Math.round(n).toLocaleString('es-MX');
+
+  let chart=null;
+
+  function getPlan(agentes){
+    if(agentes<=5)return{name:'Starter',price:299,priceMXN:5980};
+    if(agentes<=20)return{name:'Professional',price:599,priceMXN:11980};
+    return{name:'Enterprise',price:1200,priceMXN:24000};
+  }
+
+  function update(){
+    const agentes=parseInt(document.getElementById('sAgentes').value);
+    const consultas=parseInt(document.getElementById('sConsultas').value);
+    const tiempoMin=parseInt(document.getElementById('sTiempo').value);
+    const costoHora=parseInt(document.getElementById('sCosto').value);
+    const cierre=parseInt(document.getElementById('sCierre').value)/100;
+    const ventaVal=parseInt(document.getElementById('sVenta').value);
+
+    // Update display values
+    document.getElementById('vAgentes').textContent=agentes;
+    document.getElementById('vConsultas').textContent=consultas;
+    document.getElementById('vTiempo').textContent=tiempoMin;
+    document.getElementById('vCosto').textContent=costoHora;
+    document.getElementById('vCierre').textContent=Math.round(cierre*100);
+    document.getElementById('vVenta').textContent=ventaVal.toLocaleString('es-MX');
+
+    // Get plan
+    const plan=getPlan(agentes);
+    document.getElementById('planRec').textContent=plan.name+' $'+plan.price+'/mes';
+    document.getElementById('planName').textContent=plan.name;
+    document.getElementById('planPrice').innerHTML='$'+plan.price+'<span>/mes USD</span>';
+
+    // Calculations
+    const horasDiarias=(consultas*tiempoMin/60);
+    const horasMensuales=horasDiarias*22; // working days
+    const costoActualMes=horasMensuales*costoHora;
+
+    // With TravelAI: 89% automation
+    const automatizacion=0.89;
+    const horasAhorradas=horasMensuales*automatizacion;
+    const costoAhorradoTiempo=horasAhorradas*costoHora;
+
+    // Extra sales: 68% consultas fuera horario, 20% conversion lift
+    const consultasFueraHorario=consultas*0.68*22;
+    const ventasExtraFueraHorario=consultasFueraHorario*(cierre*0.5); // half conversion rate for new after-hours
+    const ingresoVentasExtra=ventasExtraFueraHorario*ventaVal;
+
+    const beneficioTotal=costoAhorradoTiempo+ingresoVentasExtra;
+    const costoTravelAI=plan.priceMXN;
+    const ahorro=beneficioTotal-costoTravelAI;
+    const roi=((beneficioTotal-costoTravelAI)/costoTravelAI)*100;
+    const paybackDays=costoTravelAI/(beneficioTotal/30);
+
+    // Update UI
+    document.getElementById('mHoras').textContent=fmtN(horasAhorradas)+' hrs';
+    document.getElementById('mHorasSub').textContent='De '+fmtN(horasMensuales)+' hrs actuales → '+fmtN(horasMensuales-horasAhorradas)+' hrs';
+    document.getElementById('mCostoActual').textContent=fmt(costoActualMes);
+    document.getElementById('mVentasExtra').textContent=fmt(ingresoVentasExtra);
+    document.getElementById('mVentasSub').textContent=Math.round(ventasExtraFueraHorario)+' ventas nuevas fuera de horario';
+    document.getElementById('mAhorro').textContent=fmt(ahorro);
+    document.getElementById('roi').textContent=Math.round(roi)+'%';
+    document.getElementById('roiDesc').textContent='Recuperas '+fmt(ahorro)+' al mes después de pagar TravelAI';
+    document.getElementById('payback').textContent=Math.max(1,Math.round(paybackDays))+' días';
+
+    // Table
+    document.getElementById('t1a').textContent=fmtN(horasMensuales)+' hrs';
+    document.getElementById('t1b').textContent=fmtN(horasMensuales-horasAhorradas)+' hrs';
+    document.getElementById('t1d').textContent='-'+fmtN(horasAhorradas)+' hrs';
+    document.getElementById('t2a').textContent=fmt(costoActualMes);
+    document.getElementById('t2d').textContent=fmt(costoAhorradoTiempo)+' ahorrado';
+    document.getElementById('t3a').textContent='Sin atender ('+fmtN(consultas*0.68*22)+'/mes)';
+    document.getElementById('t3b').textContent='100% atendidas automáticamente';
+    document.getElementById('t3d').textContent='+'+fmtN(consultasFueraHorario)+' atendidas';
+    document.getElementById('t4b').textContent=fmt(ingresoVentasExtra);
+    document.getElementById('t4d').textContent='+'+fmt(ingresoVentasExtra);
+    document.getElementById('t5b').textContent=fmt(costoTravelAI);
+    document.getElementById('t5d').textContent='-'+fmt(costoTravelAI);
+    document.getElementById('t6a').textContent=fmt(-costoActualMes);
+    document.getElementById('t6b').textContent=fmt(ahorro);
+    document.getElementById('t6d').textContent=fmt(beneficioTotal);
+
+    // Chart
+    const sinT=costoActualMes/1000;
+    const conT=(costoActualMes-costoAhorradoTiempo+costoTravelAI)/1000;
+    const ventasT=ingresoVentasExtra/1000;
+
+    if(chart){chart.destroy()}
+    const ctx=document.getElementById('roiChart').getContext('2d');
+    chart=new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:['Costos totales/mes','Beneficios/mes','Ahorro neto/mes'],
+        datasets:[
+          {label:'Sin TravelAI',data:[sinT,0,0],backgroundColor:'rgba(239,68,68,0.6)',borderColor:'rgba(239,68,68,0.9)',borderWidth:2,borderRadius:6},
+          {label:'Con TravelAI',data:[conT,(beneficioTotal/1000),(ahorro/1000)],backgroundColor:['rgba(6,182,212,0.6)','rgba(16,185,129,0.6)','rgba(16,185,129,0.7)'],borderColor:['rgba(6,182,212,0.9)','rgba(16,185,129,0.9)','rgba(16,185,129,0.9)'],borderWidth:2,borderRadius:6}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#94a3b8',font:{family:'DM Sans',size:12}}},tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(1)+'K MXN'}}},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#94a3b8',font:{family:'DM Sans'}}},
+          y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#94a3b8',font:{family:'DM Sans'},callback:v=>'$'+v+'K'}}
+        }
+      }
+    });
+  }
+
+  update();
+</script>
+</body>
+</html>
