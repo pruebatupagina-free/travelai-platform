@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan Semana 1 — TravelAI Monterrey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,.07);--c:#06b6d4;--cd:rgba(6,182,212,.1);--b:#3b82f6;--g:#10b981;--a:#f59e0b;--r:#ef4444;--p:#6366f1;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;min-height:100vh}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:10px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200}
+    .tn-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0}
+    .tn-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .nav-links{display:flex;gap:6px;flex:1}
+    .back{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--t2);padding:5px 10px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back:hover{color:var(--c);border-color:rgba(6,182,212,.3)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+    .btn-g{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--t2)}
+    .btn-g:hover{background:rgba(255,255,255,.09);color:var(--t)}
+
+    /* LAYOUT */
+    .main{padding:24px;max-width:1400px;margin:0 auto}
+    .page-header{margin-bottom:28px}
+    .page-header h1{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--c),var(--b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+    .page-header p{color:var(--t2);font-size:14px}
+
+    /* META GOALS */
+    .meta-goals{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+    .goal-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:16px;text-align:center}
+    .goal-icon{font-size:24px;margin-bottom:8px}
+    .goal-num{font-family:var(--fh);font-size:28px;font-weight:800;margin-bottom:4px}
+    .goal-num.cyan{color:var(--c)}
+    .goal-num.blue{color:var(--b)}
+    .goal-num.green{color:var(--g)}
+    .goal-num.amber{color:var(--a)}
+    .goal-label{font-size:12px;color:var(--t2)}
+
+    /* PROGRESS BAR */
+    .week-progress{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:16px}
+    .wp-label{font-size:13px;font-weight:600;white-space:nowrap}
+    .wp-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+    .wp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--c),var(--b));transition:width .6s ease;width:0%}
+    .wp-pct{font-size:13px;font-weight:700;color:var(--c);white-space:nowrap;min-width:36px;text-align:right}
+    .wp-tasks{font-size:12px;color:var(--t2);white-space:nowrap}
+
+    /* KANBAN */
+    .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;overflow-x:auto}
+    .k-col{min-width:220px}
+    .k-header{border-radius:10px 10px 0 0;padding:12px 14px;margin-bottom:10px;position:relative}
+    .k-header.mon{background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(6,182,212,.05));border:1px solid rgba(6,182,212,.25)}
+    .k-header.tue{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(59,130,246,.05));border:1px solid rgba(59,130,246,.25)}
+    .k-header.wed{background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.05));border:1px solid rgba(99,102,241,.25)}
+    .k-header.thu{background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(16,185,129,.05));border:1px solid rgba(16,185,129,.25)}
+    .k-header.fri{background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));border:1px solid rgba(245,158,11,.25)}
+    .k-day{font-family:var(--fh);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .k-day.mon{color:var(--c)}
+    .k-day.tue{color:var(--b)}
+    .k-day.wed{color:var(--p)}
+    .k-day.thu{color:var(--g)}
+    .k-day.fri{color:var(--a)}
+    .k-date{font-size:11px;color:var(--t2);margin-top:2px}
+    .k-focus{font-size:11px;margin-top:6px;padding:4px 8px;border-radius:6px;font-weight:600;display:inline-block}
+    .k-focus.mon{background:rgba(6,182,212,.12);color:var(--c)}
+    .k-focus.tue{background:rgba(59,130,246,.12);color:var(--b)}
+    .k-focus.wed{background:rgba(99,102,241,.12);color:var(--p)}
+    .k-focus.thu{background:rgba(16,185,129,.12);color:var(--g)}
+    .k-focus.fri{background:rgba(245,158,11,.12);color:var(--a)}
+
+    /* TASK CARDS */
+    .task-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;position:relative}
+    .task-card:hover{border-color:rgba(255,255,255,.14);transform:translateY(-1px)}
+    .task-card.done{opacity:.55}
+    .task-card.done .tc-title{text-decoration:line-through}
+    .tc-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:7px;text-transform:uppercase;letter-spacing:.3px}
+    .tc-tag.prospecting{background:rgba(6,182,212,.12);color:var(--c)}
+    .tc-tag.outreach{background:rgba(59,130,246,.12);color:var(--b)}
+    .tc-tag.demo{background:rgba(99,102,241,.12);color:var(--p)}
+    .tc-tag.close{background:rgba(16,185,129,.12);color:var(--g)}
+    .tc-tag.content{background:rgba(245,158,11,.12);color:var(--a)}
+    .tc-tag.setup{background:rgba(239,68,68,.12);color:var(--r)}
+    .tc-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px}
+    .tc-desc{font-size:11px;color:var(--t2);line-height:1.5}
+    .tc-meta{display:flex;align-items:center;gap:8px;margin-top:8px}
+    .tc-time{font-size:10px;color:var(--t3);display:flex;align-items:center;gap:3px}
+    .tc-count{font-size:10px;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:10px;color:var(--t2)}
+    .tc-check{position:absolute;top:10px;right:10px;width:18px;height:18px;border:1.5px solid var(--t3);border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:10px}
+    .task-card.done .tc-check{background:var(--g);border-color:var(--g);color:#fff}
+
+    /* TOTALS STRIP */
+    .totals{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+    .total-chip{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;display:flex;align-items:center;gap:6px}
+    .tc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+    /* AGENDA SECTION */
+    .agenda-section{margin-top:32px}
+    .as-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .timeline{display:flex;flex-direction:column;gap:0}
+    .tl-day{display:grid;grid-template-columns:90px 1fr;gap:0;margin-bottom:20px}
+    .tl-label{padding:16px 12px 0 0;text-align:right}
+    .tl-day-name{font-family:var(--fh);font-size:13px;font-weight:700}
+    .tl-day-date{font-size:11px;color:var(--t2);margin-top:2px}
+    .tl-items{border-left:2px solid var(--bdr);padding-left:20px;position:relative}
+    .tl-items::before{content:'';position:absolute;left:-5px;top:18px;width:8px;height:8px;border-radius:50%;background:var(--c);border:2px solid var(--bg)}
+    .tl-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+    .tl-time{font-size:10px;color:var(--t3);margin-bottom:4px;font-weight:600}
+    .tl-task{font-size:13px;font-weight:600;margin-bottom:2px}
+    .tl-detail{font-size:11px;color:var(--t2);line-height:1.5}
+    .tl-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;margin-top:6px}
+
+    /* RESET */
+    .reset-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--r);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+    .reset-btn:hover{background:rgba(239,68,68,.18)}
+
+    /* RESPONSIVE */
+    @media(max-width:1024px){
+      .meta-goals{grid-template-columns:repeat(2,1fr)}
+      .kanban{grid-template-columns:repeat(3,1fr)}
+    }
+    @media(max-width:640px){
+      .meta-goals{grid-template-columns:repeat(2,1fr)}
+      .kanban{grid-template-columns:1fr 1fr}
+      .main{padding:14px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="tn-logo">
+    <div class="tn-sq">✈️</div>
+    TravelAI
+  </div>
+  <div class="nav-links">
+    <a href="../index.html" class="back">← Inicio</a>
+    <a href="prospectos.html" class="back">👥 Prospectos</a>
+    <a href="linkedin.html" class="back">💼 LinkedIn</a>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">↺ Reiniciar</button>
+</nav>
+
+<div class="main">
+
+  <div class="page-header">
+    <h1>🗓️ Plan de Acción — Semana 1</h1>
+    <p>Objetivo: 20 agencias contactadas · 3–5 demos agendadas · 1 propuesta enviada · Monterrey, NL</p>
+  </div>
+
+  <!-- META GOALS -->
+  <div class="meta-goals">
+    <div class="goal-card">
+      <div class="goal-icon">📨</div>
+      <div class="goal-num cyan" id="g-contactadas">0</div>
+      <div class="goal-label">/ 20 Agencias contactadas</div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-icon">📅</div>
+      <div class="goal-num blue" id="g-demos">0</div>
+      <div class="goal-label">/ 5 Demos agendadas</div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-icon">📄</div>
+      <div class="goal-num green" id="g-propuestas">0</div>
+      <div class="goal-label">/ 1 Propuesta enviada</div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-icon">✅</div>
+      <div class="goal-num amber" id="g-tareas">0</div>
+      <div class="goal-label">/ <span id="g-total">0</span> Tareas completadas</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="week-progress">
+    <span class="wp-label">Progreso semana</span>
+    <div class="wp-bar"><div class="wp-fill" id="wpFill"></div></div>
+    <span class="wp-pct" id="wpPct">0%</span>
+    <span class="wp-tasks" id="wpTasks">0 de 0 tareas</span>
+  </div>
+
+  <!-- TOTALS -->
+  <div class="totals">
+    <div class="total-chip"><div class="tc-dot" style="background:var(--c)"></div><span>🔍 Prospección</span></div>
+    <div class="total-chip"><div class="tc-dot" style="background:var(--b)"></div><span>📬 Outreach</span></div>
+    <div class="total-chip"><div class="tc-dot" style="background:var(--p)"></div><span>🖥️ Demo</span></div>
+    <div class="total-chip"><div class="tc-dot" style="background:var(--g)"></div><span>💰 Cierre</span></div>
+    <div class="total-chip"><div class="tc-dot" style="background:var(--a)"></div><span>📝 Contenido</span></div>
+    <div class="total-chip"><div class="tc-dot" style="background:var(--r)"></div><span>⚙️ Setup</span></div>
+  </div>
+
+  <!-- KANBAN -->
+  <div class="kanban" id="kanban">
+
+    <!-- LUNES -->
+    <div class="k-col">
+      <div class="k-header mon">
+        <div class="k-day mon">Lunes</div>
+        <div class="k-date">Día 1 — Preparación y primeros contactos</div>
+        <span class="k-focus mon">🚀 Setup & Launch</span>
+      </div>
+      <div class="task-card" data-id="l1" data-cat="setup" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag setup">⚙️ Setup</span>
+        <div class="tc-title">Configurar herramientas</div>
+        <div class="tc-desc">Verificar WhatsApp Web · Email configurado · LinkedIn perfil actualizado · Demo URL lista</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span></div>
+      </div>
+      <div class="task-card" data-id="l2" data-cat="prospecting" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag prospecting">🔍 Prospección</span>
+        <div class="tc-title">Revisar 18 prospectos en dashboard</div>
+        <div class="tc-desc">Ordenar por prioridad Alta → revisar datos de contacto · personalizar mensaje para Top 5</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 45 min</span></div>
+      </div>
+      <div class="task-card" data-id="l3" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Contactar Top 5 prioridad Alta</div>
+        <div class="tc-desc">WhatsApp personalizado a: La Silla Tours · OPTUR · Regio Operadora · Natours · Viajes Regios</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 60 min</span><span class="tc-count">5 agencias</span></div>
+      </div>
+      <div class="task-card" data-id="l4" data-cat="content" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag content">📝 Contenido</span>
+        <div class="tc-title">Publicar Post LinkedIn #1</div>
+        <div class="tc-desc">"¿Por qué tu agencia pierde dinero fuera del horario?" — Post de problema lunes AM</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 15 min</span></div>
+      </div>
+      <div class="task-card" data-id="l5" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Emails a 5 agencias prioridad Alta</div>
+        <div class="tc-desc">Enviar template email-seguimiento.html · asunto: "Demo gratuita IA para [Nombre Agencia]"</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span><span class="tc-count">5 emails</span></div>
+      </div>
+    </div>
+
+    <!-- MARTES -->
+    <div class="k-col">
+      <div class="k-header tue">
+        <div class="k-day tue">Martes</div>
+        <div class="k-date">Día 2 — Seguimiento y segunda oleada</div>
+        <span class="k-focus tue">📬 Outreach masivo</span>
+      </div>
+      <div class="task-card" data-id="m1" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Seguimiento Top 5 (Día 1)</div>
+        <div class="tc-desc">Revisar respuestas de ayer · responder consultas · agendar demos para interesados</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span></div>
+      </div>
+      <div class="task-card" data-id="m2" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Contactar 8 agencias prioridad Media</div>
+        <div class="tc-desc">WhatsApp + Email a: Europamundo · GrupoBMG · Interjet Vacaciones · Cosmos · Travelmax · 3 más</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 75 min</span><span class="tc-count">8 agencias</span></div>
+      </div>
+      <div class="task-card" data-id="m3" data-cat="demo" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag demo">🖥️ Demo</span>
+        <div class="tc-title">Preparar demo personalizable</div>
+        <div class="tc-desc">Probar demo-agencia.html con top 3 agencias · generar URLs personalizadas · guardar links</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 20 min</span></div>
+      </div>
+      <div class="task-card" data-id="m4" data-cat="prospecting" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag prospecting">🔍 Prospección</span>
+        <div class="tc-title">Buscar 5 agencias nuevas en LinkedIn</div>
+        <div class="tc-desc">Buscar "agencia de viajes Monterrey" · agregar a prospectos.html · clasificar prioridad</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 40 min</span></div>
+      </div>
+      <div class="task-card" data-id="m5" data-cat="content" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag content">📝 Contenido</span>
+        <div class="tc-title">Interactuar en LinkedIn</div>
+        <div class="tc-desc">Comentar 5 posts de agencias de viajes · conectar con directores de agencias en MTY</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 20 min</span></div>
+      </div>
+    </div>
+
+    <!-- MIÉRCOLES -->
+    <div class="k-col">
+      <div class="k-header wed">
+        <div class="k-day wed">Miércoles</div>
+        <div class="k-date">Día 3 — Demos y propuesta</div>
+        <span class="k-focus wed">🖥️ Primera demo</span>
+      </div>
+      <div class="task-card" data-id="x1" data-cat="demo" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag demo">🖥️ Demo</span>
+        <div class="tc-title">Demo en vivo #1 (si está agendada)</div>
+        <div class="tc-desc">Usar script-ventas.html · abrir demo-agencia.html con nombre de la agencia · seguir guión</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 45 min</span></div>
+      </div>
+      <div class="task-card" data-id="x2" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Seguimiento día 3 — Top 5</div>
+        <div class="tc-desc">Mensaje de seguimiento día 3 a quienes no respondieron · urgencia suave</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 25 min</span></div>
+      </div>
+      <div class="task-card" data-id="x3" data-cat="content" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag content">📝 Contenido</span>
+        <div class="tc-title">Publicar Post LinkedIn #2</div>
+        <div class="tc-desc">"Así funciona TravelAI" — Post de solución miércoles AM · incluir demo URL</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 10 min</span></div>
+      </div>
+      <div class="task-card" data-id="x4" data-cat="close" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag close">💰 Cierre</span>
+        <div class="tc-title">Preparar propuesta para interesado</div>
+        <div class="tc-desc">Abrir propuesta.html · ingresar nombre de agencia · imprimir PDF · personalizar precio</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span></div>
+      </div>
+      <div class="task-card" data-id="x5" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Contactar últimas 5 agencias lista</div>
+        <div class="tc-desc">Completar las 18 agencias de la lista · WhatsApp + Email · actualizar status en dashboard</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 50 min</span><span class="tc-count">5 agencias</span></div>
+      </div>
+    </div>
+
+    <!-- JUEVES -->
+    <div class="k-col">
+      <div class="k-header thu">
+        <div class="k-day thu">Jueves</div>
+        <div class="k-date">Día 4 — Seguimiento masivo</div>
+        <span class="k-focus thu">🔄 Follow-up día</span>
+      </div>
+      <div class="task-card" data-id="j1" data-cat="demo" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag demo">🖥️ Demo</span>
+        <div class="tc-title">Demo en vivo #2 y #3</div>
+        <div class="tc-desc">Demostración completa chatbot · módulo itinerarios · CRM · usar calculadora-roi.html al final</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 90 min</span></div>
+      </div>
+      <div class="task-card" data-id="j2" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Seguimiento día 3 — 8 del martes</div>
+        <div class="tc-desc">Mensaje corto de seguimiento · "¿Tuvieron oportunidad de revisar la demo?" · agendar call</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span><span class="tc-count">8 agencias</span></div>
+      </div>
+      <div class="task-card" data-id="j3" data-cat="close" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag close">💰 Cierre</span>
+        <div class="tc-title">Enviar propuesta #1</div>
+        <div class="tc-desc">Propuesta personalizada al prospecto más avanzado · incluir ROI calculado + plazo 72h</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 20 min</span></div>
+      </div>
+      <div class="task-card" data-id="j4" data-cat="prospecting" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag prospecting">🔍 Prospección</span>
+        <div class="tc-title">Revisar menciones y respuestas</div>
+        <div class="tc-desc">Revisar comentarios en posts LinkedIn · responder DMs · revisar emails de prospectos</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span></div>
+      </div>
+      <div class="task-card" data-id="j5" data-cat="content" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag content">📝 Contenido</span>
+        <div class="tc-title">Publicar Post LinkedIn #3</div>
+        <div class="tc-desc">"Agencia de viajes ahorró 40 hrs/mes" — Post de prueba social · jueves tarde</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 10 min</span></div>
+      </div>
+    </div>
+
+    <!-- VIERNES -->
+    <div class="k-col">
+      <div class="k-header fri">
+        <div class="k-day fri">Viernes</div>
+        <div class="k-date">Día 5 — Cierre y resumen</div>
+        <span class="k-focus fri">📊 Review & Close</span>
+      </div>
+      <div class="task-card" data-id="v1" data-cat="demo" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag demo">🖥️ Demo</span>
+        <div class="tc-title">Demos pendientes del pipeline</div>
+        <div class="tc-desc">Completar todas las demos agendadas · cerrar viernes con al menos 3 demos hechas</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 60 min</span></div>
+      </div>
+      <div class="task-card" data-id="v2" data-cat="close" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag close">💰 Cierre</span>
+        <div class="tc-title">Follow-up propuesta enviada</div>
+        <div class="tc-desc">Llamar al prospecto que recibió propuesta · resolver objeciones · intentar cierre</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 30 min</span></div>
+      </div>
+      <div class="task-card" data-id="v3" data-cat="outreach" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag outreach">📬 Outreach</span>
+        <div class="tc-title">Seguimiento día 7 — primeros contactos</div>
+        <div class="tc-desc">Mensaje urgencia suave a Top 5 del lunes que no avanzaron · incluir nueva agencia que cerró</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 25 min</span></div>
+      </div>
+      <div class="task-card" data-id="v4" data-cat="prospecting" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag prospecting">🔍 Prospección</span>
+        <div class="tc-title">Actualizar dashboard prospectos</div>
+        <div class="tc-desc">Status de cada agencia en prospectos.html · exportar CSV · planear semana 2</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 20 min</span></div>
+      </div>
+      <div class="task-card" data-id="v5" data-cat="content" onclick="toggle(this)">
+        <div class="tc-check">✓</div>
+        <span class="tc-tag content">📝 Contenido</span>
+        <div class="tc-title">Reporte semanal y plan semana 2</div>
+        <div class="tc-desc">Contar: contactados / respondieron / demos / propuestas · definir ajustes para semana 2</div>
+        <div class="tc-meta"><span class="tc-time">⏱ 20 min</span></div>
+      </div>
+    </div>
+
+  </div><!-- /kanban -->
+
+  <!-- AGENDA DETALLADA -->
+  <div class="agenda-section">
+    <h2 class="as-title">📋 Agenda Detallada por Día</h2>
+    <div class="timeline">
+
+      <div class="tl-day">
+        <div class="tl-label">
+          <div class="tl-day-name" style="color:var(--c)">Lunes</div>
+          <div class="tl-day-date">Semana 1</div>
+        </div>
+        <div class="tl-items">
+          <div class="tl-item">
+            <div class="tl-time">09:00 — 09:30</div>
+            <div class="tl-task">Setup completo de herramientas</div>
+            <div class="tl-detail">WhatsApp Web activo · LinkedIn perfil optimizado · URLs de demos generadas · Revisar 18 prospectos</div>
+            <span class="tl-badge" style="background:rgba(239,68,68,.1);color:var(--r)">⚙️ Setup</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">09:30 — 11:30</div>
+            <div class="tl-task">Outreach Top 5 agencias Alta prioridad</div>
+            <div class="tl-detail">WhatsApp personalizado + email a: La Silla Tours, OPTUR, Regio Operadora, Natours, Viajes Regios · mensaje único por agencia</div>
+            <span class="tl-badge" style="background:rgba(59,130,246,.1);color:var(--b)">📬 5 contactos</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">11:30 — 11:45</div>
+            <div class="tl-task">Post LinkedIn #1 — Problema</div>
+            <div class="tl-detail">"¿Cuánto pierdes cuando tu agencia cierra?" — máximo engagement lunes AM</div>
+            <span class="tl-badge" style="background:rgba(245,158,11,.1);color:var(--a)">📝 Contenido</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">14:00 — 17:00</div>
+            <div class="tl-task">Responder consultas + revisar respuestas</div>
+            <div class="tl-detail">Monitorear WhatsApp y email · agendar demos para quienes muestren interés · actualizar dashboard</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔄 Follow-up</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-day">
+        <div class="tl-label">
+          <div class="tl-day-name" style="color:var(--b)">Martes</div>
+          <div class="tl-day-date">Semana 1</div>
+        </div>
+        <div class="tl-items" style="border-left-color:rgba(59,130,246,.3)">
+          <div class="tl-item">
+            <div class="tl-time">09:00 — 09:30</div>
+            <div class="tl-task">Seguimiento Top 5 del lunes</div>
+            <div class="tl-detail">Revisar quién respondió · agendar demos · responder consultas técnicas</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔄 Seguimiento</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">09:30 — 12:00</div>
+            <div class="tl-task">Outreach 8 agencias prioridad Media</div>
+            <div class="tl-detail">WhatsApp + Email · adaptar mensaje según perfil de cada agencia · incluir demo personalizada</div>
+            <span class="tl-badge" style="background:rgba(59,130,246,.1);color:var(--b)">📬 8 contactos</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">12:00 — 12:40</div>
+            <div class="tl-task">Prospectar 5 nuevas agencias en LinkedIn</div>
+            <div class="tl-detail">Búsqueda "agencia de viajes Monterrey" · revisar perfiles · agregar a dashboard</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔍 +5 nuevos</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">14:00 — 14:20</div>
+            <div class="tl-task">Interacciones LinkedIn</div>
+            <div class="tl-detail">Comentar 5 posts de agencias · conectar con directores · compartir contenido relevante</div>
+            <span class="tl-badge" style="background:rgba(245,158,11,.1);color:var(--a)">📝 Networking</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-day">
+        <div class="tl-label">
+          <div class="tl-day-name" style="color:var(--p)">Miércoles</div>
+          <div class="tl-day-date">Semana 1</div>
+        </div>
+        <div class="tl-items" style="border-left-color:rgba(99,102,241,.3)">
+          <div class="tl-item">
+            <div class="tl-time">09:00 — 09:10</div>
+            <div class="tl-task">Post LinkedIn #2 — Solución</div>
+            <div class="tl-detail">"Así automatizamos las consultas de tu agencia" · incluir demo link</div>
+            <span class="tl-badge" style="background:rgba(245,158,11,.1);color:var(--a)">📝 Contenido</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">09:10 — 09:40</div>
+            <div class="tl-task">Seguimiento día 3 — Top 5</div>
+            <div class="tl-detail">Mensaje de seguimiento día 3 a quienes no respondieron desde el lunes · tono urgente suave</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔄 D+3</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">10:00 — 10:45</div>
+            <div class="tl-task">Demo en vivo #1</div>
+            <div class="tl-detail">Seguir script-ventas.html · abrir demo-agencia.html con nombre de la agencia · mostrar chatbot, itinerarios, CRM</div>
+            <span class="tl-badge" style="background:rgba(99,102,241,.1);color:var(--p)">🖥️ Demo</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">14:00 — 15:30</div>
+            <div class="tl-task">Contactar últimas 5 agencias de la lista</div>
+            <div class="tl-detail">Completar las 18 agencias · actualizar status en dashboard · preparar propuesta si hay interesado</div>
+            <span class="tl-badge" style="background:rgba(59,130,246,.1);color:var(--b)">📬 18 total</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-day">
+        <div class="tl-label">
+          <div class="tl-day-name" style="color:var(--g)">Jueves</div>
+          <div class="tl-day-date">Semana 1</div>
+        </div>
+        <div class="tl-items" style="border-left-color:rgba(16,185,129,.3)">
+          <div class="tl-item">
+            <div class="tl-time">09:00 — 10:30</div>
+            <div class="tl-task">Demos en vivo #2 y #3</div>
+            <div class="tl-detail">Demos agendadas · mostrar calculadora ROI al final · presentar plan Starter vs Professional</div>
+            <span class="tl-badge" style="background:rgba(99,102,241,.1);color:var(--p)">🖥️ 2 Demos</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">10:30 — 11:00</div>
+            <div class="tl-task">Enviar propuesta #1</div>
+            <div class="tl-detail">Prospuesta personalizada con ROI calculado · 3 planes · plazo de respuesta 72h · firma digital</div>
+            <span class="tl-badge" style="background:rgba(16,185,129,.1);color:var(--g)">💰 Propuesta</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">11:00 — 11:30</div>
+            <div class="tl-task">Seguimiento día 3 — 8 del martes</div>
+            <div class="tl-detail">Mensaje corto: "¿Tuvieron oportunidad de ver la demo?" · ofrecer call de 15 min</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔄 D+3</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">18:00 — 18:10</div>
+            <div class="tl-task">Post LinkedIn #3 — Prueba social</div>
+            <div class="tl-detail">"Agencia ahorró 40 hrs/mes con IA" · jueves tarde para máximo alcance</div>
+            <span class="tl-badge" style="background:rgba(245,158,11,.1);color:var(--a)">📝 Social proof</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-day">
+        <div class="tl-label">
+          <div class="tl-day-name" style="color:var(--a)">Viernes</div>
+          <div class="tl-day-date">Semana 1</div>
+        </div>
+        <div class="tl-items" style="border-left-color:rgba(245,158,11,.3)">
+          <div class="tl-item">
+            <div class="tl-time">09:00 — 10:30</div>
+            <div class="tl-task">Demos pendientes + cierre activo</div>
+            <div class="tl-detail">Completar demos del pipeline · llamar al que recibió propuesta · manejar objeciones con script</div>
+            <span class="tl-badge" style="background:rgba(16,185,129,.1);color:var(--g)">💰 Cierre</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">10:30 — 11:00</div>
+            <div class="tl-task">Seguimiento día 7 — Top 5 del lunes</div>
+            <div class="tl-detail">Mensaje urgencia: "Esta semana cerré 1 agencia de viajes en MTY. La demo sigue disponible..."</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔄 Urgencia</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">14:00 — 14:20</div>
+            <div class="tl-task">Actualizar dashboard prospectos</div>
+            <div class="tl-detail">Status final de las 18 agencias · exportar CSV · identificar hot leads para semana 2</div>
+            <span class="tl-badge" style="background:rgba(6,182,212,.1);color:var(--c)">🔍 Dashboard</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">14:20 — 15:00</div>
+            <div class="tl-task">Revisión semanal y plan semana 2</div>
+            <div class="tl-detail">Contar: contactados / respondieron / demos / propuestas / cerrados · ajustar mensaje si tasa baja</div>
+            <span class="tl-badge" style="background:rgba(245,158,11,.1);color:var(--a)">📊 Review</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+const STORAGE_KEY = 'travelai_semana1_tasks';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function toggle(card) {
+  card.classList.toggle('done');
+  const state = loadState();
+  state[card.dataset.id] = card.classList.contains('done');
+  saveState(state);
+  updateProgress();
+}
+
+function updateProgress() {
+  const cards = document.querySelectorAll('.task-card[data-id]');
+  const done = document.querySelectorAll('.task-card[data-id].done');
+  const total = cards.length;
+  const completed = done.length;
+  const pct = total ? Math.round(completed / total * 100) : 0;
+
+  document.getElementById('wpFill').style.width = pct + '%';
+  document.getElementById('wpPct').textContent = pct + '%';
+  document.getElementById('wpTasks').textContent = completed + ' de ' + total + ' tareas';
+  document.getElementById('g-total').textContent = total;
+  document.getElementById('g-tareas').textContent = completed;
+
+  // count by category
+  let contactadas = 0, demos = 0, propuestas = 0;
+  document.querySelectorAll('.task-card[data-id].done').forEach(c => {
+    if(c.dataset.cat === 'outreach') contactadas++;
+    if(c.dataset.cat === 'demo') demos++;
+    if(c.dataset.cat === 'close') propuestas++;
+  });
+  document.getElementById('g-contactadas').textContent = contactadas * 5; // approx
+  document.getElementById('g-demos').textContent = Math.min(demos * 2, 5);
+  document.getElementById('g-propuestas').textContent = Math.min(propuestas, 1);
+}
+
+function resetAll() {
+  if(!confirm('¿Reiniciar todo el progreso de la semana?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  document.querySelectorAll('.task-card').forEach(c => c.classList.remove('done'));
+  updateProgress();
+}
+
+function init() {
+  const state = loadState();
+  document.querySelectorAll('.task-card[data-id]').forEach(card => {
+    if(state[card.dataset.id]) card.classList.add('done');
+  });
+  updateProgress();
+}
+
+init();
+</script>
+</body>
+</html>

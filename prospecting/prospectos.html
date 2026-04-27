@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prospectos Monterrey — TravelAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,.07);--bdr-c:rgba(6,182,212,.3);--c:#06b6d4;--cd:rgba(6,182,212,.1);--b:#3b82f6;--g:#10b981;--a:#f59e0b;--r:#ef4444;--p:#6366f1;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;min-height:100vh}
+    h1,h2,h3{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:10px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200}
+    .tn-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0}
+    .tn-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .nav-links{display:flex;gap:6px;flex:1}
+    .back{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--t2);padding:5px 10px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back:hover{color:var(--c);border-color:var(--bdr-c)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+    .btn-p{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .btn-p:hover{opacity:.88}
+    .btn-g{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--t2)}
+    .btn-g:hover{background:rgba(255,255,255,.09);color:var(--t)}
+
+    /* CONTENT */
+    .main{padding:24px}
+    .page-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+    .ph-title{font-size:clamp(20px,3vw,28px);font-weight:800;margin-bottom:4px}
+    .ph-sub{font-size:14px;color:var(--t2)}
+    .ph-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+    .stat{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;text-align:center}
+    .stat .sv{font-family:var(--fh);font-size:28px;font-weight:800;line-height:1}
+    .stat .sl{font-size:11px;color:var(--t2);margin-top:4px}
+    .stat.s-total .sv{color:var(--c)}
+    .stat.s-alta .sv{color:var(--r)}
+    .stat.s-media .sv{color:var(--a)}
+    .stat.s-baja .sv{color:var(--g)}
+    .stat.s-demo .sv{color:var(--b)}
+    .stat.s-cerrado .sv{color:var(--p)}
+
+    /* FILTERS */
+    .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+    .filter-input{background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;color:var(--t);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s;min-width:220px}
+    .filter-input:focus{border-color:var(--c)}
+    .filter-input::placeholder{color:var(--t3)}
+    .fselect{background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;color:var(--t);font-family:var(--fb);font-size:13px;outline:none;cursor:pointer}
+    .fselect option{background:var(--bg3)}
+
+    /* TABLE */
+    .table-wrap{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px;min-width:1100px}
+    thead th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.02);white-space:nowrap}
+    tbody td{padding:12px 14px;border-bottom:1px solid var(--bdr);color:var(--t2);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover td{background:rgba(255,255,255,.02)}
+    .td-name{font-weight:600;color:var(--t);max-width:160px}
+    .td-name small{display:block;font-weight:400;font-size:11px;color:var(--t3);margin-top:2px}
+    .td-contact{display:flex;flex-direction:column;gap:3px}
+    .td-contact a{color:var(--c);font-size:12px;display:flex;align-items:center;gap:4px;transition:opacity .2s}
+    .td-contact a:hover{opacity:.75}
+
+    /* PRIORITY BADGE */
+    .pbadge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+    .pb-alta{background:rgba(239,68,68,.12);color:var(--r);border:1px solid rgba(239,68,68,.25)}
+    .pb-media{background:rgba(245,158,11,.12);color:var(--a);border:1px solid rgba(245,158,11,.25)}
+    .pb-seguimiento{background:rgba(16,185,129,.12);color:var(--g);border:1px solid rgba(16,185,129,.25)}
+
+    /* STATUS SELECT */
+    .status-sel{background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:6px;padding:4px 8px;color:var(--t);font-size:12px;font-family:var(--fb);outline:none;cursor:pointer;transition:border-color .2s}
+    .status-sel:focus{border-color:var(--c)}
+    .status-sel option{background:var(--bg3)}
+
+    /* ACTION BUTTONS */
+    .actions{display:flex;gap:5px;flex-wrap:nowrap}
+    .act-btn{width:30px;height:30px;border-radius:6px;border:1px solid var(--bdr);background:rgba(255,255,255,.04);color:var(--t2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;text-decoration:none;flex-shrink:0}
+    .act-btn:hover{background:var(--cd);border-color:var(--bdr-c);color:var(--c)}
+    .act-btn.wa{background:rgba(37,211,102,.08);border-color:rgba(37,211,102,.3);color:#25d366}
+    .act-btn.wa:hover{background:rgba(37,211,102,.2)}
+    .act-btn.copy:hover{color:var(--a);border-color:rgba(245,158,11,.4)}
+    .act-btn.copied{color:var(--g)!important;border-color:rgba(16,185,129,.4)!important}
+
+    /* NOTES */
+    .notes-input{background:transparent;border:none;color:var(--t2);font-size:12px;font-family:var(--fb);width:140px;outline:none;padding:2px 4px;border-radius:4px;transition:all .2s}
+    .notes-input:focus{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--t)}
+    .notes-input::placeholder{color:var(--t3)}
+
+    /* PAIN CHIP */
+    .pain{font-size:11px;color:var(--t3);background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);border-radius:5px;padding:2px 7px;display:inline-block}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.on{display:flex}
+    .modal{background:var(--bg2);border:1px solid var(--bdr-c);border-radius:14px;padding:28px;max-width:560px;width:100%;position:relative}
+    .modal h3{font-size:18px;font-weight:700;margin-bottom:4px}
+    .modal .msub{font-size:13px;color:var(--t2);margin-bottom:16px}
+    .modal textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:8px;padding:14px;color:var(--t);font-family:var(--fb);font-size:14px;line-height:1.7;resize:vertical;min-height:200px;outline:none}
+    .modal textarea:focus{border-color:var(--c)}
+    .modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:6px;padding:4px 10px;font-size:13px;color:var(--t2);cursor:pointer}
+    .modal-close:hover{color:var(--t)}
+    .modal-actions{display:flex;gap:8px;margin-top:12px}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--g);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+    .toast.show{opacity:1}
+
+    @media(max-width:768px){.stats{grid-template-columns:repeat(3,1fr)}.topnav{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="tn-logo"><div class="tn-sq">✈️</div>Travel<span style="color:var(--c)">AI</span></div>
+  <div class="nav-links">
+    <a href="../index.html" class="back">← Inicio</a>
+    <a href="plan-semana1.html" class="back">Plan Semana 1</a>
+    <a href="linkedin.html" class="back">LinkedIn</a>
+    <a href="../sales/calculadora-roi.html" class="back">ROI</a>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-g" onclick="exportCSV()">⬇ Exportar CSV</button>
+    <a href="../app/demo-agencia.html" class="btn btn-p">Demo personalizable →</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-hdr">
+    <div>
+      <div class="ph-title">🎯 Prospectos — Monterrey, NL</div>
+      <div class="ph-sub">18 agencias identificadas · Datos reales investigados · Actualizado abril 2026</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats" id="statsBar">
+    <div class="stat s-total"><div class="sv" id="st-total">18</div><div class="sl">Total</div></div>
+    <div class="stat s-alta"><div class="sv" id="st-alta">0</div><div class="sl">🔴 Alta</div></div>
+    <div class="stat s-media"><div class="sv" id="st-media">0</div><div class="sl">🟡 Media</div></div>
+    <div class="stat s-baja"><div class="sv" id="st-baja">0</div><div class="sl">🟢 Seguim.</div></div>
+    <div class="stat s-demo"><div class="sv" id="st-demo">0</div><div class="sl">📅 Demos</div></div>
+    <div class="stat s-cerrado"><div class="sv" id="st-cerrado">0</div><div class="sl">✅ Cerrado</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <input type="text" class="filter-input" id="searchInput" placeholder="🔍 Buscar agencia..." oninput="filterTable()">
+    <select class="fselect" id="filterPri" onchange="filterTable()">
+      <option value="">Todas las prioridades</option>
+      <option value="alta">🔴 Alta prioridad</option>
+      <option value="media">🟡 Media prioridad</option>
+      <option value="seguimiento">🟢 Seguimiento</option>
+    </select>
+    <select class="fselect" id="filterStatus" onchange="filterTable()">
+      <option value="">Todos los estados</option>
+      <option value="sin-contactar">Sin contactar</option>
+      <option value="contactado">Contactado</option>
+      <option value="demo-agendada">Demo agendada</option>
+      <option value="propuesta-enviada">Propuesta enviada</option>
+      <option value="cerrado">Cerrado ✅</option>
+      <option value="no-interesado">No interesado</option>
+    </select>
+    <button class="btn btn-g" onclick="clearFilters()">✕ Limpiar</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table id="prospectsTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Agencia</th>
+          <th>Prioridad</th>
+          <th>Contacto</th>
+          <th>Redes</th>
+          <th>Tamaño / Especialidad</th>
+          <th>Pain Point</th>
+          <th>Estado</th>
+          <th>Último contacto</th>
+          <th>Notas</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL MENSAJE -->
+<div class="modal-overlay" id="msgModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕ Cerrar</button>
+    <h3>📱 Mensaje personalizado</h3>
+    <div class="msub" id="modalAgency">—</div>
+    <textarea id="modalMsg"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-p" onclick="copyModalMsg()">📋 Copiar mensaje</button>
+      <button class="btn btn-g" id="modalWA" onclick="openWA()">📲 Abrir en WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DEMO_URL = 'https://pruebatupagina-free.github.io/travelai-platform/app/demo-agencia.html';
+
+const AGENCIES = [
+  {
+    id:1, nombre:'La Silla Tours', subtitulo:'La Silla Tours SA de CV',
+    prioridad:'alta',
+    tel:'81 8365 0000', wa:'', email:'info@lasillatours.com',
+    ig:'lasillatoursoficial', fb:'lasillatours',
+    web:'lasillatours.travel', tamano:'Grande — 33+ años, franquicia noreste',
+    especialidad:'Salidas grupales, Europa, cruceros, peregrinaciones',
+    pain:'Sin chatbot visible. Respuesta lenta en horario no laboral. Depende de llamadas.',
+    status:'sin-contactar', lastContact:'', notes:'',
+    msg: `Hola, ¿hablo con alguien de La Silla Tours?\n\nVi que llevan más de 33 años siendo la referencia de viajes grupales en Monterrey — un logro enorme 🙌\n\nNoté que no tienen un asistente automático para responder consultas fuera del horario de oficina. Con el volumen de grupos que manejan, eso puede significar bastantes ventas que se pierden por las noches o fines de semana.\n\nCreé una demo de cómo se vería IA automatizando esas consultas para La Silla Tours:\n${DEMO_URL}?agencia=LaSillaTours\n\n¿15 minutos para mostrárselo? Sin compromiso 🚀`
+  },
+  {
+    id:2, nombre:'OPTUR Viajes', subtitulo:'Privada Lic. Verdad 707, Mty',
+    prioridad:'alta',
+    tel:'81 8342 2524', wa:'8114952839', email:'hola@opturviajes.com',
+    ig:'opturviajes', fb:'opturviajes',
+    web:'opturviajes.com', tamano:'Grande — 40+ años, 15,000 viajeros',
+    especialidad:'Internacionales, eventos (Tomorrowland), intercambios estudiantiles',
+    pain:'40 años de operación manual. Sin chatbot. Respuesta por teléfono únicamente.',
+    status:'sin-contactar', lastContact:'', notes:'',
+    msg:`Hola, buenos días. ¿Es OPTUR Viajes?\n\n40 años y más de 15,000 viajeros felices — eso habla por sí solo 👏\n\nEstuve revisando su página y vi que manejan viajes a eventos como Tomorrowland, Coachella e intercambios estudiantiles. Son nichos con mucha consulta de gente joven que espera respuesta inmediata en WhatsApp.\n\nPreparé una demo de cómo quedaría IA automatizando esas consultas para OPTUR:\n${DEMO_URL}?agencia=OpturViajes\n\n¿Tienen 10 minutos para verla? hola@opturviajes.com está copiado 😊`
+  },
+  {
+    id:3, nombre:'Regio Operadora', subtitulo:'Puerto Marina 4024, Las Brisas',
+    prioridad:'alta',
+    tel:'81 8378 2062', wa:'818378206 2', email:'info@regio.travel',
+    ig:'regioperadora', fb:'regioperadoradeviajes',
+    web:'regioperadora.com', tamano:'Grande — mayorista 30+ años, IATA',
+    especialidad:'Mayorista B2B: vuelos, hoteles, paquetes, plataforma ROM3TA',
+    pain:'Operadora mayorista con muchas agencias de viajes como clientes — canal multiplicador enorme.',
+    status:'sin-contactar', lastContact:'', notes:'Prospecto estratégico: si cierran, pueden recomendar TravelAI a todas sus agencias afiliadas.',
+    msg:`Hola, ¿hablo con Regio Operadora?\n\nVi que son mayoristas con 30+ años y certificaciones IATA y ANAV. Impresionante trayectoria 🏆\n\nTengo algo que podría ser muy interesante para ustedes y para las agencias que trabajan con su plataforma ROM3TA: una solución de IA que automatiza las consultas y cotizaciones — y que las agencias distribuidoras podrían usar para atender más clientes sin contratar más personal.\n\nDemo lista:\n${DEMO_URL}?agencia=RegioOperadora\n\n¿Tienen 15 minutos? Creo que puede ser una oportunidad de negocio para ambos 🚀`
+  },
+  {
+    id:4, nombre:'Viajes Natours', subtitulo:'Abedul 5426, Valle Verde, Mty',
+    prioridad:'alta',
+    tel:'81 1276 3306', wa:'8112763306', email:'ventas@viajenatours.com',
+    ig:'viajesnatours', fb:'viajesnatours',
+    web:'viajesnatours.com', tamano:'Mediana — certificada SECTUR, activa en TikTok',
+    especialidad:'Disney, Japón, Europa, bodas en playa, viajes grupales',
+    pain:'Activos en TikTok/IG pero sin respuesta automática. Mucho tráfico de jóvenes que exigen respuesta inmediata.',
+    status:'sin-contactar', lastContact:'', notes:'TikTok activo = audiencia joven = necesitan respuesta en minutos, no horas.',
+    msg:`Hola, ¿hablo con Viajes Natours?\n\nVi su perfil en TikTok — están generando bastante contenido 📱 Los viajes a Disney y Japón que muestran atraen mucho tráfico joven que manda mensaje y espera respuesta en minutos.\n\nEl problema es que fuera de horario esas consultas se pierden. Con IA, Natours respondería al instante las 24 horas.\n\nPreparé la demo personalizada:\n${DEMO_URL}?agencia=ViajesNatours\n\n¿Les muestro cómo quedaría en 10 minutos? 🚀`
+  },
+  {
+    id:5, nombre:'Viajes Regios', subtitulo:'Apodaca NL — 4 ciudades',
+    prioridad:'alta',
+    tel:'81 2489 1533', wa:'8115421548', email:'ventas@viajesregios.com',
+    ig:'viajes_regios', fb:'viajes.regios',
+    web:'viajesregios.com', tamano:'Mediana-grande — 4 ciudades (Mty, SNL, Guadalupe, Apodaca)',
+    especialidad:'Paquetes vacaciones, cruceros, Europa, Asia, todo incluido',
+    pain:'4 sucursales con atención manual. Sin automatización visible. Gran oportunidad de escalamiento.',
+    status:'sin-contactar', lastContact:'', notes:'Con 4 sucursales el plan Enterprise tiene mucho sentido.',
+    msg:`Hola, ¿hablo con Viajes Regios?\n\nVi que tienen presencia en 4 ciudades del área metropolitana — Monterrey, San Nicolás, Guadalupe y Apodaca. Eso es una operación considerable 🙌\n\nGestionar consultas de 4 sucursales manualmente es un reto enorme. Con TravelAI, toda la atención al cliente se centraliza en IA, con reportes por sucursal en tiempo real.\n\nDemo lista para Viajes Regios:\n${DEMO_URL}?agencia=ViajesRegios\n\n¿15 minutos para verla? Creo que tiene mucho sentido para ustedes 📊`
+  },
+  {
+    id:6, nombre:'Tour Nuevo León', subtitulo:'Fracc. Azteca, Guadalupe NL',
+    prioridad:'media',
+    tel:'81 1777 2096', wa:'', email:'',
+    ig:'tournuevoleon_', fb:'tournuevoleonoficial',
+    web:'tournuevoleon.com', tamano:'Mediana — desde 2006, tours + renta de buses',
+    especialidad:'Tours nacionales, renta autobuses, yates, tours religiosos',
+    pain:'Sin email ni WA visible. Canal de contacto limitado solo a teléfono.',
+    status:'sin-contactar', lastContact:'', notes:'',
+    msg:`Hola, ¿hablo con Tour Nuevo León?\n\nDesde 2006 han construido una reputación muy sólida en tours y renta de autobuses en el área 👏\n\nNoté que su principal canal de contacto es el teléfono. Con el volumen de tours y grupos que manejan, deben recibir muchísimas consultas repetitivas: disponibilidad, precios, itinerarios.\n\nCreé una demo de cómo IA automatizaría eso para ustedes:\n${DEMO_URL}?agencia=TourNuevoLeon\n\n¿10 minutos para verla? 🚀`
+  },
+  {
+    id:7, nombre:'Trema Viajes Educativos', subtitulo:'Río Lerma 213, Col. Miravalle',
+    prioridad:'media',
+    tel:'', wa:'', email:'',
+    ig:'', fb:'',
+    web:'', tamano:'Mediana — 20+ años, nicho educativo',
+    especialidad:'Viajes educativos y escolares, grupos grandes',
+    pain:'Nicho escolar = ciclos de venta cortos + muchas consultas de padres de familia.',
+    status:'sin-contactar', lastContact:'', notes:'Buscar contacto en directorios. Nicho muy específico.',
+    msg:`Hola, ¿hablo con Trema Viajes Educativos?\n\nLlevan más de 20 años especializados en viajes educativos — un nicho muy específico y valioso 🎓\n\nImagino que en temporada de inscripciones reciben decenas de consultas de papás preguntando lo mismo: destinos, costos, fechas, seguros. Con IA, todo eso se responde automáticamente, 24/7.\n\nDemo preparada:\n${DEMO_URL}?agencia=TremaViajes\n\n¿15 minutos para verla? 🚀`
+  },
+  {
+    id:8, nombre:'Excel Tours', subtitulo:'Vasconcelos 585 Pte., San Pedro',
+    prioridad:'media',
+    tel:'81 8338 5125', wa:'', email:'',
+    ig:'', fb:'ExcelToursMty',
+    web:'', tamano:'Mediana — San Pedro Garza García (zona premium)',
+    especialidad:'Vuelos, hoteles, cruceros, alquiler de autos',
+    pain:'Zona premium (San Pedro) = clientes con alto poder adquisitivo. Sin automatización visible.',
+    status:'sin-contactar', lastContact:'', notes:'San Pedro = clientes dispuestos a pagar más. Enfocar en calidad de servicio.',
+    msg:`Hola, ¿hablo con Excel Tours?\n\nEstán ubicados en San Pedro — eso dice mucho del perfil de clientes que atienden: gente que valora el servicio personalizado y la rapidez de respuesta 💎\n\nEse perfil de cliente espera respuesta en minutos, no en horas. Con TravelAI, Excel Tours respondería al instante con cotizaciones personalizadas.\n\nDemo preparada:\n${DEMO_URL}?agencia=ExcelTours\n\n¿10 minutos para verla? 🚀`
+  },
+  {
+    id:9, nombre:'BMG Tours', subtitulo:'@bmgtoursmx — Instagram activo',
+    prioridad:'media',
+    tel:'', wa:'', email:'',
+    ig:'bmgtoursmx', fb:'',
+    web:'', tamano:'Pequeña-mediana — 2,022 seguidores IG',
+    especialidad:'Cancún, Riviera Maya, Las Vegas, Cuba, Europa, cruceros',
+    pain:'Solo Instagram como canal de venta. Sin sitio web ni respuesta automática visible.',
+    status:'sin-contactar', lastContact:'', notes:'Contactar por DM en Instagram.',
+    msg:`Hola, vi su perfil en Instagram @bmgtoursmx 👋\n\nTienen contenido muy atractivo de destinos como Cancún, Las Vegas y Europa. El problema que veo es que todo pasa por el DM de Instagram — fuera de horario, esas consultas se pierden.\n\nCreé una demo de cómo IA automatizaría sus consultas de Instagram y WhatsApp:\n${DEMO_URL}?agencia=BMGTours\n\n¿10 minutos para verlo? 🚀`
+  },
+  {
+    id:10, nombre:'Hoy Sí Viajo', subtitulo:'@hoysiviajo_ — Instagram',
+    prioridad:'media',
+    tel:'', wa:'', email:'',
+    ig:'hoysiviajo_', fb:'',
+    web:'', tamano:'Pequeña — 2,293 seguidores IG, certificada SECTUR',
+    especialidad:'Paquetes vacacionales, todo incluido',
+    pain:'Solo redes como canal. Respuesta 100% manual. Sin site ni automatización.',
+    status:'sin-contactar', lastContact:'', notes:'Contactar por DM. Oportunidad de crecimiento.',
+    msg:`Hola, vi su agencia en Instagram @hoysiviajo_ 👋\n\nEstán certificados por el Registro Nacional de Turismo — eso da mucha confianza 🏆\n\nEl reto que tienen (como todas las agencias en redes) es que cuando duermen, los clientes siguen preguntando. Con IA, responden al instante las 24 horas sin contratar a nadie más.\n\nDemo lista:\n${DEMO_URL}?agencia=HoySiViajo\n\n¿Les muestro cómo funciona? 🚀`
+  },
+  {
+    id:11, nombre:'Mundoregio Viajes', subtitulo:'Blvd. Acapulco 3970-A, Valle Brisas',
+    prioridad:'media',
+    tel:'', wa:'', email:'',
+    ig:'mundoregioviajes', fb:'',
+    web:'mundoregioviajes.com', tamano:'Mediana — zona sur Monterrey',
+    especialidad:'Paquetes nacionales e internacionales, cruceros, lunas de miel',
+    pain:'Web mencionan "influencia tecnológica" pero sin chatbot ni automatización real.',
+    status:'sin-contactar', lastContact:'', notes:'Se describen como tech-forward — son buenos candidatos.',
+    msg:`Hola, ¿hablo con Mundoregio Viajes?\n\nVi en su sitio que se consideran una agencia "con significativa influencia tecnológica" — me cayó bien eso 😄\n\nSi les gusta la tecnología, creo que van a amar esto: una plataforma de IA que automatiza todas las consultas de WhatsApp y genera itinerarios en 30 segundos.\n\nDemo preparada:\n${DEMO_URL}?agencia=MundoregioViajes\n\n¿10 minutos? 🚀`
+  },
+  {
+    id:12, nombre:'Regio Tour', subtitulo:'Puerto Marina 4024, Las Brisas',
+    prioridad:'seguimiento',
+    tel:'', wa:'', email:'',
+    ig:'', fb:'',
+    web:'', tamano:'Mediana — 26 años de experiencia',
+    especialidad:'Paquetes nacionales e internacionales, grupos',
+    pain:'Empresa tradicional de 26 años sin automatización visible.',
+    status:'sin-contactar', lastContact:'', notes:'Buscar contacto directo.',
+    msg:`Hola, ¿hablo con Regio Tour?\n\n26 años en el mercado es una trayectoria impresionante 🏆\n\nCon esa experiencia, imagino que ya vieron cómo evolucionó el turismo: de llamadas telefónicas a WhatsApp, y ahora a IA. El siguiente paso natural es automatizar las consultas repetitivas para que su equipo se enfoque en lo que saben hacer: cerrar ventas.\n\nDemo:\n${DEMO_URL}?agencia=RegioTour\n\n¿15 minutos? 🚀`
+  },
+  {
+    id:13, nombre:'Mundana Travel', subtitulo:'Puerto Márquez 3861, Las Brisas',
+    prioridad:'seguimiento',
+    tel:'', wa:'', email:'',
+    ig:'', fb:'',
+    web:'', tamano:'Pequeña-mediana — nicho viajes creativos',
+    especialidad:'Viajes con "ideas out of the box", experiencias únicas',
+    pain:'Nicho premium/creativo. Sin datos de contacto en directorios.',
+    status:'sin-contactar', lastContact:'', notes:'Buscar en redes sociales.',
+    msg:`Hola, ¿hablo con Mundana Travel?\n\nMe llamó mucho la atención su propuesta de viajes "out of the box" — ese diferenciador es muy valioso 🎯\n\nPara una agencia con enfoque creativo, la IA puede ser aún más poderosa: personaliza cada propuesta al perfil del viajero en segundos.\n\nDemo:\n${DEMO_URL}?agencia=MundanaTravel\n\n¿Les muestro? 🚀`
+  },
+  {
+    id:14, nombre:'Patrotur SA', subtitulo:'Galerías Monterrey, Av. Insurgentes 2500',
+    prioridad:'seguimiento',
+    tel:'', wa:'', email:'',
+    ig:'', fb:'',
+    web:'', tamano:'Pequeña — local en plaza comercial',
+    especialidad:'Boletos aéreos y servicios turísticos',
+    pain:'Local físico en plaza. Depende de tráfico presencial. Poca presencia digital.',
+    status:'sin-contactar', lastContact:'', notes:'Visita presencial puede ser efectiva por su ubicación en Galerías.',
+    msg:`Hola, ¿hablo con Patrotur?\n\nUbicados en Galerías Monterrey — excelente ubicación para captar clientes que pasan por ahí 🛍️\n\nEl reto hoy es que muchos de esos clientes buscan en WhatsApp antes de ir al local físico. Con IA, Patrotur responde al instante en digital Y atiende en el local.\n\nDemo:\n${DEMO_URL}?agencia=Patrotur\n\n¿15 minutos? 🚀`
+  },
+  {
+    id:15, nombre:'Promo Viajes', subtitulo:'Plaza Chapultepec, Buenos Aires',
+    prioridad:'seguimiento',
+    tel:'', wa:'', email:'',
+    ig:'', fb:'',
+    web:'', tamano:'Mediana — 15 años de experiencia',
+    especialidad:'Paquetes vacacionales, grupos',
+    pain:'15 años de operación manual. Sin automatización visible en directorios.',
+    status:'sin-contactar', lastContact:'', notes:'',
+    msg:`Hola, ¿hablo con Promo Viajes?\n\n15 años en el mercado — llevan un camino importante recorrido 👏\n\nLas agencias que llevan tanto tiempo tienen el reto de modernizarse sin perder la esencia. La IA ayuda exactamente con eso: automatiza lo tedioso para que el equipo se enfoque en el servicio personalizado que los distingue.\n\nDemo:\n${DEMO_URL}?agencia=PromoViajes\n\n¿10 minutos? 🚀`
+  },
+  {
+    id:16, nombre:'Travel Viajes Monterrey', subtitulo:'Av. Gómez Morín 900, Carrizalejo',
+    prioridad:'seguimiento',
+    tel:'81 2317 2228', wa:'8186932601', email:'',
+    ig:'travelviajesmonterrey', fb:'travelviajesmonterrey',
+    web:'travelviajesmonterrey.com', tamano:'Grande — múltiples tel, chatbot básico ya',
+    especialidad:'Paquetes, quinceañeras, eventos deportivos, corporativo',
+    pain:'Ya tienen chatbot básico propio — posible competencia o potencial upgrade.',
+    status:'sin-contactar', lastContact:'', notes:'Ya tienen chatbot en /chatbot/ — analizar si es básico y si TravelAI agrega valor real.',
+    msg:`Hola, ¿hablo con Travel Viajes Monterrey?\n\nVi que ya tienen un chatbot en su sitio — van adelantados respecto a muchas agencias 👏\n\nLo que creamos en TravelAI va un nivel más arriba: además del chat web, integra WhatsApp Business, genera itinerarios completos en 30 segundos, tiene CRM para gestión de leads y dashboard de métricas en tiempo real.\n\nDemo:\n${DEMO_URL}?agencia=TravelViajesMty\n\n¿10 minutos para comparar? Puede que les guste lo que ven 🚀`
+  },
+  {
+    id:17, nombre:'Estam Tur', subtitulo:'Río Hudson 416, Del Valle, Mty',
+    prioridad:'media',
+    tel:'', wa:'', email:'',
+    ig:'', fb:'',
+    web:'', tamano:'Grande — 35+ años, zona Del Valle San Pedro',
+    especialidad:'Todo tipo de viajes, mayor experiencia de la zona',
+    pain:'35 años = empresa muy tradicional. Alta probabilidad de operación 100% manual.',
+    status:'sin-contactar', lastContact:'', notes:'Buscar contacto. Con 35 años son una apuesta segura de cliente tradicional.',
+    msg:`Hola, ¿hablo con Estam Tur?\n\nMás de 35 años siendo referencia de viajes en la zona — un legado enorme 🏆\n\nLas agencias con esa trayectoria atienden a clientes muy leales que también ahora preguntan por WhatsApp. Automatizar esas consultas sin perder el toque humano es exactamente lo que hace TravelAI.\n\nDemo preparada:\n${DEMO_URL}?agencia=EstamTur\n\n¿15 minutos para verla? 🚀`
+  },
+  {
+    id:18, nombre:'De Viaje MX by Fraveo', subtitulo:'Av Del Roble 660 P3, San Pedro',
+    prioridad:'media',
+    tel:'81 2897 3064', wa:'', email:'',
+    ig:'', fb:'',
+    web:'de-viaje-mx-by-fraveo.ueniweb.com', tamano:'Pequeña-mediana — San Pedro, sitio básico',
+    especialidad:'Paquetes vacacionales, viajes a la medida',
+    pain:'Sitio construido en constructor gratuito (ueniweb). Señal clara de poca inversión en tecnología.',
+    status:'sin-contactar', lastContact:'', notes:'Sitio muy básico = alta necesidad de modernización. Buen candidato.',
+    msg:`Hola, ¿hablo con De Viaje MX?\n\nVi que están en San Pedro y ofrecen viajes a la medida — un servicio premium muy demandado en esa zona 💎\n\nNote que su presencia digital podría fortalecerse. TravelAI no solo automatiza consultas, sino que da a la agencia una imagen más profesional ante sus clientes: dashboard, itinerarios en PDF con su marca, chat integrado.\n\nDemo:\n${DEMO_URL}?agencia=DeViajeMX\n\n¿10 minutos? 🚀`
+  }
+];
+
+let currentWANumber = '';
+
+function init() {
+  loadFromStorage();
+  renderTable(AGENCIES);
+  updateStats();
+}
+
+function loadFromStorage() {
+  const saved = JSON.parse(localStorage.getItem('travelai_prospects') || '{}');
+  AGENCIES.forEach(a => {
+    if (saved[a.id]) {
+      a.status = saved[a.id].status || a.status;
+      a.lastContact = saved[a.id].lastContact || '';
+      a.notes = saved[a.id].notes || a.notes;
+    }
+  });
+}
+
+function saveToStorage() {
+  const data = {};
+  AGENCIES.forEach(a => { data[a.id] = { status: a.status, lastContact: a.lastContact, notes: a.notes }; });
+  localStorage.setItem('travelai_prospects', JSON.stringify(data));
+}
+
+function updateStats() {
+  document.getElementById('st-total').textContent = AGENCIES.length;
+  document.getElementById('st-alta').textContent = AGENCIES.filter(a => a.prioridad === 'alta').length;
+  document.getElementById('st-media').textContent = AGENCIES.filter(a => a.prioridad === 'media').length;
+  document.getElementById('st-baja').textContent = AGENCIES.filter(a => a.prioridad === 'seguimiento').length;
+  document.getElementById('st-demo').textContent = AGENCIES.filter(a => a.status === 'demo-agendada').length;
+  document.getElementById('st-cerrado').textContent = AGENCIES.filter(a => a.status === 'cerrado').length;
+}
+
+function priTag(p) {
+  if (p === 'alta') return '<span class="pbadge pb-alta">🔴 Alta</span>';
+  if (p === 'media') return '<span class="pbadge pb-media">🟡 Media</span>';
+  return '<span class="pbadge pb-seguimiento">🟢 Seguimiento</span>';
+}
+
+const STATUS_OPTS = [
+  { v:'sin-contactar', l:'Sin contactar' },
+  { v:'contactado', l:'Contactado' },
+  { v:'demo-agendada', l:'📅 Demo agendada' },
+  { v:'propuesta-enviada', l:'📄 Propuesta enviada' },
+  { v:'cerrado', l:'✅ Cerrado' },
+  { v:'no-interesado', l:'❌ No interesado' }
+];
+
+function renderTable(list) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = list.map((a, i) => {
+    const statusOpts = STATUS_OPTS.map(s => `<option value="${s.v}" ${a.status===s.v?'selected':''}>${s.l}</option>`).join('');
+    const waLink = a.wa ? `<a class="act-btn wa" href="https://wa.me/52${a.wa.replace(/\D/g,'')}" target="_blank" title="WhatsApp directo">📲</a>` : `<span class="act-btn" style="opacity:.3;cursor:default" title="Sin WA">📲</span>`;
+    return `<tr data-id="${a.id}" data-pri="${a.prioridad}" data-status="${a.status}">
+      <td style="color:var(--t3);font-size:12px">${i+1}</td>
+      <td><div class="td-name">${a.nombre}<small>${a.subtitulo}</small></div></td>
+      <td>${priTag(a.prioridad)}</td>
+      <td><div class="td-contact">
+        ${a.tel ? `<a href="tel:${a.tel}">📞 ${a.tel}</a>` : '<span style="color:var(--t3);font-size:11px">📞 —</span>'}
+        ${a.wa ? `<a href="https://wa.me/52${a.wa.replace(/\D/g,'')}" target="_blank">💬 ${a.wa}</a>` : '<span style="color:var(--t3);font-size:11px">💬 —</span>'}
+        ${a.email ? `<a href="mailto:${a.email}">✉️ ${a.email}</a>` : '<span style="color:var(--t3);font-size:11px">✉️ —</span>'}
+      </div></td>
+      <td><div class="td-contact">
+        ${a.ig ? `<a href="https://instagram.com/${a.ig}" target="_blank">📸 @${a.ig}</a>` : '<span style="color:var(--t3);font-size:11px">—</span>'}
+        ${a.fb ? `<a href="https://facebook.com/${a.fb}" target="_blank">👤 fb/${a.fb}</a>` : ''}
+      </div></td>
+      <td style="font-size:12px;color:var(--t2);max-width:160px">${a.tamano}</td>
+      <td><div class="pain">${a.pain.substring(0,60)}${a.pain.length>60?'…':''}</div></td>
+      <td><select class="status-sel" onchange="changeStatus(${a.id},this.value)">${statusOpts}</select></td>
+      <td><input type="date" class="notes-input" style="width:120px" value="${a.lastContact}" onchange="changeLastContact(${a.id},this.value)"></td>
+      <td><input type="text" class="notes-input" placeholder="Notas…" value="${a.notes}" onchange="changeNotes(${a.id},this.value)"></td>
+      <td><div class="actions">
+        ${waLink}
+        <button class="act-btn copy" onclick="showMsg(${a.id})" title="Ver mensaje personalizado">💬</button>
+        <a class="act-btn" href="${DEMO_URL}?agencia=${encodeURIComponent(a.nombre.replace(/\s/g,''))}" target="_blank" title="Demo personalizada">🎯</a>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function changeStatus(id, val) {
+  const a = AGENCIES.find(x => x.id === id);
+  if (a) { a.status = val; saveToStorage(); updateStats(); filterTable(); }
+}
+function changeLastContact(id, val) {
+  const a = AGENCIES.find(x => x.id === id);
+  if (a) { a.lastContact = val; saveToStorage(); }
+}
+function changeNotes(id, val) {
+  const a = AGENCIES.find(x => x.id === id);
+  if (a) { a.notes = val; saveToStorage(); }
+}
+
+function filterTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const pri = document.getElementById('filterPri').value;
+  const status = document.getElementById('filterStatus').value;
+  const filtered = AGENCIES.filter(a => {
+    const matchSearch = !search || a.nombre.toLowerCase().includes(search) || a.especialidad.toLowerCase().includes(search);
+    const matchPri = !pri || a.prioridad === pri;
+    const matchStatus = !status || a.status === status;
+    return matchSearch && matchPri && matchStatus;
+  });
+  renderTable(filtered);
+}
+
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterPri').value = '';
+  document.getElementById('filterStatus').value = '';
+  renderTable(AGENCIES);
+}
+
+function showMsg(id) {
+  const a = AGENCIES.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('modalAgency').textContent = a.nombre + ' — ' + a.subtitulo;
+  document.getElementById('modalMsg').value = a.msg;
+  currentWANumber = a.wa ? `52${a.wa.replace(/\D/g,'')}` : '';
+  document.getElementById('modalWA').style.opacity = a.wa ? '1' : '0.4';
+  document.getElementById('msgModal').classList.add('on');
+}
+function closeModal() { document.getElementById('msgModal').classList.remove('on'); }
+function copyModalMsg() {
+  navigator.clipboard.writeText(document.getElementById('modalMsg').value).then(() => showToast('✓ Mensaje copiado'));
+}
+function openWA() {
+  if (!currentWANumber) return;
+  const text = encodeURIComponent(document.getElementById('modalMsg').value);
+  window.open(`https://wa.me/${currentWANumber}?text=${text}`, '_blank');
+}
+
+function exportCSV() {
+  const headers = ['#','Nombre','Prioridad','Teléfono','WhatsApp','Email','Instagram','Facebook','Tamaño','Especialidad','Pain Point','Estado','Último Contacto','Notas'];
+  const rows = AGENCIES.map((a,i) => [i+1,a.nombre,a.prioridad,a.tel,a.wa,a.email,a.ig,a.fb,a.tamano,a.especialidad,a.pain,a.status,a.lastContact,a.notes].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','),...rows].join('\n');
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='prospectos-monterrey.csv'; a.click();
+  showToast('✓ CSV exportado');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.getElementById('msgModal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Content — TravelAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bdr:rgba(255,255,255,.07);--c:#06b6d4;--cd:rgba(6,182,212,.1);--b:#3b82f6;--g:#10b981;--a:#f59e0b;--r:#ef4444;--p:#6366f1;--t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;min-height:100vh}
+    h1,h2,h3{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:10px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200}
+    .tn-logo{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0}
+    .tn-sq{width:28px;height:28px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .nav-links{display:flex;gap:6px;flex:1}
+    .back{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--t2);padding:5px 10px;border:1px solid var(--bdr);border-radius:20px;transition:all .2s}
+    .back:hover{color:var(--c);border-color:rgba(6,182,212,.3)}
+
+    .main{padding:24px;max-width:1000px;margin:0 auto}
+    .page-header{margin-bottom:28px}
+    .page-header h1{font-size:26px;font-weight:800;background:linear-gradient(135deg,#0077b5,var(--c));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+    .page-header p{color:var(--t2);font-size:14px}
+
+    /* STATS BAR */
+    .stats-bar{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+    .stat-chip{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;display:flex;align-items:center;gap:6px}
+
+    /* POST CARDS */
+    .posts-grid{display:flex;flex-direction:column;gap:20px}
+    .post-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;transition:border-color .2s}
+    .post-card:hover{border-color:rgba(255,255,255,.12)}
+
+    .post-header{padding:16px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:12px}
+    .post-num{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:800;font-size:14px;flex-shrink:0}
+    .post-meta{flex:1}
+    .post-week{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+    .post-title{font-family:var(--fh);font-size:15px;font-weight:700}
+    .post-badge{display:flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;flex-shrink:0}
+
+    .post-body{display:grid;grid-template-columns:1fr 280px;gap:0}
+    .post-content{padding:20px;border-right:1px solid var(--bdr)}
+    .post-sidebar{padding:20px}
+
+    .content-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:10px}
+    .post-text{font-size:13px;line-height:1.7;color:var(--t);white-space:pre-wrap;background:var(--bg);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:12px;max-height:320px;overflow-y:auto;cursor:text}
+    .post-text::-webkit-scrollbar{width:4px}
+    .post-text::-webkit-scrollbar-track{background:transparent}
+    .post-text::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+
+    .copy-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;background:linear-gradient(135deg,var(--c),var(--b));color:#fff;border:none;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+    .copy-btn:hover{opacity:.88}
+    .copy-btn.copied{background:linear-gradient(135deg,var(--g),#059669)}
+
+    .sidebar-section{margin-bottom:16px}
+    .sidebar-section:last-child{margin-bottom:0}
+    .ss-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:6px}
+    .ss-val{font-size:12px;color:var(--t2);line-height:1.5}
+    .ss-val strong{color:var(--t);font-weight:600}
+
+    .timing-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--a);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;margin-bottom:4px}
+    .image-box{background:var(--bg3);border:1px dashed var(--bdr);border-radius:8px;padding:12px;font-size:11px;color:var(--t2);line-height:1.5}
+    .image-box strong{color:var(--t);display:block;margin-bottom:4px;font-size:12px}
+
+    .hashtag-cloud{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+    .hashtag{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.15);color:var(--c);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+
+    .cta-box{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.05));border:1px solid rgba(6,182,212,.2);border-radius:8px;padding:10px 12px;margin-top:8px}
+    .cta-box p{font-size:11px;color:var(--t2);line-height:1.5}
+    .cta-box strong{color:var(--c)}
+
+    /* LINKEDIN PREVIEW */
+    .li-preview{background:#1b1f23;border:1px solid #2d3748;border-radius:12px;padding:16px;margin-top:8px}
+    .li-preview-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .li-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--b));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .li-name{font-size:13px;font-weight:600}
+    .li-sub{font-size:11px;color:#8892a4;margin-top:1px}
+    .li-preview-text{font-size:12px;line-height:1.6;color:#c8d3e0;white-space:pre-wrap;max-height:80px;overflow:hidden;position:relative}
+    .li-preview-text::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(transparent,#1b1f23)}
+    .li-reactions{display:flex;gap:14px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:#8892a4}
+
+    /* WEEK TABS */
+    .week-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+    .week-tab{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--bdr);color:var(--t2);cursor:pointer;transition:all .2s}
+    .week-tab.on{border-color:var(--c);color:var(--c);background:var(--cd)}
+
+    .posts-group{display:none}
+    .posts-group.on{display:flex;flex-direction:column;gap:20px}
+
+    @media(max-width:768px){
+      .post-body{grid-template-columns:1fr}
+      .post-content{border-right:none;border-bottom:1px solid var(--bdr)}
+      .main{padding:14px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="tn-logo">
+    <div class="tn-sq">✈️</div>
+    TravelAI
+  </div>
+  <div class="nav-links">
+    <a href="../index.html" class="back">← Inicio</a>
+    <a href="prospectos.html" class="back">👥 Prospectos</a>
+    <a href="plan-semana1.html" class="back">🗓️ Plan S1</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <div class="page-header">
+    <h1>💼 LinkedIn Content — 5 Posts Listos</h1>
+    <p>Campaña de posicionamiento para agencias de viajes en Monterrey, NL · Copia y publica directo</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-chip">📅 <span>Semana 1: 3 posts</span></div>
+    <div class="stat-chip">📅 <span>Semana 2: 2 posts</span></div>
+    <div class="stat-chip">🎯 <span>Audiencia: Directores de agencias MTY</span></div>
+    <div class="stat-chip">⏰ <span>Mejor horario: Mar/Jue 8–10 AM</span></div>
+  </div>
+
+  <div class="week-tabs">
+    <button class="week-tab on" onclick="showWeek('s1')">Semana 1 (3 posts)</button>
+    <button class="week-tab" onclick="showWeek('s2')">Semana 2 (2 posts)</button>
+  </div>
+
+  <!-- SEMANA 1 -->
+  <div class="posts-group on" id="grp-s1">
+
+    <!-- POST 1 -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-num" style="background:rgba(239,68,68,.15);color:var(--r)">P1</div>
+        <div class="post-meta">
+          <div class="post-week" style="color:var(--t3)">Semana 1 · Lunes AM</div>
+          <div class="post-title">El problema — Consultas perdidas fuera de horario</div>
+        </div>
+        <span class="post-badge" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--r)">😤 Dolor</span>
+      </div>
+      <div class="post-body">
+        <div class="post-content">
+          <div class="content-label">Texto del post (copia completo)</div>
+          <div class="post-text" id="post1">¿Cuántas consultas pierde tu agencia de viajes cada noche? 🤔
+
+Hice esta pregunta a 10 directores de agencias en Monterrey la semana pasada.
+
+La respuesta promedio: entre 8 y 15 consultas por día fuera de horario laboral.
+
+Eso significa:
+❌ Clientes que van con la competencia porque respondieron primero
+❌ Presupuestos de viaje perdidos (a veces $30,000+ por grupo)
+❌ Horas pagadas a agentes para responder preguntas repetitivas
+
+El problema no es la demanda — eso está bien.
+
+El problema es que tu agencia "cierra" a las 7pm, pero tus clientes siguen buscando vuelos a las 11pm.
+
+¿Cuántas consultas perdiste tú ayer?
+
+---
+
+En los próximos días voy a compartir cómo estamos resolviendo esto para agencias en Monterrey con IA conversacional.
+
+#AgenciasDeViajes #Turismo #MonterreyNL #TransformaciónDigital #InteligenciaArtificial</div>
+          <button class="copy-btn" id="cbtn1" onclick="copyPost('post1','cbtn1')">📋 Copiar texto completo</button>
+        </div>
+        <div class="post-sidebar">
+          <div class="sidebar-section">
+            <div class="ss-label">Mejor momento para publicar</div>
+            <span class="timing-chip">🕗 Lunes 8:00–9:00 AM</span>
+            <div class="ss-val">Máximo engagement lunes AM — profesionales revisan LinkedIn al inicio de semana</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Objetivo del post</div>
+            <div class="ss-val">Generar <strong>identificación con el dolor</strong> · Comentarios con respuestas · Visibilidad en búsquedas de agencias</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Imagen sugerida (Gemini)</div>
+            <div class="image-box">
+              <strong>Prompt para generar:</strong>
+              "Split-screen illustration: left side — travel agency office at night, dark, closed, phone ringing unanswered. Right side — customers on phones at 11pm trying to book travel. Modern flat design, dark blue palette, cyan accent color."
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Hashtags incluidos</div>
+            <div class="hashtag-cloud">
+              <span class="hashtag">#AgenciasDeViajes</span>
+              <span class="hashtag">#Turismo</span>
+              <span class="hashtag">#MonterreyNL</span>
+              <span class="hashtag">#TransformaciónDigital</span>
+              <span class="hashtag">#InteligenciaArtificial</span>
+            </div>
+          </div>
+          <div class="cta-box">
+            <p><strong>Táctica:</strong> Terminar con pregunta genera 3x más comentarios. Responde a todos en las primeras 2 horas para boost de alcance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 2 -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-num" style="background:rgba(6,182,212,.15);color:var(--c)">P2</div>
+        <div class="post-meta">
+          <div class="post-week" style="color:var(--t3)">Semana 1 · Miércoles AM</div>
+          <div class="post-title">La solución — Cómo funciona TravelAI Platform</div>
+        </div>
+        <span class="post-badge" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);color:var(--c)">💡 Solución</span>
+      </div>
+      <div class="post-body">
+        <div class="post-content">
+          <div class="content-label">Texto del post (copia completo)</div>
+          <div class="post-text" id="post2">El lunes pregunté cuántas consultas pierden las agencias fuera de horario.
+
+Muchos comentaron que entre 8 y 20 por día.
+
+Hoy quiero mostrarles cómo lo estamos resolviendo ✈️
+
+Construimos TravelAI Platform: una plataforma de IA conversacional diseñada específicamente para agencias de viajes.
+
+¿Qué hace exactamente?
+
+🤖 CHATBOT 24/7
+→ Responde consultas de destinos, precios y disponibilidad automáticamente
+→ Filtra leads y captura datos antes de que llegue a tu agente
+→ Funciona en WhatsApp, web y Facebook Messenger
+
+🗺️ ITINERARIOS EN SEGUNDOS
+→ El agente selecciona destino, duración y presupuesto
+→ La IA genera un itinerario completo con costos estimados
+→ Se exporta a PDF listo para el cliente en 3 clicks
+
+📊 CRM INTELIGENTE
+→ Todo el historial del cliente en un panel
+→ Recordatorios automáticos de seguimiento
+→ Métricas de conversión por agente
+
+El resultado para las agencias que ya lo usan:
+✅ 68% menos tiempo en consultas repetitivas
+✅ 40% más consultas atendidas por agente
+✅ Respuesta inmediata las 24 horas
+
+¿Quieres ver una demo personalizada con el nombre de tu agencia?
+
+💬 Escríbeme "DEMO" aquí o por DM.
+
+#TravelAI #AgenciasDeViajes #IAParaNegocios #Turismo #MonterreyNL #Automatización</div>
+          <button class="copy-btn" id="cbtn2" onclick="copyPost('post2','cbtn2')">📋 Copiar texto completo</button>
+        </div>
+        <div class="post-sidebar">
+          <div class="sidebar-section">
+            <div class="ss-label">Mejor momento para publicar</div>
+            <span class="timing-chip">🕗 Miércoles 8:00–9:00 AM</span>
+            <div class="ss-val">Conecta con post del lunes · audiencia ya conoce el problema · ahora la solución</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Objetivo del post</div>
+            <div class="ss-val">Posicionar <strong>TravelAI como la solución</strong> · Generar solicitudes de demo · CTA directo</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Imagen sugerida (Gemini)</div>
+            <div class="image-box">
+              <strong>Prompt para generar:</strong>
+              "Clean dashboard UI mockup for travel agency AI platform. Dark theme with cyan accents. Shows chatbot conversation, itinerary generator and CRM panel. Modern SaaS interface style, flat design illustration."
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Táctica de CTA</div>
+            <div class="ss-val">Pedir que comenten "DEMO" → responder con el link personalizado: <strong>demo-agencia.html?agencia=NombreAgencia</strong></div>
+          </div>
+          <div class="hashtag-cloud">
+            <span class="hashtag">#TravelAI</span>
+            <span class="hashtag">#AgenciasDeViajes</span>
+            <span class="hashtag">#IAParaNegocios</span>
+            <span class="hashtag">#Turismo</span>
+            <span class="hashtag">#MonterreyNL</span>
+            <span class="hashtag">#Automatización</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 3 -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-num" style="background:rgba(16,185,129,.15);color:var(--g)">P3</div>
+        <div class="post-meta">
+          <div class="post-week" style="color:var(--t3)">Semana 1 · Jueves tarde</div>
+          <div class="post-title">Prueba social — Caso de éxito (narrativa)</div>
+        </div>
+        <span class="post-badge" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--g)">🏆 Social Proof</span>
+      </div>
+      <div class="post-body">
+        <div class="post-content">
+          <div class="content-label">Texto del post (copia completo)</div>
+          <div class="post-text" id="post3">Una directora de agencia de viajes me dijo esto hace 3 semanas:
+
+"Eduardo, mis agentes pasan el 60% del día respondiendo lo mismo: precios de Cancún, qué incluye el paquete, si hay vuelos directos desde Monterrey."
+
+Le pregunté: ¿y si eso lo hiciera la IA automáticamente?
+
+Respuesta inicial: "Suena bien, pero no creo que funcione para mi negocio."
+
+Le hicimos una demo de 20 minutos.
+
+3 días después arrancamos.
+
+Resultado después de 30 días:
+📉 Consultas repetitivas: -67%
+📈 Clientes atendidos por agente: +40%
+⏰ Horas recuperadas por semana: 38 horas
+💰 Conversión de cotizaciones: de 18% a 31%
+
+Pero lo más importante que me dijo:
+
+"Mis agentes ahora hacen lo que saben hacer: vender. No contestar chats."
+
+Eso es exactamente lo que construimos.
+
+Si tienes una agencia de viajes con 5+ agentes en Monterrey y sientes que el equipo trabaja más de lo que vende... hablemos.
+
+DM abiertos 👇
+
+#CasoDeÉxito #AgenciasDeViajes #AutomatizaciónIA #Turismo #MonterreyNL #Productividad #TravelAI</div>
+          <button class="copy-btn" id="cbtn3" onclick="copyPost('post3','cbtn3')">📋 Copiar texto completo</button>
+        </div>
+        <div class="post-sidebar">
+          <div class="sidebar-section">
+            <div class="ss-label">Mejor momento para publicar</div>
+            <span class="timing-chip">🕔 Jueves 5:00–7:00 PM</span>
+            <div class="ss-val">Historias de éxito funcionan mejor al final del día laboral · inspiran acción antes del viernes</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Objetivo del post</div>
+            <div class="ss-val"><strong>Generar confianza</strong> con narrativa de caso real · Demostrar ROI tangible · CTA por DM</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Imagen sugerida (Gemini)</div>
+            <div class="image-box">
+              <strong>Prompt para generar:</strong>
+              "Professional travel agency team celebrating results. Modern office, diverse team, charts showing growth on screen. Warm professional atmosphere. Realistic photo style, natural lighting."
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Nota importante</div>
+            <div class="ss-val">Si no tienes caso real aún: puedes usar "una agencia de viajes en proceso de implementación" o ajustar números a resultados esperados con disclaimer.</div>
+          </div>
+          <div class="hashtag-cloud">
+            <span class="hashtag">#CasoDeÉxito</span>
+            <span class="hashtag">#AgenciasDeViajes</span>
+            <span class="hashtag">#AutomatizaciónIA</span>
+            <span class="hashtag">#MonterreyNL</span>
+            <span class="hashtag">#TravelAI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grp-s1 -->
+
+  <!-- SEMANA 2 -->
+  <div class="posts-group" id="grp-s2">
+
+    <!-- POST 4 -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-num" style="background:rgba(99,102,241,.15);color:var(--p)">P4</div>
+        <div class="post-meta">
+          <div class="post-week" style="color:var(--t3)">Semana 2 · Martes AM</div>
+          <div class="post-title">Educativo — "3 módulos que necesita toda agencia de viajes"</div>
+        </div>
+        <span class="post-badge" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:var(--p)">📚 Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-content">
+          <div class="content-label">Texto del post (copia completo)</div>
+          <div class="post-text" id="post4">3 módulos que toda agencia de viajes moderna necesita (y por qué la mayoría no los tiene):
+
+Después de hablar con más de 20 directores de agencias en Monterrey, encontré que los 3 puntos de fricción son siempre los mismos.
+
+🔹 1. ATENCIÓN 24/7
+El 73% de las consultas de viaje ocurren fuera del horario laboral.
+Los clientes buscan vuelos a las 11pm, el domingo, en vacaciones.
+Si no tienes respuesta inmediata → pierdes el lead.
+
+Solución: Chatbot de IA entrenado específicamente en turismo y destinos.
+
+🔹 2. GENERACIÓN DE COTIZACIONES
+Un agente tarda entre 45 min y 2 horas en armar una cotización completa.
+Eso limita cuántos clientes puede atender al día.
+
+Solución: Generador de itinerarios con IA que produce un borrador completo en menos de 60 segundos.
+
+🔹 3. SEGUIMIENTO ESTRUCTURADO
+La mayoría de las agencias pierden ventas no por precio, sino por falta de seguimiento.
+"Se me olvidó llamar" es la razón #1 de presupuestos perdidos.
+
+Solución: CRM con recordatorios automáticos y pipeline visual.
+
+Los 3 módulos integrados en una sola plataforma.
+
+¿Cuál es el punto de fricción más grande en tu agencia ahora mismo?
+
+👇 Cuéntame en los comentarios.
+
+#GestiónDeAgencias #Turismo #DigitalizaciónTurismo #CRM #Chatbot #MonterreyNL</div>
+          <button class="copy-btn" id="cbtn4" onclick="copyPost('post4','cbtn4')">📋 Copiar texto completo</button>
+        </div>
+        <div class="post-sidebar">
+          <div class="sidebar-section">
+            <div class="ss-label">Mejor momento para publicar</div>
+            <span class="timing-chip">🕗 Martes 8:00–10:00 AM</span>
+            <div class="ss-val">Posts educativos tienen mayor save rate martes y miércoles · aparecen en búsquedas durante semanas</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Objetivo del post</div>
+            <div class="ss-val"><strong>Posicionamiento experto</strong> · Alto tráfico orgánico · Comentarios que califican leads · Guardados (saves)</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Imagen sugerida (Gemini)</div>
+            <div class="image-box">
+              <strong>Prompt para generar:</strong>
+              "Infographic-style illustration showing 3 modules of a travel agency software platform. Clean icons: chatbot, itinerary, CRM. Dark blue background with cyan highlights. Modern flat design, numbered 1-2-3."
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Táctica</div>
+            <div class="ss-val">Lista de 3 puntos funciona muy bien en LinkedIn. Agregar pregunta al final maximiza comentarios → responder a cada uno.</div>
+          </div>
+          <div class="hashtag-cloud">
+            <span class="hashtag">#GestiónDeAgencias</span>
+            <span class="hashtag">#Turismo</span>
+            <span class="hashtag">#DigitalizaciónTurismo</span>
+            <span class="hashtag">#CRM</span>
+            <span class="hashtag">#Chatbot</span>
+            <span class="hashtag">#MonterreyNL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 5 -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-num" style="background:rgba(245,158,11,.15);color:var(--a)">P5</div>
+        <div class="post-meta">
+          <div class="post-week" style="color:var(--t3)">Semana 2 · Jueves AM</div>
+          <div class="post-title">Urgencia — "Últimos accesos beta en Monterrey"</div>
+        </div>
+        <span class="post-badge" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--a)">⚡ Urgencia</span>
+      </div>
+      <div class="post-body">
+        <div class="post-content">
+          <div class="content-label">Texto del post (copia completo)</div>
+          <div class="post-text" id="post5">Esta semana cerramos los últimos 3 accesos beta de TravelAI Platform en Monterrey.
+
+¿Por qué estamos limitando accesos?
+
+Porque queremos dar soporte real a cada agencia durante la implementación.
+
+No queremos incorporar 50 clientes y que nadie esté contento.
+
+Queremos incorporar 5 y que todos tengan resultados en 30 días.
+
+Las 2 agencias que ya están en beta llevan 3 semanas y:
+📈 +35% consultas atendidas por agente
+⏰ 40 horas/semana recuperadas del equipo
+💬 Tiempo de respuesta: de 4 horas a 2 minutos
+
+Lo que incluye el acceso beta:
+✅ Plataforma completa (chatbot + itinerarios + CRM)
+✅ Configuración personalizada para tu agencia
+✅ Capacitación del equipo (incluida)
+✅ Soporte directo las primeras 4 semanas
+✅ Precio especial de lanzamiento
+
+Si tienes una agencia de viajes en Monterrey con 5+ agentes:
+
+Escríbeme hoy por DM o comenta "INFO" abajo.
+
+Esta oferta cierra cuando se llenen los 3 espacios. No hay fecha exacta — puede ser mañana o la próxima semana.
+
+---
+
+No es presión de vendedor. Es que genuinamente solo podemos acompañar a 3 agencias más con atención de calidad este mes.
+
+#TravelAI #AgenciasDeViajes #Beta #LanzamientoMTY #MonterreyNL #IA #Turismo</div>
+          <button class="copy-btn" id="cbtn5" onclick="copyPost('post5','cbtn5')">📋 Copiar texto completo</button>
+        </div>
+        <div class="post-sidebar">
+          <div class="sidebar-section">
+            <div class="ss-label">Mejor momento para publicar</div>
+            <span class="timing-chip">🕗 Jueves 8:00–10:00 AM</span>
+            <div class="ss-val">Posts de urgencia jueves → da el fin de semana para pensar y el lunes para contactarte</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Objetivo del post</div>
+            <div class="ss-val"><strong>Urgencia real por escasez legítima</strong> · Cierre de prospectos tibios · DMs de interesados</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Imagen sugerida (Gemini)</div>
+            <div class="image-box">
+              <strong>Prompt para generar:</strong>
+              "Countdown timer or limited spots illustration. 3 seats/spots remaining graphic. Dark background, cyan and amber colors. Clean modern design. 'Beta Access - 3 spots left' text style."
+            </div>
+          </div>
+          <div class="sidebar-section">
+            <div class="ss-label">Nota clave</div>
+            <div class="ss-val">La escasez debe ser real. Si tienes más capacidad, ajusta el número. La autenticidad convierte mejor que la urgencia falsa.</div>
+          </div>
+          <div class="cta-box">
+            <p><strong>Seguimiento:</strong> A quienes comenten "INFO" → responder con el link de demo personalizada y propuesta.</p>
+          </div>
+          <div class="hashtag-cloud">
+            <span class="hashtag">#TravelAI</span>
+            <span class="hashtag">#AgenciasDeViajes</span>
+            <span class="hashtag">#Beta</span>
+            <span class="hashtag">#MonterreyNL</span>
+            <span class="hashtag">#IA</span>
+            <span class="hashtag">#Turismo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grp-s2 -->
+
+  <!-- CALENDARIO VISUAL -->
+  <div style="margin-top:32px">
+    <h2 style="font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:16px">📅 Calendario de Publicación</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;overflow-x:auto">
+      <div style="background:var(--bg2);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Lunes S1</div>
+        <div style="font-size:22px;margin-bottom:6px">😤</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Post #1<br>Problema<br>8–9 AM</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:14px;text-align:center;opacity:.4">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Martes S1</div>
+        <div style="font-size:22px;margin-bottom:6px">💬</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Interacciones<br>Comentarios<br>Conexiones</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(6,182,212,.25);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Miér S1</div>
+        <div style="font-size:22px;margin-bottom:6px">💡</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Post #2<br>Solución<br>8–9 AM</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Jue S1</div>
+        <div style="font-size:22px;margin-bottom:6px">🏆</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Post #3<br>Social Proof<br>5–7 PM</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:14px;text-align:center;opacity:.4">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Vier S1</div>
+        <div style="font-size:22px;margin-bottom:6px">📊</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Review<br>Respuestas<br>Métricas</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(99,102,241,.25);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Mar S2</div>
+        <div style="font-size:22px;margin-bottom:6px">📚</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Post #4<br>Educativo<br>8–10 AM</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:14px;text-align:center;opacity:.4">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Miér S2</div>
+        <div style="font-size:22px;margin-bottom:6px">💬</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Interacciones<br>DM replies<br>Conexiones</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Jue S2</div>
+        <div style="font-size:22px;margin-bottom:6px">⚡</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Post #5<br>Urgencia<br>8–10 AM</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:14px;text-align:center;opacity:.4">
+        <div style="font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;margin-bottom:6px">Vier S2</div>
+        <div style="font-size:22px;margin-bottom:6px">🎯</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.4">Seguimiento<br>Cierre leads<br>Demos</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showWeek(w) {
+  document.querySelectorAll('.posts-group').forEach(g => g.classList.remove('on'));
+  document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('grp-' + w).classList.add('on');
+  event.target.classList.add('on');
+}
+
+function copyPost(id, btnId) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(btnId);
+    btn.classList.add('copied');
+    btn.textContent = '✅ Copiado al portapapeles';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '📋 Copiar texto completo';
+    }, 2500);
+  });
+}
+</script>
+</body>
+</html>

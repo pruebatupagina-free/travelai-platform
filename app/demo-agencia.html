@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">TravelAI Platform — Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#080d1a;--bg2:#0e1528;--bg3:#111827;--bg4:#1a2236;
+      --bdr:rgba(255,255,255,.07);--bdr-c:rgba(6,182,212,.3);
+      --c:#06b6d4;--cd:rgba(6,182,212,.1);--b:#3b82f6;--g:#10b981;
+      --a:#f59e0b;--r:#ef4444;--p:#6366f1;
+      --t:#f1f5f9;--t2:#94a3b8;--t3:#475569;
+      --fh:'Space Grotesk',sans-serif;--fb:'DM Sans',sans-serif
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fb);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+    h1,h2,h3,h4{font-family:var(--fh);line-height:1.2}
+    a{color:inherit;text-decoration:none}
+
+    /* DEMO BANNER */
+    .demo-banner{background:linear-gradient(90deg,rgba(245,158,11,.15),rgba(245,158,11,.08));border-bottom:1px solid rgba(245,158,11,.3);padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;color:var(--a);font-weight:600;position:sticky;top:0;z-index:300}
+    .demo-banner a{color:var(--c);text-decoration:underline;cursor:pointer}
+
+    /* TOP NAV */
+    .topnav{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:37px;z-index:200}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:16px}
+    .nav-sq{width:32px;height:32px;background:linear-gradient(135deg,var(--c),var(--b));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+    .nav-brand{font-size:13px;font-weight:600;color:var(--t);opacity:.8}
+    .nav-links{display:flex;gap:4px;flex:1;margin-left:24px}
+    .nav-link{padding:6px 12px;border-radius:8px;font-size:13px;color:var(--t2);cursor:pointer;transition:all .2s;font-weight:500}
+    .nav-link:hover,.nav-link.on{color:var(--t);background:rgba(255,255,255,.05)}
+    .nav-link.on{color:var(--c)}
+    .nav-cta{margin-left:auto;padding:8px 18px;background:linear-gradient(135deg,var(--c),var(--b));color:#fff;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;font-family:var(--fb)}
+    .nav-cta:hover{opacity:.88}
+
+    /* MAIN APP LAYOUT */
+    .app-wrap{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 101px)}
+    .sidebar{background:var(--bg2);border-right:1px solid var(--bdr);padding:20px 0;position:sticky;top:101px;height:calc(100vh - 101px);overflow-y:auto}
+    .sb-section{margin-bottom:24px}
+    .sb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:0 18px;margin-bottom:6px}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;transition:all .2s;border-left:3px solid transparent;font-size:13px;color:var(--t2)}
+    .sb-item:hover{color:var(--t);background:rgba(255,255,255,.03)}
+    .sb-item.on{color:var(--c);background:rgba(6,182,212,.06);border-left-color:var(--c)}
+    .sb-icon{width:22px;text-align:center;font-size:15px;flex-shrink:0}
+    .sb-badge{margin-left:auto;background:var(--c);color:#000;font-size:9px;font-weight:800;padding:1px 5px;border-radius:10px}
+    .sb-new{background:var(--g);color:#fff}
+
+    /* CONTENT AREA */
+    .content{flex:1;overflow:hidden}
+
+    /* VIEWS */
+    .view{display:none;padding:28px;animation:fadeIn .2s ease}
+    .view.on{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* DASHBOARD VIEW */
+    .dash-header{margin-bottom:24px}
+    .dash-greeting{font-size:22px;font-weight:800;margin-bottom:4px}
+    .dash-sub{font-size:14px;color:var(--t2)}
+    .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+    .metric-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;position:relative;overflow:hidden}
+    .metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .mc-cyan::before{background:linear-gradient(90deg,var(--c),transparent)}
+    .mc-blue::before{background:linear-gradient(90deg,var(--b),transparent)}
+    .mc-green::before{background:linear-gradient(90deg,var(--g),transparent)}
+    .mc-amber::before{background:linear-gradient(90deg,var(--a),transparent)}
+    .m-label{font-size:12px;color:var(--t2);margin-bottom:8px}
+    .m-val{font-family:var(--fh);font-size:28px;font-weight:800}
+    .m-val.cyan{color:var(--c)}
+    .m-val.blue{color:var(--b)}
+    .m-val.green{color:var(--g)}
+    .m-val.amber{color:var(--a)}
+    .m-change{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px}
+    .m-up{color:var(--g)}
+    .m-icon{font-size:24px;position:absolute;bottom:12px;right:14px;opacity:.2}
+
+    /* ACTIVITY */
+    .section-title{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .activity-list{display:flex;flex-direction:column;gap:8px}
+    .activity-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+    .ai-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .ai-text{flex:1;font-size:13px}
+    .ai-text strong{font-weight:600}
+    .ai-time{font-size:11px;color:var(--t3)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+
+    /* CHATBOT VIEW */
+    .chat-wrap{display:grid;grid-template-columns:300px 1fr;gap:0;height:calc(100vh - 165px);max-height:700px}
+    .chat-list{background:var(--bg2);border-right:1px solid var(--bdr);overflow-y:auto}
+    .chat-list-item{padding:14px 16px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .15s}
+    .chat-list-item:hover{background:rgba(255,255,255,.03)}
+    .chat-list-item.on{background:rgba(6,182,212,.06)}
+    .cli-name{font-size:13px;font-weight:600;margin-bottom:2px}
+    .cli-msg{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cli-time{font-size:10px;color:var(--t3);float:right}
+    .chat-area{display:flex;flex-direction:column}
+    .chat-topbar{background:var(--bg3);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;gap:10px}
+    .chat-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--p));display:flex;align-items:center;justify-content:center;font-size:14px}
+    .chat-client-name{font-size:14px;font-weight:600}
+    .chat-status{font-size:11px;color:var(--g);display:flex;align-items:center;gap:4px}
+    .chat-status::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--g)}
+    .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+    .msg{max-width:75%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.5}
+    .msg-bot{background:var(--bg4);border:1px solid var(--bdr);align-self:flex-start;border-radius:4px 12px 12px 12px}
+    .msg-user{background:linear-gradient(135deg,var(--c),var(--b));align-self:flex-end;color:#fff;border-radius:12px 12px 4px 12px}
+    .msg-ai{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);align-self:flex-start;border-radius:4px 12px 12px 12px}
+    .msg-label{font-size:10px;color:var(--t3);margin-bottom:8px}
+    .chat-input-row{padding:12px 16px;border-top:1px solid var(--bdr);display:flex;gap:8px}
+    .chat-input{flex:1;background:var(--bg4);border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;color:var(--t);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s}
+    .chat-input:focus{border-color:var(--bdr-c)}
+    .send-btn{padding:9px 16px;background:linear-gradient(135deg,var(--c),var(--b));color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}
+    .send-btn:hover{opacity:.88}
+
+    /* ITINERARIOS VIEW */
+    .itin-grid{display:grid;grid-template-columns:320px 1fr;gap:16px;height:calc(100vh - 165px)}
+    .itin-form{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:20px;overflow-y:auto}
+    .form-group{margin-bottom:16px}
+    .form-label{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px;display:block}
+    .form-input,.form-select{width:100%;background:var(--bg4);border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;color:var(--t);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s}
+    .form-input:focus,.form-select:focus{border-color:var(--bdr-c)}
+    .form-select option{background:var(--bg3)}
+    .gen-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--c),var(--b));color:#fff;border:none;border-radius:9px;font-family:var(--fb);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+    .gen-btn:hover{opacity:.88;transform:translateY(-1px)}
+    .itin-result{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+    .itin-result-header{padding:16px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+    .itin-result-title{font-family:var(--fh);font-size:16px;font-weight:700}
+    .export-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--g);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+    .export-btn:hover{background:rgba(16,185,129,.18)}
+    .itin-days{padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px}
+    .day-card{background:var(--bg4);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+    .day-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+    .day-num{font-family:var(--fh);font-size:13px;font-weight:700}
+    .day-title{font-size:12px;color:var(--t2)}
+    .day-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--bdr)}
+    .activity-row{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+    .act-time{color:var(--t3);min-width:44px;font-weight:600;flex-shrink:0}
+    .act-desc{color:var(--t2);line-height:1.4}
+    .cost-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(6,182,212,.04);border-top:1px solid var(--bdr)}
+    .cost-label{font-size:12px;color:var(--t2)}
+    .cost-val{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--c)}
+
+    /* CRM VIEW */
+    .crm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .crm-col-title{font-family:var(--fh);font-size:13px;font-weight:700;padding:12px 0;display:flex;align-items:center;gap:6px}
+    .crm-count{background:rgba(255,255,255,.08);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:var(--t2)}
+    .crm-cards{display:flex;flex-direction:column;gap:8px}
+    .crm-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:14px}
+    .crm-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-1px);transition:all .2s}
+    .crm-card-name{font-size:13px;font-weight:600;margin-bottom:4px}
+    .crm-card-dest{font-size:12px;color:var(--t2);margin-bottom:8px}
+    .crm-card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+    .tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+    .tag-cyan{background:var(--cd);color:var(--c)}
+    .tag-green{background:rgba(16,185,129,.1);color:var(--g)}
+    .tag-amber{background:rgba(245,158,11,.1);color:var(--a)}
+    .tag-red{background:rgba(239,68,68,.1);color:var(--r)}
+    .crm-card-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--t3)}
+    .crm-card-val{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--g)}
+
+    /* SHARE PANEL */
+    .share-panel{position:fixed;bottom:24px;right:24px;z-index:400;background:var(--bg3);border:1px solid var(--bdr-c);border-radius:14px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,.4);max-width:280px;display:none}
+    .share-panel.on{display:block}
+    .sp-title{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .sp-url{font-size:11px;color:var(--t2);background:var(--bg2);padding:6px 10px;border-radius:6px;word-break:break-all;margin-bottom:8px;line-height:1.4}
+    .sp-btns{display:flex;gap:6px}
+    .sp-btn{flex:1;padding:6px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+    .sp-copy{background:linear-gradient(135deg,var(--c),var(--b));color:#fff}
+    .sp-copy:hover{opacity:.88}
+    .sp-close{background:rgba(255,255,255,.07);color:var(--t2)}
+    .sp-close:hover{background:rgba(255,255,255,.12)}
+
+    /* RESPONSIVE */
+    @media(max-width:1024px){
+      .app-wrap{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .metrics-grid{grid-template-columns:repeat(2,1fr)}
+      .itin-grid{grid-template-columns:1fr}
+      .chat-wrap{grid-template-columns:1fr}
+      .chat-list{display:none}
+      .crm-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:640px){
+      .metrics-grid{grid-template-columns:1fr 1fr}
+      .two-col{grid-template-columns:1fr}
+      .crm-grid{grid-template-columns:1fr}
+      .view{padding:16px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  🎯 Esta es una demo personalizada para <strong id="bannerName">tu agencia</strong> ·
+  <span onclick="showShare()" style="cursor:pointer">Compartir este link ↗</span>
+</div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-logo">
+    <div class="nav-sq">✈️</div>
+    <span id="navBrand">TravelAI</span>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link on" onclick="showView('dashboard',this)">Dashboard</div>
+    <div class="nav-link" onclick="showView('chatbot',this)">Chatbot IA</div>
+    <div class="nav-link" onclick="showView('itinerarios',this)">Itinerarios</div>
+    <div class="nav-link" onclick="showView('crm',this)">CRM</div>
+  </div>
+  <button class="nav-cta" onclick="showShare()">📤 Compartir demo</button>
+</nav>
+
+<!-- APP LAYOUT -->
+<div class="app-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Principal</div>
+      <div class="sb-item on" onclick="showView('dashboard',null)"><span class="sb-icon">📊</span> Dashboard</div>
+      <div class="sb-item" onclick="showView('chatbot',null)"><span class="sb-icon">🤖</span> Chatbot IA <span class="sb-badge sb-new">Live</span></div>
+      <div class="sb-item" onclick="showView('itinerarios',null)"><span class="sb-icon">🗺️</span> Itinerarios</div>
+      <div class="sb-item" onclick="showView('crm',null)"><span class="sb-icon">👥</span> CRM Clientes</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Reportes</div>
+      <div class="sb-item"><span class="sb-icon">📈</span> Analíticas</div>
+      <div class="sb-item"><span class="sb-icon">💰</span> Ventas</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Configuración</div>
+      <div class="sb-item"><span class="sb-icon">⚙️</span> Ajustes</div>
+      <div class="sb-item"><span class="sb-icon">🎓</span> Capacitación</div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view on" id="view-dashboard">
+      <div class="dash-header">
+        <div class="dash-greeting" id="dashGreeting">Bienvenido a TravelAI Platform</div>
+        <div class="dash-sub">Resumen de actividad · Última actualización: hace 2 minutos</div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card mc-cyan">
+          <div class="m-label">Consultas respondidas hoy</div>
+          <div class="m-val cyan">47</div>
+          <div class="m-change m-up">↑ +23% vs ayer</div>
+          <div class="m-icon">💬</div>
+        </div>
+        <div class="metric-card mc-blue">
+          <div class="m-label">Itinerarios generados</div>
+          <div class="m-val blue">12</div>
+          <div class="m-change m-up">↑ +40% vs semana pasada</div>
+          <div class="m-icon">🗺️</div>
+        </div>
+        <div class="metric-card mc-green">
+          <div class="m-label">Leads calificados</div>
+          <div class="m-val green">8</div>
+          <div class="m-change m-up">↑ Tasa 31% (vs 18%)</div>
+          <div class="m-icon">🎯</div>
+        </div>
+        <div class="metric-card mc-amber">
+          <div class="m-label">Horas ahorradas esta semana</div>
+          <div class="m-val amber">38h</div>
+          <div class="m-change m-up">↑ Equivale a 1 agente extra</div>
+          <div class="m-icon">⏰</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="section-title">🔔 Actividad reciente</div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="ai-dot" style="background:var(--g)"></div>
+              <div class="ai-text">🤖 Chatbot respondió consulta de <strong>Cancún todo incluido</strong> · cliente calificado → CRM</div>
+              <div class="ai-time">Hace 3 min</div>
+            </div>
+            <div class="activity-item">
+              <div class="ai-dot" style="background:var(--b)"></div>
+              <div class="ai-text">🗺️ Itinerario generado: <strong>Europa 10 días</strong> para Familia González · $68,000</div>
+              <div class="ai-time">Hace 12 min</div>
+            </div>
+            <div class="activity-item">
+              <div class="ai-dot" style="background:var(--a)"></div>
+              <div class="ai-text">⏰ Recordatorio: <strong>Seguimiento pendiente</strong> con cliente Martínez · presupuesto Riviera Maya</div>
+              <div class="ai-time">Hace 28 min</div>
+            </div>
+            <div class="activity-item">
+              <div class="ai-dot" style="background:var(--c)"></div>
+              <div class="ai-text">💬 <strong>15 consultas atendidas</strong> automáticamente fuera de horario (ayer 10pm–8am)</div>
+              <div class="ai-time">Esta mañana</div>
+            </div>
+            <div class="activity-item">
+              <div class="ai-dot" style="background:var(--g)"></div>
+              <div class="ai-text">✅ Cotización aprobada: <strong>Luna de miel Bali</strong> · cliente confirmó pago</div>
+              <div class="ai-time">Ayer 4:30 PM</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">📊 Rendimiento del mes</div>
+          <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:20px">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+                  <span style="color:var(--t2)">Consultas automatizadas</span>
+                  <span style="color:var(--c);font-weight:700">89%</span>
+                </div>
+                <div style="background:rgba(255,255,255,.06);height:6px;border-radius:3px;overflow:hidden">
+                  <div style="width:89%;height:100%;background:linear-gradient(90deg,var(--c),var(--b));border-radius:3px"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+                  <span style="color:var(--t2)">Tasa de conversión</span>
+                  <span style="color:var(--g);font-weight:700">31%</span>
+                </div>
+                <div style="background:rgba(255,255,255,.06);height:6px;border-radius:3px;overflow:hidden">
+                  <div style="width:31%;height:100%;background:linear-gradient(90deg,var(--g),#059669);border-radius:3px"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+                  <span style="color:var(--t2)">Satisfacción del cliente</span>
+                  <span style="color:var(--a);font-weight:700">96%</span>
+                </div>
+                <div style="background:rgba(255,255,255,.06);height:6px;border-radius:3px;overflow:hidden">
+                  <div style="width:96%;height:100%;background:linear-gradient(90deg,var(--a),#d97706);border-radius:3px"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+                  <span style="color:var(--t2)">Tiempo respuesta promedio</span>
+                  <span style="color:var(--b);font-weight:700">2 min</span>
+                </div>
+                <div style="background:rgba(255,255,255,.06);height:6px;border-radius:3px;overflow:hidden">
+                  <div style="width:95%;height:100%;background:linear-gradient(90deg,var(--b),var(--p));border-radius:3px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHATBOT -->
+    <div class="view" id="view-chatbot">
+      <div class="section-title" style="margin-bottom:14px">🤖 Chatbot IA — Conversaciones en tiempo real</div>
+      <div class="chat-wrap">
+        <div class="chat-list">
+          <div style="padding:12px 14px;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Conversaciones activas (5)</div>
+          <div class="chat-list-item on">
+            <span class="cli-time">Ahora</span>
+            <div class="cli-name">María López</div>
+            <div class="cli-msg">¿Tienen paquetes para Cancún en mayo?</div>
+          </div>
+          <div class="chat-list-item">
+            <span class="cli-time">2 min</span>
+            <div class="cli-name">Roberto Garza</div>
+            <div class="cli-msg">¿Incluye seguro de viaje el paquete?</div>
+          </div>
+          <div class="chat-list-item">
+            <span class="cli-time">8 min</span>
+            <div class="cli-name">Ana Martínez</div>
+            <div class="cli-msg">Gracias! Voy a hablar con mi esposo</div>
+          </div>
+          <div class="chat-list-item">
+            <span class="cli-time">15 min</span>
+            <div class="cli-name">Carlos Flores</div>
+            <div class="cli-msg">¿Cuánto sale Europa en agosto?</div>
+          </div>
+          <div class="chat-list-item">
+            <span class="cli-time">1h</span>
+            <div class="cli-name">Silvia Reyes</div>
+            <div class="cli-msg">Quiero información de cruceros</div>
+          </div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-topbar">
+            <div class="chat-avatar">👤</div>
+            <div>
+              <div class="chat-client-name">María López</div>
+              <div class="chat-status">Activa ahora · WhatsApp</div>
+            </div>
+            <button style="margin-left:auto;padding:6px 12px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--g);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">Transferir a agente</button>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="msg-label" style="text-align:center;font-size:10px;color:var(--t3)">Hoy · Conversación iniciada 11:32 AM</div>
+            <div class="msg msg-user">¿Tienen paquetes para Cancún en mayo?</div>
+            <div class="msg msg-ai">¡Hola María! 👋 Soy el asistente de <span class="ai-agency-name">tu agencia</span>. ¡Claro que sí! Tenemos varias opciones para Cancún en mayo. ¿Me podrías indicar cuántas personas viajan y cuántos noches aproximadamente tienen en mente? 🌴</div>
+            <div class="msg msg-user">Somos 2 personas, 7 noches</div>
+            <div class="msg msg-ai">¡Perfecto! Para 2 personas, 7 noches en Cancún mayo tengo 3 opciones:
+
+🏨 <strong>Opción A — Económica</strong>
+Hotel 4★ todo incluido · desde $18,500/persona
+Vuelo + hotel + traslados incluidos
+
+🏨 <strong>Opción B — Recomendada</strong>
+Hotel 5★ frente al mar · desde $24,000/persona
+Incluye snorkel + tour a Chichén Itzá
+
+🏨 <strong>Opción C — Premium</strong>
+Resort Adults Only 5★ · desde $32,000/persona
+All inclusive premium + spa + tours privados
+
+¿Alguna opción te llama la atención? Te puedo armar el itinerario completo al instante 🗺️</div>
+            <div class="msg msg-user">Me gusta la B, ¿qué fechas hay disponibles?</div>
+            <div class="msg msg-ai">¡Excelente elección! 🌟 Para mayo tenemos disponibilidad en estas fechas:
+
+✅ 2–9 mayo (disponible)
+✅ 9–16 mayo (últimas 2 habitaciones)
+✅ 16–23 mayo (disponible)
+✅ 23–30 mayo (disponible)
+
+¿Cuál se acomoda mejor a sus fechas? Con gusto le proceso la cotización formal con todos los detalles incluidos 📋</div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" type="text" placeholder="Escribe como si fueras el cliente para ver la demo...">
+            <button class="send-btn" onclick="sendDemo()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITINERARIOS -->
+    <div class="view" id="view-itinerarios">
+      <div class="section-title" style="margin-bottom:14px">🗺️ Generador de Itinerarios IA</div>
+      <div class="itin-grid">
+        <div class="itin-form">
+          <div style="font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:16px;color:var(--t2)">Parámetros del viaje</div>
+          <div class="form-group">
+            <label class="form-label">Nombre del cliente</label>
+            <input class="form-input" id="itinClient" type="text" placeholder="Ej. Familia González" value="Familia Hernández">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Destino</label>
+            <select class="form-select" id="itinDest">
+              <option value="cancun">Cancún, México</option>
+              <option value="europa" selected>Europa Clásica</option>
+              <option value="riviera">Riviera Maya</option>
+              <option value="bali">Bali, Indonesia</option>
+              <option value="cdmx">CDMX + Oaxaca</option>
+              <option value="ny">Nueva York, EE.UU.</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duración</label>
+            <select class="form-select" id="itinDays">
+              <option value="5">5 noches / 6 días</option>
+              <option value="7" selected>7 noches / 8 días</option>
+              <option value="10">10 noches / 11 días</option>
+              <option value="14">14 noches / 15 días</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Viajeros</label>
+            <select class="form-select" id="itinPax">
+              <option value="1">1 persona (solo)</option>
+              <option value="2" selected>2 personas (pareja)</option>
+              <option value="4">4 personas (familia)</option>
+              <option value="10">Grupo (10+ personas)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Presupuesto por persona</label>
+            <select class="form-select" id="itinBudget">
+              <option value="eco">Económico ($15,000–$25,000)</option>
+              <option value="mid" selected>Medio ($25,000–$50,000)</option>
+              <option value="lux">Premium ($50,000+)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Intereses</label>
+            <select class="form-select" id="itinStyle">
+              <option value="cultural" selected>Cultural + Gastronomía</option>
+              <option value="relax">Relax + Playa</option>
+              <option value="aventura">Aventura + Naturaleza</option>
+              <option value="lujo">Lujo + Spas</option>
+            </select>
+          </div>
+          <button class="gen-btn" onclick="generateItinerary()">⚡ Generar Itinerario con IA</button>
+          <div style="font-size:11px;color:var(--t3);text-align:center;margin-top:8px">Genera en menos de 3 segundos</div>
+        </div>
+        <div class="itin-result" id="itinResult">
+          <div class="itin-result-header">
+            <div>
+              <div class="itin-result-title" id="itinTitle">Europa Clásica — 7 Noches</div>
+              <div style="font-size:12px;color:var(--t2);margin-top:2px" id="itinSub">Familia Hernández · 2 personas · Presupuesto medio</div>
+            </div>
+            <button class="export-btn" onclick="alert('✅ PDF generado y listo para enviar al cliente')">📄 Exportar PDF</button>
+          </div>
+          <div class="itin-days" id="itinDays">
+            <div class="day-card">
+              <div class="day-header" style="background:rgba(6,182,212,.06)">
+                <div class="day-num" style="color:var(--c)">Día 1</div>
+                <div class="day-title">Madrid — Llegada y orientación</div>
+              </div>
+              <div class="day-body">
+                <div class="activity-row"><span class="act-time">08:00</span><span class="act-desc">Vuelo desde Monterrey (conexión) · llegada Aeropuerto Adolfo Suárez</span></div>
+                <div class="activity-row"><span class="act-time">15:00</span><span class="act-desc">Check-in Hotel 4★ centro de Madrid · descanso</span></div>
+                <div class="activity-row"><span class="act-time">19:00</span><span class="act-desc">Paseo por Gran Vía · cena en taberna española tradicional</span></div>
+              </div>
+              <div class="cost-row"><span class="cost-label">Costo estimado día 1</span><span class="cost-val">$2,400 MXN/pp</span></div>
+            </div>
+            <div class="day-card">
+              <div class="day-header" style="background:rgba(59,130,246,.06)">
+                <div class="day-num" style="color:var(--b)">Día 2</div>
+                <div class="day-title">Madrid — Museos y cultura</div>
+              </div>
+              <div class="day-body">
+                <div class="activity-row"><span class="act-time">09:00</span><span class="act-desc">Museo del Prado (entradas incluidas) · visita guiada 3h</span></div>
+                <div class="activity-row"><span class="act-time">13:00</span><span class="act-desc">Almuerzo en Mercado de San Miguel</span></div>
+                <div class="activity-row"><span class="act-time">16:00</span><span class="act-desc">Parque del Retiro · Barrio de las Letras</span></div>
+                <div class="activity-row"><span class="act-time">20:00</span><span class="act-desc">Espectáculo flamenco + cena incluida</span></div>
+              </div>
+              <div class="cost-row"><span class="cost-label">Costo estimado día 2</span><span class="cost-val">$1,800 MXN/pp</span></div>
+            </div>
+            <div class="day-card">
+              <div class="day-header" style="background:rgba(99,102,241,.06)">
+                <div class="day-num" style="color:var(--p)">Días 3–4</div>
+                <div class="day-title">París — Ciudad de la Luz</div>
+              </div>
+              <div class="day-body">
+                <div class="activity-row"><span class="act-time">08:30</span><span class="act-desc">Tren AVE Madrid → París (2h45min) · 1a clase incluida</span></div>
+                <div class="activity-row"><span class="act-time">12:00</span><span class="act-desc">Check-in Hotel boutique cerca del Sena</span></div>
+                <div class="activity-row"><span class="act-time">14:00</span><span class="act-desc">Tour Torre Eiffel + crucero por el Sena (2h)</span></div>
+                <div class="activity-row"><span class="act-time">Día 4</span><span class="act-desc">Louvre (entradas) · Champs-Élysées · Montmartre al atardecer</span></div>
+              </div>
+              <div class="cost-row"><span class="cost-label">Costo estimado días 3–4</span><span class="cost-val">$6,200 MXN/pp</span></div>
+            </div>
+            <div class="day-card">
+              <div class="day-header" style="background:rgba(16,185,129,.06)">
+                <div class="day-num" style="color:var(--g)">Días 5–7</div>
+                <div class="day-title">Roma — La Ciudad Eterna</div>
+              </div>
+              <div class="day-body">
+                <div class="activity-row"><span class="act-time">Día 5</span><span class="act-desc">Vuelo París → Roma · Coliseo y Foro Romano (entrada incluida)</span></div>
+                <div class="activity-row"><span class="act-time">Día 6</span><span class="act-desc">Vaticano + Capilla Sixtina (tour privado) · Fontana di Trevi</span></div>
+                <div class="activity-row"><span class="act-time">Día 7</span><span class="act-desc">Libre para compras · vuelo Roma → Monterrey (vía conexión)</span></div>
+              </div>
+              <div class="cost-row"><span class="cost-label">Costo estimado días 5–7</span><span class="cost-val">$8,400 MXN/pp</span></div>
+            </div>
+            <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div style="font-size:12px;color:var(--t2);margin-bottom:2px">Total estimado por persona (sin vuelo intercontinental)</div>
+                <div style="font-family:var(--fh);font-size:22px;font-weight:800;color:var(--c)">$32,400 MXN</div>
+                <div style="font-size:11px;color:var(--t3);margin-top:2px">+ vuelo MTY–Europa: $18,000–$24,000 MXN según aerolínea y fecha</div>
+              </div>
+              <button onclick="alert('✅ Cotización enviada al cliente por WhatsApp')" style="padding:10px 18px;background:linear-gradient(135deg,var(--g),#059669);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Enviar al cliente 📱</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRM -->
+    <div class="view" id="view-crm">
+      <div class="section-title" style="margin-bottom:14px">👥 CRM — Pipeline de Clientes</div>
+      <div class="crm-grid">
+        <div>
+          <div class="crm-col-title" style="color:var(--a)">🟡 Prospecto <span class="crm-count">4</span></div>
+          <div class="crm-cards">
+            <div class="crm-card">
+              <div class="crm-card-name">Familia Rodríguez</div>
+              <div class="crm-card-dest">✈️ Cancún todo incluido · 4 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-amber">WhatsApp</span><span class="tag tag-cyan">Bot → humano</span></div>
+              <div class="crm-card-meta"><span>Contacto: hace 2h</span><span class="crm-card-val" style="color:var(--a)">$78,000</span></div>
+            </div>
+            <div class="crm-card">
+              <div class="crm-card-name">Luis Moreno</div>
+              <div class="crm-card-dest">✈️ Luna de miel Bali · 2 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-amber">Facebook</span></div>
+              <div class="crm-card-meta"><span>Contacto: ayer</span><span class="crm-card-val" style="color:var(--a)">$95,000</span></div>
+            </div>
+            <div class="crm-card">
+              <div class="crm-card-name">Sandra López</div>
+              <div class="crm-card-dest">✈️ Nueva York · 2 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-amber">Web</span></div>
+              <div class="crm-card-meta"><span>Hace 3 días</span><span class="crm-card-val" style="color:var(--a)">$52,000</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="crm-col-title" style="color:var(--b)">🔵 Cotización enviada <span class="crm-count">3</span></div>
+          <div class="crm-cards">
+            <div class="crm-card">
+              <div class="crm-card-name">Familia Hernández</div>
+              <div class="crm-card-dest">✈️ Europa Clásica 7N · 2 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-cyan">PDF enviado</span><span class="tag tag-green">Alto interés</span></div>
+              <div class="crm-card-meta"><span>Seguimiento: mañana</span><span class="crm-card-val">$64,800</span></div>
+            </div>
+            <div class="crm-card">
+              <div class="crm-card-name">Grupo Corporativo TechMTY</div>
+              <div class="crm-card-dest">✈️ Las Vegas · 15 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-cyan">Propuesta corp.</span></div>
+              <div class="crm-card-meta"><span>Decisión: viernes</span><span class="crm-card-val">$420,000</span></div>
+            </div>
+            <div class="crm-card">
+              <div class="crm-card-name">Ana García</div>
+              <div class="crm-card-dest">✈️ Riviera Maya · 2 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-amber">Esperando resp.</span></div>
+              <div class="crm-card-meta"><span>Hace 2 días</span><span class="crm-card-val">$38,000</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="crm-col-title" style="color:var(--g)">🟢 Confirmado <span class="crm-count">2</span></div>
+          <div class="crm-cards">
+            <div class="crm-card">
+              <div class="crm-card-name">Carlos y Paola Vega</div>
+              <div class="crm-card-dest">✈️ Italia 10N · 2 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-green">Depósito recibido</span></div>
+              <div class="crm-card-meta"><span>Viaje: 15 jun</span><span class="crm-card-val">$86,000</span></div>
+            </div>
+            <div class="crm-card">
+              <div class="crm-card-name">Familia Martínez</div>
+              <div class="crm-card-dest">✈️ Disney Orlando · 4 personas</div>
+              <div class="crm-card-tags"><span class="tag tag-green">Pagado completo</span></div>
+              <div class="crm-card-meta"><span>Viaje: 3 jul</span><span class="crm-card-val">$124,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SHARE PANEL -->
+<div class="share-panel" id="sharePanel">
+  <div class="sp-title">🔗 Compartir demo personalizada</div>
+  <div class="sp-url" id="shareUrl"></div>
+  <div class="sp-btns">
+    <button class="sp-btn sp-copy" onclick="copyShareUrl()">Copiar link</button>
+    <button class="sp-btn sp-close" onclick="hideShare()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+// ── INIT: leer ?agencia= de la URL ──────────────────────────────
+const params = new URLSearchParams(location.search);
+let agencyName = params.get('agencia') || sessionStorage.getItem('travelai_demo_agency') || '';
+
+if (agencyName) {
+  agencyName = decodeURIComponent(agencyName);
+  sessionStorage.setItem('travelai_demo_agency', agencyName);
+  applyAgency(agencyName);
+}
+
+function applyAgency(name) {
+  document.title = 'IA para ' + name + ' — Demo TravelAI';
+  document.getElementById('pageTitle').textContent = 'IA para ' + name + ' — Demo';
+  document.getElementById('navBrand').textContent = 'IA para ' + name;
+  document.getElementById('bannerName').textContent = name;
+  document.getElementById('dashGreeting').textContent = 'Bienvenido a IA para ' + name;
+
+  document.querySelectorAll('.ai-agency-name').forEach(el => {
+    el.textContent = name;
+  });
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────────
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(l => l.classList.remove('on'));
+  document.getElementById('view-' + id).classList.add('on');
+  if (btn) btn.classList.add('on');
+}
+
+// ── CHATBOT DEMO ─────────────────────────────────────────────────
+const demoReplies = [
+  '¡Hola! Soy el asistente de ' + (agencyName || 'tu agencia') + '. ¿En qué destino estás pensando? 🌍',
+  'Tenemos excelentes opciones para eso. ¿Cuántas personas viajan y en qué fechas? 📅',
+  'Perfecto. Te puedo mostrar 3 paquetes con diferentes presupuestos. ¿Te interesa que te los detalle? ✈️',
+  '¡Claro! Te armo la cotización completa ahora mismo. Un agente te contactará en breve con todos los detalles 🎉',
+];
+let replyIdx = 0;
+
+function sendDemo() {
+  const input = document.getElementById('chatInput');
+  const val = input.value.trim();
+  if (!val) return;
+  const msgs = document.getElementById('chatMessages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg msg-user';
+  userMsg.textContent = val;
+  msgs.appendChild(userMsg);
+  input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    const botMsg = document.createElement('div');
+    botMsg.className = 'msg msg-ai';
+    botMsg.innerHTML = demoReplies[replyIdx % demoReplies.length].replace('tu agencia', agencyName || 'tu agencia');
+    replyIdx++;
+    msgs.appendChild(botMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 900);
+}
+
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendDemo();
+});
+
+// ── ITINERARY GENERATOR ──────────────────────────────────────────
+function generateItinerary() {
+  const dest = document.getElementById('itinDest');
+  const days = document.getElementById('itinDays').value;
+  const client = document.getElementById('itinClient').value || 'Cliente';
+  const pax = document.getElementById('itinPax');
+  const destText = dest.options[dest.selectedIndex].text;
+  const paxText = pax.options[pax.selectedIndex].text;
+
+  document.getElementById('itinTitle').textContent = destText + ' — ' + days + ' Noches';
+  document.getElementById('itinSub').textContent = client + ' · ' + paxText + ' · Presupuesto ' + document.getElementById('itinBudget').options[document.getElementById('itinBudget').selectedIndex].text;
+
+  const btn = document.querySelector('.gen-btn');
+  btn.textContent = '⏳ Generando itinerario...';
+  btn.style.opacity = '.7';
+  setTimeout(() => {
+    btn.textContent = '✅ ¡Itinerario listo!';
+    btn.style.background = 'linear-gradient(135deg,var(--g),#059669)';
+    setTimeout(() => {
+      btn.textContent = '⚡ Generar Itinerario con IA';
+      btn.style.background = '';
+      btn.style.opacity = '';
+    }, 2500);
+  }, 1500);
+}
+
+// ── SHARE ────────────────────────────────────────────────────────
+function showShare() {
+  const url = location.origin + location.pathname + (agencyName ? '?agencia=' + encodeURIComponent(agencyName) : '');
+  document.getElementById('shareUrl').textContent = url;
+  document.getElementById('sharePanel').classList.add('on');
+}
+
+function hideShare() {
+  document.getElementById('sharePanel').classList.remove('on');
+}
+
+function copyShareUrl() {
+  const url = document.getElementById('shareUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.querySelector('.sp-copy');
+    btn.textContent = '✅ Copiado!';
+    setTimeout(() => { btn.textContent = 'Copiar link'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
